@@ -195,12 +195,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               onTap: () {
-                                Navigator.pushReplacement(
+                                /*Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           const ScheduleScreen()),
-                                );
+                                );*/
                               },
                             ),
                             GestureDetector(
