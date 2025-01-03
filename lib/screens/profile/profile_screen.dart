@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/schedule_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';

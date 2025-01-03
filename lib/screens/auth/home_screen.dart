@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -6,6 +7,7 @@ import 'package:escoladeverao/widgets/custom_card_home.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.user}) : super(key: key);
@@ -22,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Ana Beatriz Almeida',
     'José Carlos Oliveira',
   ];
+
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
@@ -51,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
