@@ -9,6 +9,7 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    _checkSavedLogin();
 
     // Limpando os erros ao digitar nos campos
     emailInput.addListener(() {
@@ -46,6 +48,24 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     });
+  }
+
+  Future<void> _checkSavedLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberLogin = prefs.getBool('remember_login') ?? false;
+    final savedEmail = prefs.getString('saved_email');
+    final savedPassword = prefs.getString('saved_password');
+
+    if (rememberLogin && savedEmail != null && savedPassword != null) {
+      setState(() {
+        emailInput.text = savedEmail;
+        passwordInput.text = savedPassword;
+        _isChecked = true;
+      });
+
+      // Opcional: fazer login automático
+      await _login();
+    }
   }
 
   @override
@@ -78,6 +98,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> saveUser(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('user_id', user.id);
+    prefs.setString('user_name', user.name);
+  }
+
+// In login_screen.dart, modify the _login method:
   Future<void> _login() async {
     setState(() {
       _emailError = '';
@@ -88,79 +115,60 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = emailInput.text.trim();
     final password = passwordInput.text;
 
-    // Validações dos campos
-    if (email.isEmpty) {
-      setState(() {
-        _emailError = 'O campo e-mail é obrigatório';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    if (!_isValidEmail(email)) {
-      setState(() {
-        _emailError = 'Digite um e-mail válido';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    if (password.isEmpty) {
-      setState(() {
-        _passwordError = 'O campo senha é obrigatório';
-        _isLoading = false;
-      });
-      return;
-    }
-
     try {
       final result = await _apiService.login(email, password);
 
-      print('Login result: $result');
+      if (result != null &&
+          result is Map<String, dynamic> &&
+          result['success'] == true) {
+        final userData = result['data']['data']['user'];
+        if (userData != null) {
+          final user = User(
+            id: userData['id']?.toString() ?? '',
+            name: userData['name'] ?? '',
+          );
 
-      if (result != null && result is Map<String, dynamic>) {
-        if (result['success'] == true) {
+          // Salvar usuário e estado de login nas preferências
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_id', user.id);
+          await prefs.setString('user_name', user.name);
+
+          // Salvar estado do checkbox "Lembrar senha"
+          if (_isChecked) {
+            await prefs.setBool('remember_login', true);
+            // Opcional: salvar credenciais de forma segura
+            await prefs.setString('saved_email', email);
+            // Nota: em produção, considere usar flutter_secure_storage para a senha
+            await prefs.setString('saved_password', password);
+          }
+
           if (!mounted) return;
 
-          // Corrected data extraction
-          final userData = result['data']['data']['user'];
-          if (userData != null) {
-            final user = User(
-              name: userData['name'] ?? '',
-              sobrenome: userData['sobrenome'] ?? '',
-              id: userData['id']?.toString() ?? '',
-            );
-
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(user: user),
-              ),
-              (route) => false,
-            );
-          } else {
-            throw Exception('Dados do usuário não encontrados na resposta');
-          }
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(user: user),
+              settings: RouteSettings(arguments: user),
+            ),
+            (route) => false,
+          );
         } else {
-          setState(() {
-            _passwordError = _getLoginErrorMessage(result['message'] ?? '');
-          });
+          throw Exception('Dados do usuário não encontrados na resposta');
         }
       } else {
-        throw Exception('Formato de resposta inválido');
-      }
-    } catch (e) {
-      print('Login error: $e');
-      setState(() {
-        _passwordError =
-            'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente';
-      });
-    } finally {
-      if (mounted) {
         setState(() {
-          _isLoading = false;
+          _passwordError = _getLoginErrorMessage(result['message'] ?? '');
         });
       }
+    } catch (e) {
+      setState(() {
+        _passwordError =
+            'Erro ao conectar ao servidor. Verifique sua conexão e tente novamente.';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/widgets/custom_app_bar_error.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_card_schedule.dart';
