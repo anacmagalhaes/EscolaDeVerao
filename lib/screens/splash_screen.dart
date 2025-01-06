@@ -2,7 +2,6 @@ import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/widgets/custom_image_view.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/routes/app_routes.dart';
-import 'package:escoladeverao/models/user_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
