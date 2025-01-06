@@ -1,5 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/auth/home_screen.dart';
+import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
 import 'package:escoladeverao/controllers/login_controllers.dart';
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/auth/home_screen.dart';
+import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
