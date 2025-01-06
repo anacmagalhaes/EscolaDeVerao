@@ -1,7 +1,7 @@
-import 'package:escoladeverao/controllers/login_controllers.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
@@ -22,15 +22,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isChecked = false;
   final ApiService _apiService = ApiService();
   bool _isLoading = false;
+  final AuthService authService = AuthService();
 
   // Variáveis de erro
   String _emailError = '';
   String _passwordError = '';
+  final emailInput = TextEditingController();
+  final passwordInput = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _checkSavedLogin();
+    _checkExistingUser();
+    _loadSavedCredentials();
 
     // Limpando os erros ao digitar nos campos
     emailInput.addListener(() {
@@ -50,21 +54,13 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> _checkSavedLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    final rememberLogin = prefs.getBool('remember_login') ?? false;
-    final savedEmail = prefs.getString('saved_email');
-    final savedPassword = prefs.getString('saved_password');
-
-    if (rememberLogin && savedEmail != null && savedPassword != null) {
-      setState(() {
-        emailInput.text = savedEmail;
-        passwordInput.text = savedPassword;
-        _isChecked = true;
-      });
-
-      // Opcional: fazer login automático
-      await _login();
+  _checkExistingUser() async {
+    User? user = await authService.loadUser();
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+      );
     }
   }
 
@@ -83,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Traduz os erros da API para mensagens amigáveis
   String _getLoginErrorMessage(String apiError) {
-    // Mapeamento de erros comuns da API para mensagens amigáveis
     switch (apiError.toLowerCase()) {
       case 'invalid_credentials':
       case 'incorrect password':
@@ -104,7 +99,19 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString('user_name', user.name);
   }
 
-// In login_screen.dart, modify the _login method:
+  _loadSavedCredentials() async {
+    final credentials = await authService.loadCredentials();
+    final hasRemember = await authService.hasRememberLogin();
+
+    if (mounted) {
+      setState(() {
+        emailInput.text = credentials['email'] ?? '';
+        passwordInput.text = credentials['password'] ?? '';
+        _isChecked = hasRemember;
+      });
+    }
+  }
+
   Future<void> _login() async {
     setState(() {
       _emailError = '';
@@ -142,9 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final result = await _apiService.login(email, password);
 
-      if (result != null &&
-          result is Map<String, dynamic> &&
-          result['success'] == true) {
+      if (result != null && result['success'] == true) {
         final userData = result['data']['data']['user'];
         if (userData != null) {
           final user = User(
@@ -152,27 +157,22 @@ class _LoginScreenState extends State<LoginScreen> {
             name: userData['name'] ?? '',
           );
 
-          // Salvar usuário e estado de login nas preferências
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_id', user.id);
-          await prefs.setString('user_name', user.name);
+          await authService.saveUser(user);
 
-          // Salvar estado do checkbox "Lembrar senha"
-          if (_isChecked) {
-            await prefs.setBool('remember_login', true);
-            // Opcional: salvar credenciais de forma segura
-            await prefs.setString('saved_email', email);
-            // Nota: em produção, considere usar flutter_secure_storage para a senha
-            await prefs.setString('saved_password', password);
+          if (!_isChecked) {
+            await authService.clearSavedCredentials();
+          } else {
+            // Se estiver marcado, salva as credenciais
+            await authService.saveCredentials(email, password);
           }
 
           if (!mounted) return;
 
+          // Redirecionar para a tela inicial
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(user: user),
-              settings: RouteSettings(arguments: user),
             ),
             (route) => false,
           );
@@ -318,7 +318,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: CustomOutlinedButton(
                         text: 'Cadastrar',
                         height: 56.h,
-                        width: double.maxFinite,
                         buttonFonts: const Fonts(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -327,47 +326,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         buttonStyle: OutlinedButton.styleFrom(
-                            side:
-                                const BorderSide(color: AppColors.textPrimary),
+                            side: const BorderSide(
+                                color: AppColors.orangePrimary),
                             backgroundColor: AppColors.background),
                         onPressed: () {
-                          // Implementar navegação para tela de cadastro
+                          Navigator.pushNamed(context, '/sign_up_screen');
                         },
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 50.h),
-              if (_isLoading)
-                Container(
-                  width: double
-                      .infinity, // Garantindo que o Container ocupe a largura total
-                  // A altura da tela
-                  color: Colors
-                      .transparent, // Cor de fundo com opacidade (um fundo mais claro pode ajudar na visibilidade)
-                  child: Center(
-                    // O Center vai garantir que o conteúdo seja centralizado
-                    child: Column(
-                      mainAxisSize: MainAxisSize
-                          .min, // Isso garante que o Column ocupe o espaço necessário
-                      children: [
-                        CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.orangePrimary),
-                          strokeWidth: 3,
-                        ),
-                        SizedBox(height: 12.h),
-                        const Fonts(
-                          text: 'Verificando suas credenciais...',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
