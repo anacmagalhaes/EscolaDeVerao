@@ -1,5 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/auth/home_screen.dart';
+import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/scan_screen.dart';
 import 'package:escoladeverao/screens/schedule_screen.dart';

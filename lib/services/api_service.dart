@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 class ApiService {
-  final String baseUrl = 'https://dba1-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://620b-177-130-172-153.ngrok-free.app';
   late final http.Client _client;
-  User? currentUser;
+  User? currentUser; // Inicializado como null
 
   ApiService() {
     // Configurar um cliente HTTP personalizado que aceita certificados inválidos
@@ -56,7 +57,7 @@ class ApiService {
             'Erro no login. Status: ${response.statusCode}, Body: ${response.body}');
         return {
           'success': false,
-          'message': 'Erro no login: ${response.statusCode}',
+          'message': 'Erro no login: ${response.statusCode} - ${response.body}',
         };
       }
     } catch (e, stackTrace) {
