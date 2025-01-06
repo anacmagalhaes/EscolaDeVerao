@@ -1,12 +1,10 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key, required this.user}) : super(key: key);
@@ -44,41 +42,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _verifyLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final rememberLogin = prefs.getBool('remember_login') ?? false;
-
-    if (!rememberLogin) {
-      // Se não deve lembrar login, verifica se tem token válido
-      // Aqui você pode adicionar sua lógica de verificação de token
-      final userId = prefs.getString('user_id');
-      if (userId == null) {
-        logout();
-      }
-    }
-  }
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Se não quiser manter as credenciais salvas após logout:
-    await prefs.remove('remember_login');
-    await prefs.remove('saved_email');
-    await prefs.remove('saved_password');
-    // ou para limpar tudo:
-    // await prefs.clear();
-
-    if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (route) => false,
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-    _verifyLoginStatus();
   }
 
   @override
@@ -159,17 +125,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.black),
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  logout();
-                                },
-                                icon: Icon(Icons.logout))
                           ],
                         ),
                         Padding(
                           padding: EdgeInsets.only(
                               left: 24.h, right: 24.h, bottom: 24.h),
                           child: Divider(
+                            // ignore: deprecated_member_use
                             color: AppColors.textPrimary.withOpacity(0.50),
                           ),
                         ),
