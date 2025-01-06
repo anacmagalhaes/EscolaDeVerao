@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -17,6 +18,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  AuthService authService = AuthService();
+
   final List<String> palestrantes = [
     'Rafael Monteiro Silva',
     'Ana Beatriz Almeida',
@@ -47,6 +50,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return FadeTransition(opacity: fadeAnimation, child: child);
           },
+        ),
+      );
+    }
+  }
+
+  void _logout() async {
+    try {
+      await authService.logout(); // Limpa todos os dados salvos
+
+      if (!mounted) return;
+
+      // Remove todas as rotas da pilha e navega para a tela de login
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/login_screen', // ou '/login_screen' dependendo da sua rota
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      // Tratamento de erro opcional
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao fazer logout. Tente novamente.'),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -131,6 +158,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                   ),
                                 ),
+                                IconButton(
+                                    onPressed: () {
+                                      _logout();
+                                    },
+                                    icon: Icon(Icons.logout))
                               ],
                             ),
                           ],
