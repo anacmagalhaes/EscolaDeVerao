@@ -115,6 +115,30 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = emailInput.text.trim();
     final password = passwordInput.text;
 
+    if (email.isEmpty) {
+      setState(() {
+        _emailError = 'O campo e-mail é obrigatório';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (!_isValidEmail(email)) {
+      setState(() {
+        _emailError = 'Digite um e-mail válido';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (password.isEmpty) {
+      setState(() {
+        _passwordError = 'O campo senha é obrigatório';
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
       final result = await _apiService.login(email, password);
 
