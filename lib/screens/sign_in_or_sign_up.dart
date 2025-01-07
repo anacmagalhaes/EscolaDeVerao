@@ -1,4 +1,5 @@
 import 'package:escoladeverao/screens/auth/login_screen.dart';
+import 'package:escoladeverao/screens/sign_up_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
@@ -82,14 +83,13 @@ class SignInOrSignUp extends StatelessWidget {
                     side: const BorderSide(color: AppColors.textPrimary),
                     backgroundColor: AppColors.background),
                 onPressed: () {
-                  // Navigator.pushReplacement(
-                  //   // ignore: use_build_context_synchronously
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => const SignUpScreen(
-                  //             origin: 'signinorsignup',
-                  //           )),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SignUpScreen(
+                              origin: 'sign_in_or_sign_up_screen',
+                            )),
+                  );
                 },
               ),
             ],
