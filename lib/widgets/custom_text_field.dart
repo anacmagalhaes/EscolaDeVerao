@@ -10,6 +10,7 @@ class CustomTextField extends StatefulWidget {
   final bool isRequired;
   final TextEditingController controller;
   final String? errorText;
+  final Function(String)? onChanged;
 
   const CustomTextField({
     super.key,
@@ -21,6 +22,7 @@ class CustomTextField extends StatefulWidget {
     required this.controller,
     this.isRequired = false,
     this.errorText,
+    this.onChanged,
   });
 
   @override

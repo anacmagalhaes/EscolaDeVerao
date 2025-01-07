@@ -326,8 +326,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         buttonStyle: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: AppColors.orangePrimary),
+                            side:
+                                const BorderSide(color: AppColors.textPrimary),
                             backgroundColor: AppColors.background),
                         onPressed: () {
                           Navigator.pushNamed(context, '/sign_up_screen');
