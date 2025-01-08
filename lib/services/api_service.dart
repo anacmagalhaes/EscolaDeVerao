@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 class ApiService {
-  final String baseUrl = 'https://e7a4-177-130-172-153.ngrok-free.app';
+  final String baseUrl = 'https://8064-177-130-172-153.ngrok-free.app';
   late final http.Client _client;
   User? currentUser; // Inicializado como null
 
@@ -114,7 +114,6 @@ class ApiService {
       };
     }
   }
-
 
   // Não esqueça de fechar o cliente quando não for mais necessário
   void dispose() {
