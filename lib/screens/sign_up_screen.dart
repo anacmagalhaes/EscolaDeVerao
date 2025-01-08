@@ -21,6 +21,156 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final ApiService apiService = ApiService(); // Instância do ApiService
 
+  String _nameError = '';
+  String _emailError = '';
+  String _cpfError = '';
+  String _phoneError = '';
+  String _passwordError = '';
+  String _confirmPassError = '';
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final cpfController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPassController = TextEditingController();
+
+  // Função para validar os campos
+  bool _validateFields() {
+    bool isValid = true;
+
+    if (nameController.text.isEmpty) {
+      setState(() {
+        _nameError = 'Nome é obrigatório';
+      });
+      isValid = false;
+    }
+    if (emailController.text.isEmpty || !emailController.text.contains('@')) {
+      setState(() {
+        _emailError = 'E-mail inválido';
+      });
+      isValid = false;
+    }
+    if (cpfController.text.isEmpty) {
+      setState(() {
+        _cpfError = 'CPF é obrigatório';
+      });
+      isValid = false;
+    }
+    if (phoneController.text.isEmpty) {
+      setState(() {
+        _phoneError = 'Telefone é obrigatório';
+      });
+      isValid = false;
+    }
+    if (passwordController.text.isEmpty || passwordController.text.length < 6) {
+      setState(() {
+        _passwordError = 'Senha deve ter pelo menos 6 caracteres';
+      });
+      isValid = false;
+    }
+    // Confirmar Senha
+    if (confirmPassController.text.isEmpty) {
+      setState(() {
+        _confirmPassError = 'Por favor, confirme sua senha';
+      });
+      isValid = false;
+    } else if (confirmPassController.text != passwordController.text) {
+      setState(() {
+        _confirmPassError = 'As senhas não coincidem';
+      });
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  // Função para realizar o cadastro
+  Future<void> _signUp() async {
+    // Limpar erros anteriores
+    setState(() {
+      _nameError = '';
+      _emailError = '';
+      _cpfError = '';
+      _phoneError = '';
+      _passwordError = '';
+      _confirmPassError = '';
+    });
+
+    if (!_validateFields()) {
+      return;
+    }
+
+    // Criando o objeto de cadastro
+    final userData = {
+      'name': nameController.text,
+      'email': emailController.text,
+      'cpf': cpfController.text,
+      'phone': phoneController.text,
+      'password': passwordController.text,
+    };
+
+    try {
+      // Simulando uma chamada de API
+      final response = await apiService.register(userData);
+
+      if (response['status'] == 'success') {
+        // Exibir modal de verificação do e-mail com duração de 5s na tela
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Cadastro bem-sucedido'),
+            content: Text('Você foi cadastrado com sucesso!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // Exibir mensagem de erro
+        _handleApiError(response['error']);
+      }
+    } catch (e) {
+      // Erro de conexão ou outro erro
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Erro'),
+          content: Text(
+              'Ocorreu um erro ao tentar cadastrar. Tente novamente mais tarde.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  // Função para tratar os erros da API
+  void _handleApiError(String error) {
+    setState(() {
+      if (error == 'email_already_taken') {
+        _emailError = 'Este e-mail já está cadastrado';
+      } else if (error == 'cpf_already_registered') {
+        _cpfError = 'Este CPF já está cadastrado';
+      } else if (error == 'weak_password') {
+        _passwordError = 'Senha muito fraca';
+      } else {
+        _emailError = 'Erro desconhecido';
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,21 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             CustomAppBarError(
               onBackPressed: () {
                 FocusScope.of(context).unfocus();
-                if (widget.origin == '/login') {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
-                } else if (widget.origin == '/signinorsignup') {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SignInOrSignUp()),
-                  );
-                } else {
-                  Navigator.pop(context);
-                }
+                Navigator.pop(context);
               },
               backgroundColor: AppColors.background,
               leadingIcon: Image.asset(
@@ -76,6 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           fontWeight: FontWeight.w400,
                           color: AppColors.textPrimary),
                       SizedBox(height: 45.h),
+                      // Nome
                       CustomTextField(
                         labelText: 'Nome',
                         hintText: 'Digite seu nome completo',
@@ -83,7 +220,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: nameController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_nameError.isNotEmpty)
+                        Text(
+                          _nameError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 16.h),
+                      // E-mail
                       CustomTextField(
                         labelText: 'E-mail',
                         hintText: 'Digite seu e-mail',
@@ -91,7 +235,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: emailController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_emailError.isNotEmpty)
+                        Text(
+                          _emailError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 16.h),
+                      // CPF
                       CustomTextField(
                         labelText: 'CPF',
                         hintText: 'Digite seu CPF',
@@ -99,7 +250,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: cpfController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_cpfError.isNotEmpty)
+                        Text(
+                          _cpfError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 16.h),
+                      // Telefone
                       CustomTextField(
                         labelText: 'Telefone',
                         hintText: '(99) 99999-9999',
@@ -107,7 +265,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: phoneController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_phoneError.isNotEmpty)
+                        Text(
+                          _phoneError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 16.h),
+
+                      // LinkedIn
                       CustomTextField(
                         labelText: 'Link LinkedIn',
                         hintText: 'https://www.linkedin.com/in/seulinkedlin ',
@@ -115,13 +281,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: linkedinController,
                       ),
                       SizedBox(height: 16.h),
+                      // Github
                       CustomTextField(
-                        labelText: 'Link GitHub',
+                        labelText: 'Link Github',
                         hintText: 'https://github.com/seugithub',
                         keyboardType: TextInputType.url,
                         controller: githubController,
                       ),
                       SizedBox(height: 16.h),
+                      //Lattes
                       CustomTextField(
                         labelText: 'Link Currículo Lattes',
                         hintText: 'Adicione seu link do Lattes',
@@ -129,6 +297,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: lattesController,
                       ),
                       SizedBox(height: 16.h),
+                      // Senha
                       CustomTextField(
                         labelText: 'Senha',
                         hintText: 'Crie sua senha',
@@ -137,7 +306,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: passwordController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_passwordError.isNotEmpty)
+                        Text(
+                          _passwordError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 16.h),
+                      // Confirmar Senha
                       CustomTextField(
                         labelText: 'Confirme sua senha',
                         hintText: 'Digite novamente sua senha',
@@ -146,94 +322,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: confirmPassController,
                         isRequired: true,
                       ),
+                      SizedBox(height: 8.h),
+                      if (_confirmPassError.isNotEmpty)
+                        Text(
+                          _confirmPassError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
                       SizedBox(height: 15.h),
+                      // Botão de Cadastro
                       SizedBox(
                         width: double.maxFinite,
                         child: CustomOutlinedButton(
-                          text: 'Cadastrar',
-                          height: 56.h,
-                          buttonFonts: const Fonts(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          buttonStyle: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: AppColors.orangePrimary),
-                            backgroundColor: AppColors.orangePrimary,
-                          ),
-                          onPressed: () async {
-                            FocusScope.of(context)
-                                .unfocus(); // Fechar o teclado
-
-                            // Verificar se todos os campos obrigatórios estão preenchidos
-                            if (nameController.text.isEmpty ||
-                                emailController.text.isEmpty ||
-                                cpfController.text.isEmpty ||
-                                phoneController.text.isEmpty ||
-                                passwordController.text.isEmpty ||
-                                confirmPassController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Preencha todos os campos obrigatórios.')),
-                              );
-                              return;
-                            }
-
-                            // Verificar se as senhas coincidem
-                            if (passwordController.text !=
-                                confirmPassController.text) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('As senhas não coincidem.')),
-                              );
-                              return;
-                            }
-
-                            // Montar o mapa de dados para o cadastro
-                            final Map<String, dynamic> userData = {
-                              'name': nameController.text,
-                              'email': emailController.text,
-                              'cpf': cpfController.text,
-                              'phone': phoneController.text,
-                              'linkedin': linkedinController.text,
-                              'github': githubController.text,
-                              'lattes': lattesController.text,
-                              'password': passwordController.text,
-                            };
-
-                            // Chamar a API de cadastro
-                            final response =
-                                await apiService.register(userData);
-
-                            if (response['success']) {
-                              // Cadastro realizado com sucesso
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Cadastro realizado com sucesso!')),
-                              );
-
-                              // Navegar para a tela de login ou realizar login automático
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()),
-                              );
-                            } else {
-                              // Mostrar erro
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                        Text('Erro: ${response['message']}')),
-                              );
-                            }
-                          },
-                        ),
+                            text: 'Cadastrar',
+                            height: 56.h,
+                            buttonFonts: const Fonts(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.background,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            buttonStyle: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: AppColors.orangePrimary),
+                              backgroundColor: AppColors.orangePrimary,
+                            ),
+                            onPressed: _signUp),
                       ),
                     ],
                   ),
