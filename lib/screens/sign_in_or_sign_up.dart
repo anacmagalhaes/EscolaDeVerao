@@ -1,6 +1,4 @@
 import 'package:escoladeverao/screens/auth/login_screen.dart';
-import 'package:escoladeverao/screens/modals/verification_email_modal.dart';
-import 'package:escoladeverao/screens/modals/verification_error_modal.dart';
 import 'package:escoladeverao/screens/sign_up_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';

@@ -1,8 +1,6 @@
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
-import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:escoladeverao/screens/modals/verification_email_modal.dart';
 import 'package:escoladeverao/screens/modals/verification_error_modal.dart';
-import 'package:escoladeverao/screens/sign_in_or_sign_up.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -11,7 +9,6 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class SignUpScreen extends StatefulWidget {
   final String origin;
@@ -110,10 +107,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // Simulando uma chamada de API
       final response = await apiService.register(userData);
 
-      if (response['status'] == 'success') {
+      if (response['success'] == true) {
         VerificationEmailModal(context, emailController.text);
       } else {
-        // Exibir mensagem de erro
         _handleApiError(response['error']);
       }
     } catch (e) {

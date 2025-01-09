@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 class ApiService {
-  final String baseUrl = 'https://9b65-177-130-172-153.ngrok-free.app';
+  final String baseUrl = 'https://2164-177-130-172-153.ngrok-free.app';
   late final http.Client _client;
   User? currentUser; // Inicializado como null
 
@@ -70,6 +70,7 @@ class ApiService {
     }
   }
 
+  //método de cadastro
   Future<Map<String, dynamic>> register(Map<String, dynamic> userData) async {
     final url = Uri.parse('$baseUrl/api/register');
     print('Tentando cadastro na URL: $url');
@@ -88,7 +89,6 @@ class ApiService {
         body: jsonEncode(userData),
       );
       print('Status code: ${response.statusCode}');
-      print('Resposta do servidor: ${response.body}');
       if (response.statusCode == 201) {
         final decodedResponse = jsonDecode(response.body);
         print('Resposta decodificada: $decodedResponse');
@@ -107,6 +107,53 @@ class ApiService {
       }
     } catch (e, stackTrace) {
       print('Exceção durante o cadastro: $e');
+      print('Stack trace: $stackTrace');
+      return {
+        'success': false,
+        'message': 'Erro ao conectar com a API: $e',
+      };
+    }
+  }
+
+  //método de recuperação de senha
+  Future<Map<String, dynamic>> resetPasswordWithCpfEmail(
+      String cpf, String email) async {
+    final url = Uri.parse('$baseUrl/api/user/forgot_password');
+    print('Enviando pedido de recuperação de senha para URL: $url');
+
+    try {
+      final Map<String, dynamic> body = {
+        'cpf': cpf,
+        'email': email,
+      };
+
+      final response = await _client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Resposta do servidor: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final decodedResponse = jsonDecode(response.body);
+        return {
+          'success': true,
+          'message': decodedResponse['message'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Erro ao redefinir senha: ${response.body}',
+        };
+      }
+    } catch (e, stackTrace) {
+      print('Exceção ao redefinir senha: $e');
       print('Stack trace: $stackTrace');
       return {
         'success': false,
