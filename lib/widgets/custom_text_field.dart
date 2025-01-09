@@ -8,7 +8,7 @@ class CustomTextField extends StatefulWidget {
   final bool obscureText;
   final bool showTogglePasswordIcon;
   final bool isRequired;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String? errorText;
   final Function(String)? onChanged;
 
