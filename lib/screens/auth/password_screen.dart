@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
-import 'package:escoladeverao/screens/auth/code_screen.dart';
+import 'package:escoladeverao/screens/modals/new_password_modal.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -17,6 +18,104 @@ class PasswordScreen extends StatefulWidget {
 }
 
 class _PasswordScreenState extends State<PasswordScreen> {
+  final ApiService apiService = ApiService();
+
+  String? cpfError;
+  String? emailError;
+
+  // Validação para formato de e-mail
+  bool isValidEmail(String email) {
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  void _recoverPassword() async {
+    final cpf = cpfPassController.text.trim();
+    final email = emailPassController.text.trim();
+
+    // Limpar mensagens de erro antes de validar novamente
+    setState(() {
+      cpfError = null;
+      emailError = null;
+    });
+
+    bool hasError = false;
+
+    // Validações dos campos
+    if (cpf.isEmpty) {
+      setState(() {
+        cpfError = 'Por favor, insira o CPF.';
+      });
+      hasError = true;
+    }
+
+    if (email.isEmpty) {
+      setState(() {
+        emailError = 'Por favor, insira o e-mail.';
+      });
+      hasError = true;
+    } else if (!isValidEmail(email)) {
+      setState(() {
+        emailError = 'Por favor, insira um e-mail válido.';
+      });
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    try {
+      final response = await apiService.resetPasswordWithCpfEmail(cpf, email);
+
+      if (response['success']) {
+        // Sucesso: exibir modal e limpar campos
+        NewPasswordModal(context, email);
+        setState(() {
+          cpfPassController.clear();
+          emailPassController.clear();
+        });
+      } else {
+        // Erro: tratar mensagem retornada pela API
+        setState(() {
+          final serverMessage =
+              response['data']?['email']?.first ?? response['message'];
+
+          // Mapeamento de mensagens para mensagens amigáveis
+          emailError = _mapServerErrorToFriendlyMessage(serverMessage);
+        });
+      }
+    } catch (e) {
+      // Erro inesperado (problemas de conexão, etc.)
+      setState(() {
+        emailError = 'Erro ao se conectar ao servidor. Tente novamente.';
+      });
+    }
+  }
+
+  /// Mapeia mensagens de erro do servidor para mensagens amigáveis
+  String _mapServerErrorToFriendlyMessage(String? serverMessage) {
+    if (serverMessage == null) return 'Erro desconhecido. Tente novamente.';
+
+    final errorMapping = {
+      "O campo email selecionado é inválido.": "E-mail inválido.",
+      "O campo cpf selecionado é inválido.": "CPF inválido.",
+      // Adicione outros mapeamentos de mensagens conforme necessário
+    };
+
+    return errorMapping[serverMessage] ??
+        'Erro ao processar a solicitação. Tente novamente.';
+  }
+
+  @override
+  void dispose() {
+    // Limpar os campos ao sair da tela
+    cpfPassController.clear();
+    emailPassController.clear();
+    cpfPassController.dispose();
+    emailPassController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,19 +123,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
       appBar: CustomAppBar(
         onBackPressed: () {
           FocusScope.of(context).unfocus();
-          // if (widget.origin == 'settings') {
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const SettingsScreen()),
-          //   );
-          // } else if (widget.origin == 'login') {
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(builder: (context) => const LoginScreen()),
-          //   );
-          // } else {
-          //   Navigator.pop(context); // Fallback para outras telas
-          // }
         },
         backgroundColor: AppColors.background,
       ),
@@ -66,6 +152,29 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 keyboardType: TextInputType.emailAddress,
                 controller: emailPassController,
               ),
+              if (emailError != null)
+                Padding(
+                  padding: EdgeInsets.only(top: 8.h),
+                  child: Text(
+                    emailError!,
+                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                  ),
+                ),
+              SizedBox(height: 16.h),
+              CustomTextField(
+                labelText: 'CPF',
+                hintText: 'Digite seu CPF',
+                keyboardType: TextInputType.number,
+                controller: cpfPassController,
+              ),
+              if (cpfError != null)
+                Padding(
+                  padding: EdgeInsets.only(top: 8.h),
+                  child: Text(
+                    cpfError!,
+                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                  ),
+                ),
               SizedBox(height: 16.h),
               SizedBox(
                 width: double.maxFinite,
@@ -73,7 +182,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                   children: [
                     Expanded(
                       child: CustomOutlinedButton(
-                        text: 'Enviar código',
+                        text: 'Recuperar senha',
                         height: 56.h,
                         buttonFonts: const Fonts(
                             fontSize: 16,
@@ -86,15 +195,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                             side: const BorderSide(
                                 color: AppColors.orangePrimary),
                             backgroundColor: AppColors.orangePrimary),
-                        onPressed: () {
-                          //lógica de enviar código
-                          Navigator.pushReplacement(
-                            // ignore: use_build_context_synchronously
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const CodeScreen()),
-                          );
-                        },
+                        onPressed: _recoverPassword,
                       ),
                     ),
                     SizedBox(width: 16.h),

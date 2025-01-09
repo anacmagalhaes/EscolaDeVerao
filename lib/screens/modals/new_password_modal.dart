@@ -4,7 +4,7 @@ import 'package:escoladeverao/utils/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void CodeEmailModal(BuildContext context, String email) {
+void NewPasswordModal(BuildContext context, String email) {
   String maskEmail(String email) {
     // Divide o e-mail em duas partes: antes e depois do '@'
     final parts = email.split('@');
@@ -100,7 +100,7 @@ void CodeEmailModal(BuildContext context, String email) {
               Column(
                 children: [
                   Fonts(
-                    text: 'Código enviado para o e-mail cadastrado',
+                    text: 'Nova senha enviada para o e-mail cadastrado',
                     maxLines: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
