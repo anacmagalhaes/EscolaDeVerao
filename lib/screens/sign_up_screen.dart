@@ -1,5 +1,7 @@
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
 import 'package:escoladeverao/screens/auth/login_screen.dart';
+import 'package:escoladeverao/screens/modals/verification_email_modal.dart';
+import 'package:escoladeverao/screens/modals/verification_error_modal.dart';
 import 'package:escoladeverao/screens/sign_in_or_sign_up.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
@@ -114,45 +116,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final response = await apiService.register(userData);
 
       if (response['status'] == 'success') {
-        // Exibir modal de verificação do e-mail com duração de 5s na tela
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Cadastro bem-sucedido'),
-            content: Text('Você foi cadastrado com sucesso!'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        VerificationEmailModal(context, emailController.text);
       } else {
         // Exibir mensagem de erro
         _handleApiError(response['error']);
       }
     } catch (e) {
       // Erro de conexão ou outro erro
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Erro'),
-          content: Text(
-              'Ocorreu um erro ao tentar cadastrar. Tente novamente mais tarde.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      VerificationErrorModal(context);
     }
   }
 
