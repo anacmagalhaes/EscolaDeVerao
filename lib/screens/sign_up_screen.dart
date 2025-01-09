@@ -11,6 +11,7 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class SignUpScreen extends StatefulWidget {
   final String origin;
@@ -29,12 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _phoneError = '';
   String _passwordError = '';
   String _confirmPassError = '';
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final cpfController = TextEditingController();
-  final phoneController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPassController = TextEditingController();
 
   // Função para validar os campos
   bool _validateFields() {
@@ -106,8 +101,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final userData = {
       'name': nameController.text,
       'email': emailController.text,
-      'cpf': cpfController.text,
-      'phone': phoneController.text,
+      'cpf': cpfController.text.replaceAll('.', '').replaceAll('-', ''),
+      'phone': phoneController.text.replaceAll(RegExp(r'[^0-9]'), ''),
       'password': passwordController.text,
     };
 
