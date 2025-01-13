@@ -28,6 +28,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _passwordError = '';
   String _confirmPassError = '';
 
+  bool isValidEmail(String email) {
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool isValidCPF(String cpf) {
+    cpf = cpf.replaceAll(RegExp(r'\D'), '');
+    if (cpf.length != 11 || RegExp(r'^(\d)\1*$').hasMatch(cpf)) {
+      return false;
+    }
+
+    List<int> numbers = cpf.split('').map((e) => int.parse(e)).toList();
+
+    for (int j = 9; j < 11; j++) {
+      int sum = 0;
+      for (int i = 0; i < j; i++) {
+        sum += numbers[i] * ((j + 1) - i);
+      }
+      int digit = (sum * 10) % 11;
+      if (digit == 10) digit = 0;
+      if (digit != numbers[j]) return false;
+    }
+
+    return true;
+  }
+
   // Função para validar os campos
   bool _validateFields() {
     bool isValid = true;
@@ -38,7 +65,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       isValid = false;
     }
-    if (emailController.text.isEmpty || !emailController.text.contains('@')) {
+    if (emailController.text.isEmpty) {
+      setState(() {
+        _emailError = 'E-mail é obrigatório';
+      });
+      isValid = false;
+    } else if (!isValidEmail(emailController.text)) {
       setState(() {
         _emailError = 'E-mail inválido';
       });
@@ -47,6 +79,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (cpfController.text.isEmpty) {
       setState(() {
         _cpfError = 'CPF é obrigatório';
+      });
+      isValid = false;
+    } else if (!isValidCPF(cpfController.text)) {
+      setState(() {
+        _cpfError = 'CPF inválido';
       });
       isValid = false;
     }
@@ -119,10 +156,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   // Função para tratar os erros da API
+// Função para tratar os erros da API
   void _handleApiError(String error) {
     setState(() {
       if (error == 'email_already_taken') {
         _emailError = 'Este e-mail já está cadastrado';
+      } else if (error == 'email_not_found') {
+        _emailError = 'E-mail não encontrado';
       } else if (error == 'cpf_already_registered') {
         _cpfError = 'Este CPF já está cadastrado';
       } else if (error == 'weak_password') {
