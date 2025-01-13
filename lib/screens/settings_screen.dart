@@ -1,4 +1,6 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/auth/password_screen.dart';
+import 'package:escoladeverao/screens/change_password_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -205,14 +207,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  /*Navigator.pushReplacement(
+                                  Navigator.pushReplacement(
                                     // ignore: use_build_context_synchronously
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const PasswordScreen(
-                                                origin: 'settings')),
-                                  );*/
+                                            const ChangePasswordScreen()),
+                                  );
                                 },
                               ),
                               SizedBox(height: 34.84.h),

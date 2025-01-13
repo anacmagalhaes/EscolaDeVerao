@@ -1,6 +1,4 @@
-import 'package:escoladeverao/screens/auth/login_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:escoladeverao/controllers/password_controller.dart';
+import 'package:escoladeverao/controllers/change_password_controllers.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
@@ -8,17 +6,17 @@ import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PasswordScreen extends StatefulWidget {
-  final String origin;
-  const PasswordScreen({Key? key, required this.origin}) : super(key: key);
+class ChangePasswordScreen extends StatefulWidget {
+  const ChangePasswordScreen({Key? key}) : super(key: key);
 
   @override
-  _PasswordScreenState createState() => _PasswordScreenState();
+  _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
 }
 
-class _PasswordScreenState extends State<PasswordScreen> {
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final ApiService apiService = ApiService();
 
   String? cpfError;
@@ -53,8 +51,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
   }
 
   void _recoverPassword() async {
-    final cpf = cpfPassController.text.trim();
-    final email = emailPassController.text.trim();
+    final cpf = cpfChangePassController.text.trim();
+    final email = emailChangePassController.text.trim();
 
     // Limpar mensagens de erro antes de validar novamente
     setState(() {
@@ -98,8 +96,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
         // Sucesso: exibir modal e limpar campos
         NewPasswordModal(context, email);
         setState(() {
-          cpfPassController.clear();
-          emailPassController.clear();
+          cpfChangePassController.clear();
+          emailChangePassController.clear();
         });
       } else {
         // Erro: tratar mensagem retornada pela API
@@ -136,10 +134,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   void dispose() {
     // Limpar os campos ao sair da tela
-    cpfPassController.clear();
-    emailPassController.clear();
-    cpfPassController.dispose();
-    emailPassController.dispose();
+    cpfChangePassController.clear();
+    emailChangePassController.clear();
+    cpfChangePassController.dispose();
+    emailChangePassController.dispose();
     super.dispose();
   }
 
@@ -151,7 +149,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         onBackPressed: () {
           FocusScope.of(context).unfocus();
         },
-        fallbackRoute: '/login_screen',
+        fallbackRoute: '/settings_screen',
         backgroundColor: AppColors.background,
       ),
       body: SingleChildScrollView(
@@ -161,14 +159,14 @@ class _PasswordScreenState extends State<PasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Fonts(
-                  text: 'Recuperação de senha',
+                  text: 'Alteração de senha',
                   maxLines: 2,
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary),
               SizedBox(height: 8.h),
               const Fonts(
-                  text: 'Informe o e-mail cadastrado para recuperação',
+                  text: 'Informe o e-mail cadastrado para alteração',
                   maxLines: 2,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -178,7 +176,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 labelText: 'E-mail',
                 hintText: 'Digite seu e-mail',
                 keyboardType: TextInputType.emailAddress,
-                controller: emailPassController,
+                controller: emailChangePassController,
               ),
               if (emailError != null)
                 Padding(
@@ -193,7 +191,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 labelText: 'CPF',
                 hintText: 'Digite seu CPF',
                 keyboardType: TextInputType.number,
-                controller: cpfPassController,
+                controller: cpfChangePassController,
               ),
               if (cpfError != null)
                 Padding(
