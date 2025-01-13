@@ -1,3 +1,4 @@
+import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
@@ -30,6 +31,27 @@ class _PasswordScreenState extends State<PasswordScreen> {
     return emailRegex.hasMatch(email);
   }
 
+  bool isValidCPF(String cpf) {
+    cpf = cpf.replaceAll(RegExp(r'\D'), '');
+    if (cpf.length != 11 || RegExp(r'^(\d)\1*$').hasMatch(cpf)) {
+      return false;
+    }
+
+    List<int> numbers = cpf.split('').map((e) => int.parse(e)).toList();
+
+    for (int j = 9; j < 11; j++) {
+      int sum = 0;
+      for (int i = 0; i < j; i++) {
+        sum += numbers[i] * ((j + 1) - i);
+      }
+      int digit = (sum * 10) % 11;
+      if (digit == 10) digit = 0;
+      if (digit != numbers[j]) return false;
+    }
+
+    return true;
+  }
+
   void _recoverPassword() async {
     final cpf = cpfPassController.text.trim();
     final email = emailPassController.text.trim();
@@ -46,6 +68,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
     if (cpf.isEmpty) {
       setState(() {
         cpfError = 'Por favor, insira o CPF.';
+      });
+      hasError = true;
+    } else if (!isValidCPF(cpf)) {
+      setState(() {
+        cpfError = 'Por favor, insira um CPF válido.';
       });
       hasError = true;
     }
@@ -124,6 +151,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
         onBackPressed: () {
           FocusScope.of(context).unfocus();
         },
+        fallbackRoute: '/login_screen',
         backgroundColor: AppColors.background,
       ),
       body: SingleChildScrollView(
