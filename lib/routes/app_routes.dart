@@ -3,6 +3,7 @@ import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:escoladeverao/screens/auth/password_screen.dart';
 import 'package:escoladeverao/screens/change_password_screen.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
+import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/screens/sign_in_or_sign_up.dart';
 import 'package:escoladeverao/screens/sign_up_screen.dart';
@@ -20,6 +21,7 @@ class AppRoutes {
   static const String passwordScreen = '/password_screen';
   static const String changePasswordScreen = '/change_password_screen';
   static const String settingsScreen = '/settings_screen';
+  static const String userProfileScreen = '/user_profile_screen';
   static const String initialRoute = '/initialRoute';
 
   // Adicionando o método para verificar o status de login
@@ -50,6 +52,10 @@ class AppRoutes {
       settingsScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
         return SettingsScreen(user: routeUser ?? initialUser!);
+      },
+      userProfileScreen: (context) {
+        final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
+        return UserProfileScreen(user: routeUser ?? initialUser!);
       },
       initialRoute: (context) => initialUser != null
           ? HomeScreen(user: User(id: '', name: ''))
