@@ -3,8 +3,8 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
+import 'package:escoladeverao/widgets/custom_qr_code.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -242,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary),
                         SizedBox(height: 16.h),
-                        Image.asset('assets/images/qrcode.png'),
+                        CustomQrCode(user: widget.user),
                       ],
                     ),
                   ),
