@@ -27,25 +27,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     currentUser = widget.user;
-     _userFuture = _loadUserData();
-
+    _userFuture = _loadUserData();
   }
-  
-Future<User> _loadUserData() async {
-  try {
-    final userData = await apiService.fetchUserById(widget.user.id);
-    if (mounted) {
-      setState(() {
-        currentUser = userData;
-      });
+
+  Future<User> _loadUserData() async {
+    try {
+      final userData = await apiService.fetchUserById(widget.user.id);
+      if (mounted) {
+        setState(() {
+          currentUser = userData;
+        });
+      }
+      return userData;
+    } catch (e) {
+      print('Erro ao carregar dados do usuário: $e');
+      throw e;
     }
-    return userData;
-  } catch (e) {
-    print('Erro ao carregar dados do usuário: $e');
-    throw e;
   }
-}
-
 
   void _onItemTapped(int index) {
     if (index != 3) {
@@ -131,70 +129,75 @@ Future<User> _loadUserData() async {
   }
 
   Widget _buildBody() {
-    return FutureBuilder<User>(
-      future: _userFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Erro ao carregar perfil: ${snapshot.error}'),
-                ElevatedButton(
-                  onPressed: _loadUserData,
-                  child: const Text('Tentar novamente'),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          children: [
+            Container(color: AppColors.orangePrimary),
+            Container(
+              height: constraints.maxHeight,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
                 ),
-              ],
-            ),
-          );
-        }
-
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return Stack(
-              children: [
-                Container(color: AppColors.orangePrimary),
-                Container(
-                  height: constraints.maxHeight,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: AppColors.background,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.h),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 32.h),
-                          _buildActionButtons(),
-                          SizedBox(height: 45.h),
-                          const Fonts(
-                            text: 'Compartilhe seu perfil!',
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                          SizedBox(height: 16.h),
-                          CustomQrCode(user: snapshot.data ?? currentUser),
-                          SizedBox(height: 24.h),
-                        ],
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 5.h),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 32.h),
+                      _buildActionButtons(),
+                      SizedBox(height: 45.h),
+                      const Fonts(
+                        text: 'Compartilhe seu perfil!',
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
-                    ),
+                      SizedBox(height: 16.h),
+                      FutureBuilder<User>(
+                        future: _userFuture,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                      'Erro ao carregar perfil: ${snapshot.error}'),
+                                  ElevatedButton(
+                                    onPressed: _loadUserData,
+                                    child: const Text('Tentar novamente'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // QR Code Widget
+                          return CustomQrCode(
+                              user: snapshot.data ?? currentUser);
+                        },
+                      ),
+                      SizedBox(height: 24.h),
+                    ],
                   ),
                 ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         );
       },
     );
@@ -266,6 +269,4 @@ Future<User> _loadUserData() async {
       body: _buildBody(),
     );
   }
-
-
 }
