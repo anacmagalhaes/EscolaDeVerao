@@ -9,27 +9,32 @@ class CustomQrCode extends StatelessWidget {
 
   final User user;
 
-  String _generateUserData() {
-    // Criando um Map com os dados do usuário
-    final userData = {
+  String generateUserData() {
+    // Mantendo exatamente os mesmos campos e valores da API
+    final Map<String, dynamic> userData = {
       'id': user.id,
       'name': user.name,
       'sobrenome': user.sobrenome,
       'email': user.email,
-      'phone': user.phone,
+      'cpf': user.cpf,
+      'telefone': user.telefone,
       'github': user.github,
       'linkedin': user.linkedin,
       'lattes': user.lattes,
     };
 
-    // Convertendo para JSON
-    final jsonData = jsonEncode(userData);
-    return 'escoladeverao://app/user?data=$jsonData';
+    print('Dados do usuário para QR code: $userData');
+    return jsonEncode(userData);
   }
 
   @override
   Widget build(BuildContext context) {
+    final qrData = generateUserData();
+    print('QR Code data: $qrData');
     return QrImageView(
-        data: _generateUserData(), version: QrVersions.auto, size: 300.0);
+      data: qrData, // Gera o texto formatado
+      version: QrVersions.auto,
+      size: 300.0,
+    );
   }
 }

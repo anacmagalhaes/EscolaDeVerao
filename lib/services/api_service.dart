@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://57f3-177-130-172-153.ngrok-free.app';
+  final String baseUrl = 'https://81ce-177-36-211-30.ngrok-free.app';
   late final http.Client _client;
   User? currentUser; // Inicializado como null
 
@@ -18,13 +19,11 @@ class ApiService {
 
     _client = IOClient(httpClient);
   }
-
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/api/login');
     print('Tentando login na URL: $url');
 
     try {
-      // Log dos dados sendo enviados
       final Map<String, dynamic> body = {
         'email': email,
         'password': password,
@@ -48,10 +47,24 @@ class ApiService {
       if (response.statusCode == 200) {
         final decodedResponse = jsonDecode(response.body);
         print('Resposta decodificada: $decodedResponse');
-        return {
-          'success': true,
-          'data': decodedResponse,
-        };
+
+        final userData = decodedResponse['data']['user'];
+        final token = decodedResponse['data']['token'];
+
+        if (token != null && userData != null) {
+          return {
+            'success': true,
+            'data': {
+              'user': userData,
+              'token': token, // Simplificado, sem o nível adicional de "data"
+            },
+          };
+        } else {
+          return {
+            'success': false,
+            'message': 'Token ou dados do usuário não encontrados na resposta.',
+          };
+        }
       } else {
         print(
             'Erro no login. Status: ${response.statusCode}, Body: ${response.body}');
@@ -159,6 +172,46 @@ class ApiService {
         'success': false,
         'message': 'Erro ao conectar com a API: $e',
       };
+    }
+  }
+
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<User> fetchUserById(String userId) async {
+    try {
+      final token = await _getToken();
+
+      if (token == null) {
+        throw Exception('Token não encontrado');
+      }
+
+      final response = await _client.get(
+        Uri.parse('$baseUrl/api/user/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        // Verificar se os dados estão dentro de uma chave 'data' ou 'user'
+        final userData = data['data'] ?? data['user'] ?? data;
+        return User.fromJson(userData);
+      } else {
+        throw Exception('Falha ao carregar usuário: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro ao buscar usuário: $e');
+      throw Exception('Falha na conexão com o servidor: $e');
     }
   }
 

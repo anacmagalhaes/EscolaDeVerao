@@ -75,7 +75,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         color: AppColors.textPrimary),
                     SizedBox(height: 10.5.h),
                     Fonts(
-                        text: widget.user.phone,
+                        text: widget.user.telefone,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textPrimary),
