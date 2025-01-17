@@ -11,9 +11,9 @@ Widget getScreenFromIndex(int index, User user) {
     case 0:
       return HomeScreen(user: user);
     case 1:
-      return  ScheduleScreen(user: user);
+      return ScheduleScreen(user: user);
     case 2:
-      return const ScanScreen();
+      return ScanScreen(user: user);
     case 3:
       return ProfileScreen(user: user);
     case 4:
