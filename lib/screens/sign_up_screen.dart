@@ -22,6 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final ApiService apiService = ApiService(); // Instância do ApiService
 
   String _nameError = '';
+  String _sobrenomeError = '';
   String _emailError = '';
   String _cpfError = '';
   String _phoneError = '';
@@ -62,6 +63,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (nameController.text.isEmpty) {
       setState(() {
         _nameError = 'Nome é obrigatório';
+      });
+      isValid = false;
+    }
+    if (sobrenomeController.text.isEmpty) {
+      setState(() {
+        _sobrenomeError = 'Sobrenome é obrigatório';
       });
       isValid = false;
     }
@@ -120,6 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Limpar erros anteriores
     setState(() {
       _nameError = '';
+      _sobrenomeError = '';
       _emailError = '';
       _cpfError = '';
       _phoneError = '';
@@ -217,9 +225,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       // Nome
                       CustomTextField(
                         labelText: 'Nome',
-                        hintText: 'Digite seu nome completo',
+                        hintText: 'Digite seu primeiro nome',
                         keyboardType: TextInputType.name,
                         controller: nameController,
+                        isRequired: true,
+                      ),
+                      SizedBox(height: 8.h),
+                      if (_nameError.isNotEmpty)
+                        Text(
+                          _nameError,
+                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                        ),
+                      SizedBox(height: 16.h),
+                      CustomTextField(
+                        labelText: 'Sobrenome',
+                        hintText: 'Digite seu sobrenome',
+                        keyboardType: TextInputType.name,
+                        controller: sobrenomeController,
                         isRequired: true,
                       ),
                       SizedBox(height: 8.h),
