@@ -1,22 +1,21 @@
+import 'dart:convert';
+
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   Future<User?> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getString('user_id');
-    final userName = prefs.getString('user_name');
-
-    if (userId != null && userName != null) {
-      return User(id: userId, name: userName);
+    final userJson = prefs.getString('user');
+    if (userJson != null) {
+      return User.fromJson(jsonDecode(userJson));
     }
     return null;
   }
 
   Future<void> saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', user.id);
-    await prefs.setString('user_name', user.name);
+    await prefs.setString('user', jsonEncode(user.toJson()));
   }
 
   Future<void> saveCredentials(String email, String password) async {

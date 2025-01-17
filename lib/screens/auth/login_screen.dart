@@ -55,19 +55,24 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  // Verifica se o usuário já está logado
   _checkExistingUser() async {
-    User? user = await authService.loadUser();
-    if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
-      );
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null) {
+      // Token encontrado, verifica o usuário
+      User? user = await authService.loadUser();
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+        );
+      }
     }
   }
 
   @override
   void dispose() {
-    _apiService.dispose(); // Adicionado para fechar o cliente HTTP
     emailInput.dispose();
     passwordInput.dispose();
     super.dispose();
@@ -100,6 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString('user_name', user.name);
   }
 
+  // Carrega as credenciais salvas
   _loadSavedCredentials() async {
     final credentials = await authService.loadCredentials();
     final hasRemember = await authService.hasRememberLogin();
@@ -113,6 +119,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  // Função de login
+// Função de login
   Future<void> _login() async {
     setState(() {
       _emailError = '';
@@ -150,14 +158,21 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final result = await _apiService.login(email, password);
 
-      if (result != null && result['success'] == true) {
-        final userData = result['data']['data']['user'];
-        if (userData != null) {
-          final user = User(
-            id: userData['id']?.toString() ?? '',
-            name: userData['name'] ?? '',
-          );
+      if (!mounted) return;
 
+      if (result['success'] == true) {
+        final userData = result['data']['user'];
+        final token = result['data']['token'];
+
+        if (userData != null && token != null) {
+          // Criar instância do User antes de salvar
+          final user = User.fromJson(userData);
+
+          // Salvando o token
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', token);
+
+          // Salvando dados do usuário
           await authService.saveUser(user);
 
           if (!_isChecked) {
@@ -169,31 +184,35 @@ class _LoginScreenState extends State<LoginScreen> {
 
           if (!mounted) return;
 
-          // Redirecionar para a tela inicial
-          Navigator.pushAndRemoveUntil(
+          // Navegando para a tela principal
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(user: user),
             ),
-            (route) => false,
           );
         } else {
-          throw Exception('Dados do usuário não encontrados na resposta');
+          setState(() {
+            _passwordError = 'Dados de usuário inválidos';
+          });
         }
       } else {
         setState(() {
-          _passwordError = _getLoginErrorMessage(result['message'] ?? '');
+          _passwordError =
+              _getLoginErrorMessage(result['message'] ?? 'Erro ao fazer login');
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
-        _passwordError =
-            'Erro ao conectar ao servidor. Verifique sua conexão e tente novamente.';
+        _passwordError = 'Erro ao conectar ao servidor: ${e.toString()}';
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
