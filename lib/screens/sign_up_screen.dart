@@ -142,9 +142,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Criando o objeto de cadastro
     final userData = {
       'name': nameController.text,
+      'sobrenome': sobrenomeController.text,
       'email': emailController.text,
       'cpf': cpfController.text.replaceAll('.', '').replaceAll('-', ''),
       'phone': phoneController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+      'linkedin': linkedinController?.text,
+      'github': githubController?.text,
+      'lattes': lattesController?.text,
       'password': passwordController.text,
     };
 
@@ -245,9 +249,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         isRequired: true,
                       ),
                       SizedBox(height: 8.h),
-                      if (_nameError.isNotEmpty)
+                      if (_sobrenomeError.isNotEmpty)
                         Text(
-                          _nameError,
+                          _sobrenomeError,
                           style: TextStyle(color: Colors.red, fontSize: 12.sp),
                         ),
                       SizedBox(height: 16.h),
