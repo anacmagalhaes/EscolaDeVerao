@@ -22,7 +22,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final ApiService apiService = ApiService(); // Instância do ApiService
 
   String _nameError = '';
-  String _sobrenomeError = '';
+  // String _sobrenomeError = '';
   String _emailError = '';
   String _cpfError = '';
   String _phoneError = '';
@@ -66,12 +66,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       });
       isValid = false;
     }
-    if (sobrenomeController.text.isEmpty) {
-      setState(() {
-        _sobrenomeError = 'Sobrenome é obrigatório';
-      });
-      isValid = false;
-    }
+    // if (sobrenomeController.text.isEmpty) {
+    //   setState(() {
+    //     _sobrenomeError = 'Sobrenome é obrigatório';
+    //   });
+    //   isValid = false;
+    // }
     if (emailController.text.isEmpty) {
       setState(() {
         _emailError = 'E-mail é obrigatório';
@@ -127,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Limpar erros anteriores
     setState(() {
       _nameError = '';
-      _sobrenomeError = '';
+      // _sobrenomeError = '';
       _emailError = '';
       _cpfError = '';
       _phoneError = '';
@@ -142,7 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Criando o objeto de cadastro
     final userData = {
       'name': nameController.text,
-      'sobrenome': sobrenomeController.text,
+      // 'sobrenome': sobrenomeController.text,
       'email': emailController.text,
       'cpf': cpfController.text.replaceAll('.', '').replaceAll('-', ''),
       'phone': phoneController.text.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -240,20 +240,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           _nameError,
                           style: TextStyle(color: Colors.red, fontSize: 12.sp),
                         ),
-                      SizedBox(height: 16.h),
-                      CustomTextField(
-                        labelText: 'Sobrenome',
-                        hintText: 'Digite seu sobrenome',
-                        keyboardType: TextInputType.name,
-                        controller: sobrenomeController,
-                        isRequired: true,
-                      ),
-                      SizedBox(height: 8.h),
-                      if (_sobrenomeError.isNotEmpty)
-                        Text(
-                          _sobrenomeError,
-                          style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                        ),
+                      // SizedBox(height: 16.h),
+                      // CustomTextField(
+                      //   labelText: 'Sobrenome',
+                      //   hintText: 'Digite seu sobrenome',
+                      //   keyboardType: TextInputType.name,
+                      //   controller: sobrenomeController,
+                      //   isRequired: true,
+                      // ),
+                      // SizedBox(height: 8.h),
+                      // if (_sobrenomeError.isNotEmpty)
+                      //   Text(
+                      //     _sobrenomeError,
+                      //     style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                      //   ),
                       SizedBox(height: 16.h),
                       // E-mail
                       CustomTextField(
