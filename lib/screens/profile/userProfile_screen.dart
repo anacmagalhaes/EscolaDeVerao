@@ -2,12 +2,12 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
+import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key? key, required this.user}) : super(key: key);
-
   final User user;
 
   @override
@@ -18,18 +18,41 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        onBackPressed: () {
-          FocusScope.of(context).unfocus();
-        },
-        backgroundColor: AppColors.background,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(147.h),
+        child: Container(
+          width: double.infinity,
+          color: AppColors.orangePrimary,
+          child: Padding(
+            padding: EdgeInsets.only(left: 10.h, right: 10.h, top: 35.h),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {},
+                  child: SizedBox(
+                    width: 44.h,
+                    height: 44.h,
+                    child: Image.asset('assets/icons/angle-left-white.png'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
+        // controller: _scrollController,
         child: Stack(
           children: [
+            // Orange background container
             Container(
-              width: double.maxFinite,
-              margin: EdgeInsets.only(top: 65.h),
+              height: 200.h,
+              color: AppColors.orangePrimary,
+            ),
+
+            // White background container with rounded corners
+            Container(
+              margin: EdgeInsets.only(top: 120.h),
               decoration: const BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.only(
@@ -41,93 +64,244 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 24.h),
                 child: Column(
                   children: [
-                    // Space for profile image
-
-                    SizedBox(height: 80.h),
+                    SizedBox(height: 80.h), // Space for profile image
                     Fonts(
-                        text: 'Nome',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
+                      text: widget.user.name,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                    SizedBox(height: 8.h),
                     Fonts(
-                        text: widget.user.name,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
+                      text: 'ID: ',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.blueMarine,
+                      additionalSpans: [
+                        TextSpan(
+                          text: widget.user.id.padLeft(4, '0'),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.blueMarine,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 30.h),
+                    Column(
+                      children: [
+                        Fonts(
+                            text: 'Informações de contato:',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary),
+                        SizedBox(height: 16.h),
+                        Container(
+                            width: 380.h,
+                            height: 210.h,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: AppColors.quaternaryGrey, width: 1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                      top: 16.h,
+                                      left: 16.h,
+                                      right: 16.h,
+                                    ), // Adicionando padding à direita também
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Fonts(
+                                          text: 'E-mail:',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        Flexible(
+                                          child: Fonts(
+                                            text: widget.user.email,
+                                            maxLines: 2,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.quintennialGrey,
+                                            textAlign: TextAlign
+                                                .right, // Alinha o texto à direita
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 16.h,
+                                      left: 16.h,
+                                      right: 16
+                                          .h), // Adicionando padding à direita também
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Fonts(
+                                        text: 'Telefone:',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                      Flexible(
+                                        child: Fonts(
+                                          text: widget.user.telefone,
+                                          maxLines: 2,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.quintennialGrey,
+                                          textAlign: TextAlign
+                                              .right, // Alinha o texto à direita
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 16.h,
+                                        left: 16.h,
+                                        right: 16
+                                            .h), // Adicionando padding à direita também
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Fonts(
+                                          text: 'LinkedIn:',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        Flexible(
+                                          child: Fonts(
+                                            text: widget.user.linkedin,
+                                            maxLines: 2,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.quintennialGrey,
+                                            textAlign: TextAlign
+                                                .right, // Alinha o texto à direita
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 16.h,
+                                        left: 16.h,
+                                        right: 16
+                                            .h), // Adicionando padding à direita também
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Fonts(
+                                          text: 'Github:',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        Flexible(
+                                          child: Fonts(
+                                            text: widget.user.github,
+                                            maxLines: 2,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.quintennialGrey,
+                                            textAlign: TextAlign
+                                                .right, // Alinha o texto à direita
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 16.h,
+                                        left: 16.h,
+                                        right: 16
+                                            .h), // Adicionando padding à direita também
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Fonts(
+                                          text: 'Currículo Lattes:',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        Flexible(
+                                          child: Fonts(
+                                            text: widget.user.lattes,
+                                            maxLines: 2,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.quintennialGrey,
+                                            textAlign: TextAlign
+                                                .right, // Alinha o texto à direita
+                                          ),
+                                        ),
+                                      ],
+                                    )),
+                              ],
+                            ))
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    SizedBox(
+                      width: double.maxFinite,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CustomOutlinedButton(
+                              text: 'Compartilhar',
+                              height: 56.h,
+                              buttonFonts: const Fonts(
+                                  fontSize: 15.20,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.background),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              buttonStyle: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: AppColors.orangePrimary),
+                                  backgroundColor: AppColors.orangePrimary),
+                              onPressed: () {},
+                            ),
+                          ),
+                          SizedBox(width: 16.h),
+                          Expanded(
+                            child: CustomOutlinedButton(
+                              text: 'Excluir',
+                              height: 56.h,
+                              buttonFonts: const Fonts(
+                                  fontSize: 15.20,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.background),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              buttonStyle: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: AppColors.red),
+                                  backgroundColor: AppColors.red),
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 20.h), // Add some bottom padding
-                    Fonts(
-                        text: 'ID',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.id.padLeft(4, '0'),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
-                    Fonts(
-                        text: 'Telefone',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.telefone,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
-                    Fonts(
-                        text: 'Email',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.email,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
-                    Fonts(
-                        text: 'GitHub',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.github,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
-                    Fonts(
-                        text: 'LinkedIn',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.linkedin,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
-                    Fonts(
-                        text: 'Currículo Lattes',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 10.5.h),
-                    Fonts(
-                        text: widget.user.lattes,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary),
-                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
@@ -135,7 +309,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
             // Positioned profile image
             Positioned(
-              top: 60.h - 52.h,
+              top: 120.h - 52.h,
               left: MediaQuery.of(context).size.width / 2 - 52.h,
               child: SizedBox(
                 width: 104.h,
