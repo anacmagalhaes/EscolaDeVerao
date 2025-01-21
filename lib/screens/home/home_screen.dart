@@ -20,11 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
 
-  final List<String> palestrantes = [
-    'Rafael Monteiro Silva',
-    'Ana Beatriz Almeida',
-    'José Carlos Oliveira',
-  ];
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
