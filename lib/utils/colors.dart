@@ -16,4 +16,5 @@ class AppColors {
   static const Color quaternaryGrey = Color(0xFF969696);
   static const Color primaryGreen = Color(0xFFC7F9D9);
   static const Color secondaryGreen = Color(0xFFE3FCED);
+  static const Color quintennialGrey = Color(0xFF7D7D7D);
 }
