@@ -167,7 +167,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(
-                                child: CircularProgressIndicator());
+                                child: CircularProgressIndicator(
+                                    color: AppColors.orangePrimary));
                           }
 
                           if (snapshot.hasError) {

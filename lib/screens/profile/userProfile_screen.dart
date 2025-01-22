@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/scan_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -20,12 +21,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(147.h),
+        preferredSize: Size.fromHeight(35.h),
         child: Container(
           width: double.infinity,
           color: AppColors.orangePrimary,
           child: Padding(
-            padding: EdgeInsets.only(left: 10.h, right: 10.h, top: 35.h),
+            padding: EdgeInsets.only(
+                left: 16.h,
+                right: 10.h,
+                top: 35.h), // Ajuste o valor de 'left' para mover a seta
+            child: Align(
+              // Use Align para garantir o posicionamento correto
+              alignment: Alignment.centerLeft, // Posiciona à esquerda
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScanScreen(user: widget.user)),
+                  );
+                },
+                child: Image.asset('assets/icons/angle-left-white.png'),
+              ),
+            ),
           ),
         ),
       ),
