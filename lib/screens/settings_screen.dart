@@ -1,5 +1,6 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/change_password_screen.dart';
+import 'package:escoladeverao/screens/modals/verification_error_modal.dart';
 import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -243,8 +244,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                             UserProfileScreen(user: widget.user)),
+                                        builder: (context) => UserProfileScreen(
+                                            user: widget.user)),
                                   );
                                 },
                               ),
