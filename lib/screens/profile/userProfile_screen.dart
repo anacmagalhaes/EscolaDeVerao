@@ -1,12 +1,12 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/scan_screen.dart';
-import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
-import 'package:escoladeverao/widgets/custom_app_bar.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contact/contact.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -17,6 +17,14 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  Future<void> _openLink(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Não foi possível abrir o link: $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,9 +205,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               maxLines: 4,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColors.quintennialGrey,
+                                              color: AppColors.blue,
                                               textAlign: TextAlign
                                                   .right, // Alinha o texto à direita
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors.blue,
                                             ),
                                           ),
                                         ],
@@ -226,9 +237,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               maxLines: 4,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColors.quintennialGrey,
-                                              textAlign: TextAlign
-                                                  .right, // Alinha o texto à direita
+                                              color: AppColors.blue,
+                                              textAlign: TextAlign.right,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors
+                                                  .blue, // Alinha o texto à direita
                                             ),
                                           ),
                                         ],
@@ -255,9 +269,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               maxLines: 4,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColors.quintennialGrey,
-                                              textAlign: TextAlign
-                                                  .right, // Alinha o texto à direita
+                                              color: AppColors.blue,
+                                              textAlign: TextAlign.right,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors
+                                                  .blue, // Alinha o texto à direita
                                             ),
                                           ),
                                         ],
