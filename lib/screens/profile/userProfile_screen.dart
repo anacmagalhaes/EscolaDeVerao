@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
@@ -25,18 +26,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           color: AppColors.orangePrimary,
           child: Padding(
             padding: EdgeInsets.only(left: 10.h, right: 10.h, top: 35.h),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: SizedBox(
-                    width: 44.h,
-                    height: 44.h,
-                    child: Image.asset('assets/icons/angle-left-white.png'),
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -52,7 +41,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
             // White background container with rounded corners
             Container(
-              margin: EdgeInsets.only(top: 120.h),
+              margin: EdgeInsets.only(top: 55.h),
               decoration: const BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.only(
@@ -88,44 +77,75 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 15.h),
                     Column(
                       children: [
                         Fonts(
-                            text: 'Informações de contato:',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary),
+                          text: 'Informações de contato:',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
                         SizedBox(height: 16.h),
                         Container(
                             width: 380.h,
-                            height: 210.h,
+                            height: 300.h,
                             decoration: BoxDecoration(
                               border: Border.all(
                                   color: AppColors.quaternaryGrey, width: 1),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Column(
-                              children: [
-                                Padding(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 16.h,
+                                        left: 16.h,
+                                        right: 16.h,
+                                      ), // Adicionando padding à direita também
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Fonts(
+                                            text: 'E-mail:',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                          Flexible(
+                                            child: Fonts(
+                                              text: widget.user.email,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.quintennialGrey,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  Padding(
                                     padding: EdgeInsets.only(
-                                      top: 16.h,
-                                      left: 16.h,
-                                      right: 16.h,
-                                    ), // Adicionando padding à direita também
+                                        top: 16.h,
+                                        left: 16.h,
+                                        right: 16
+                                            .h), // Adicionando padding à direita também
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Fonts(
-                                          text: 'E-mail:',
+                                          text: 'Telefone:',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textPrimary,
                                         ),
                                         Flexible(
                                           child: Fonts(
-                                            text: widget.user.email,
+                                            text: widget.user.telefone,
                                             maxLines: 2,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w400,
@@ -135,129 +155,101 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                         ),
                                       ],
-                                    )),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 16.h,
-                                      left: 16.h,
-                                      right: 16
-                                          .h), // Adicionando padding à direita também
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Fonts(
-                                        text: 'Telefone:',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary,
-                                      ),
-                                      Flexible(
-                                        child: Fonts(
-                                          text: widget.user.telefone,
-                                          maxLines: 2,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.quintennialGrey,
-                                          textAlign: TextAlign
-                                              .right, // Alinha o texto à direita
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 16.h,
-                                        left: 16.h,
-                                        right: 16
-                                            .h), // Adicionando padding à direita também
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Fonts(
-                                          text: 'LinkedIn:',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.user.linkedin,
-                                            maxLines: 2,
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16.h,
+                                          left: 16.h,
+                                          right: 16
+                                              .h), // Adicionando padding à direita também
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Fonts(
+                                            text: 'LinkedIn:',
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
                                           ),
-                                        ),
-                                      ],
-                                    )),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 16.h,
-                                        left: 16.h,
-                                        right: 16
-                                            .h), // Adicionando padding à direita também
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Fonts(
-                                          text: 'Github:',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.user.github,
-                                            maxLines: 2,
+                                          Flexible(
+                                            child: Fonts(
+                                              text: widget.user.linkedin,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.quintennialGrey,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16.h,
+                                          left: 16.h,
+                                          right: 16
+                                              .h), // Adicionando padding à direita também
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Fonts(
+                                            text: 'Github:',
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
                                           ),
-                                        ),
-                                      ],
-                                    )),
-                                Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 16.h,
-                                        left: 16.h,
-                                        right: 16
-                                            .h), // Adicionando padding à direita também
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Fonts(
-                                          text: 'Currículo Lattes:',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.user.lattes,
-                                            maxLines: 2,
+                                          Flexible(
+                                            child: Fonts(
+                                              text: widget.user.github,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.quintennialGrey,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16.h,
+                                          left: 16.h,
+                                          right: 16
+                                              .h), // Adicionando padding à direita também
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Fonts(
+                                            text: 'Currículo Lattes:',
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
                                           ),
-                                        ),
-                                      ],
-                                    )),
-                              ],
+                                          Flexible(
+                                            child: Fonts(
+                                              text: widget.user.lattes,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.quintennialGrey,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ],
+                              ),
                             ))
                       ],
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: 30.h),
                     SizedBox(
                       width: double.maxFinite,
                       child: Row(
@@ -309,7 +301,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
             // Positioned profile image
             Positioned(
-              top: 120.h - 52.h,
+              top: 65.h - 52.h,
               left: MediaQuery.of(context).size.width / 2 - 52.h,
               child: SizedBox(
                 width: 104.h,
