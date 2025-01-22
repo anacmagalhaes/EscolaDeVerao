@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -18,6 +21,7 @@ class ScanScreen extends StatefulWidget {
 
 class _ScanScreenState extends State<ScanScreen> {
   int _currentIndex = 2;
+  bool _isProcessing = false;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -100,9 +104,60 @@ class _ScanScreenState extends State<ScanScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       color: Colors.black,
                     ),
-                    child: MobileScanner(
-                      onDetect: (capture) {},
-                    ),
+                    child: MobileScanner(onDetect: (capture) async {
+                      if (_isProcessing) return; // Evita múltiplas navegações
+
+                      setState(() {
+                        _isProcessing = true;
+                      });
+
+                      try {
+                        final List<Barcode> barcodes = capture.barcodes;
+
+                        if (barcodes.isNotEmpty) {
+                          final barcode = barcodes.first;
+                          final String? rawValue = barcode.rawValue;
+
+                          if (rawValue != null) {
+                            // Decodifica os dados do QR Code
+                            final Map<String, dynamic> userData =
+                                jsonDecode(rawValue);
+
+                            // Cria o objeto User
+                            final user = User(
+                              id: userData['id'],
+                              name: userData['name'],
+                              sobrenome: userData['sobrenome'],
+                              email: userData['email'],
+                              cpf: userData['cpf'],
+                              telefone: userData['telefone'],
+                              github: userData['github'],
+                              linkedin: userData['linkedin'],
+                              lattes: userData['lattes'],
+                            );
+
+                            // Navega para a tela de detalhes
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    UserProfileScreen(user: user),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        // Exibe erro caso algo dê errado
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('Erro ao processar QR Code: $e')),
+                        );
+                      } finally {
+                        setState(() {
+                          _isProcessing = false; // Libera para nova leitura
+                        });
+                      }
+                    }),
                   ),
                   SizedBox(height: 10.h),
                   // Remove o Expanded aqui e coloca o Container diretamente dentro da Column
