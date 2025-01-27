@@ -5,6 +5,7 @@ import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -15,6 +16,18 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  Future<void> _saveContact(String phone) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível abrir os contatos.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,34 +156,38 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                         ],
                                       )),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 16.h,
-                                        left: 16.h,
-                                        right: 16
-                                            .h), // Adicionando padding à direita também
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Fonts(
-                                          text: 'Telefone:',
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.user.telefone,
-                                            maxLines: 2,
+                                  GestureDetector(
+                                    onTap: () =>
+                                        _saveContact(widget.user.telefone!),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 16.h,
+                                          left: 16.h,
+                                          right: 16
+                                              .h), // Adicionando padding à direita também
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Fonts(
+                                            text: 'Telefone:',
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textPrimary,
                                           ),
-                                        ),
-                                      ],
+                                          Flexible(
+                                            child: Fonts(
+                                              text: widget.user.telefone,
+                                              maxLines: 2,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.quintennialGrey,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Padding(
