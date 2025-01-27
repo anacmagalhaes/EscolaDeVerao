@@ -1,4 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<queries>
+    <!-- Necessário para abrir números de telefone -->
+    <intent>
+        <action android:name="android.intent.action.VIEW" />
+        <data android:scheme="tel" />
+    </intent>
+</queries>
+
     <application
         android:label="escoladeverao"
         android:name="${applicationName}"
