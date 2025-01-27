@@ -119,7 +119,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         SizedBox(height: 16.h),
                         Container(
                             width: 380.h,
-                            height: 300.h,
+                            height: 350.h,
                             decoration: BoxDecoration(
                               border: Border.all(
                                   color: AppColors.quaternaryGrey, width: 1),
@@ -129,34 +129,36 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               child: Column(
                                 children: [
                                   Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 16.h,
-                                        left: 16.h,
-                                        right: 16.h,
-                                      ), // Adicionando padding à direita também
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Fonts(
-                                            text: 'E-mail:',
+                                    padding: EdgeInsets.only(
+                                      top: 16.h,
+                                      left: 16.h,
+                                      right: 16.h,
+                                    ), // Adicionando padding à direita também
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Fonts(
+                                          text: 'E-mail:',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                        Flexible(
+                                          child: Fonts(
+                                            text: widget.user.email,
+                                            maxLines: 4,
                                             fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textPrimary,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.quintennialGrey,
+                                            textAlign: TextAlign
+                                                .right, // Alinha o texto à direita
                                           ),
-                                          Flexible(
-                                            child: Fonts(
-                                              text: widget.user.email,
-                                              maxLines: 4,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.quintennialGrey,
-                                              textAlign: TextAlign
-                                                  .right, // Alinha o texto à direita
-                                            ),
-                                          ),
-                                        ],
-                                      )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 20.h),
                                   GestureDetector(
                                     child: Padding(
                                       padding: EdgeInsets.only(
@@ -211,6 +213,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       }
                                     },
                                   ),
+                                  SizedBox(height: 20.h),
                                   Padding(
                                       padding: EdgeInsets.only(
                                           top: 16.h,
@@ -243,6 +246,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                         ],
                                       )),
+                                  SizedBox(height: 20.h),
                                   Padding(
                                       padding: EdgeInsets.only(
                                           top: 16.h,
@@ -275,6 +279,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           ),
                                         ],
                                       )),
+                                  SizedBox(height: 20.h),
                                   Padding(
                                       padding: EdgeInsets.only(
                                           top: 16.h,
@@ -312,50 +317,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ))
                       ],
                     ),
-                    SizedBox(height: 30.h),
-                    SizedBox(
-                      width: double.maxFinite,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: CustomOutlinedButton(
-                              text: 'Compartilhar',
-                              height: 56.h,
-                              buttonFonts: const Fonts(
-                                  fontSize: 15.20,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.background),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              buttonStyle: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: AppColors.orangePrimary),
-                                  backgroundColor: AppColors.orangePrimary),
-                              onPressed: () {},
-                            ),
-                          ),
-                          SizedBox(width: 16.h),
-                          Expanded(
-                            child: CustomOutlinedButton(
-                              text: 'Excluir',
-                              height: 56.h,
-                              buttonFonts: const Fonts(
-                                  fontSize: 15.20,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.background),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              buttonStyle: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: AppColors.red),
-                                  backgroundColor: AppColors.red),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+
                     SizedBox(height: 20.h), // Add some bottom padding
                   ],
                 ),
