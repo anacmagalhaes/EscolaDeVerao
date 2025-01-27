@@ -4,9 +4,7 @@ import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contact/contact.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -17,14 +15,6 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  Future<void> _openLink(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Não foi possível abrir o link: $url';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

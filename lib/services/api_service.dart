@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://21a8-177-130-172-153.ngrok-free.app';
+  final String baseUrl = 'https://0c9b-187-44-55-253.ngrok-free.app';
   late final http.Client _client;
   User? currentUser; // Inicializado como null
 
@@ -212,6 +212,66 @@ class ApiService {
     } catch (e) {
       print('Erro ao buscar usuário: $e');
       throw Exception('Falha na conexão com o servidor: $e');
+    }
+  }
+
+  // Add this method to your ApiService class
+// Update this method in your ApiService class
+  Future<Map<String, dynamic>> updateProfile(
+      String userId, Map<String, dynamic> updateData) async {
+    try {
+      final token = await _getToken();
+
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Sessão expirada. Por favor, faça login novamente.',
+        };
+      }
+
+      final url = Uri.parse('$baseUrl/api/user/$userId');
+      print('Tentando atualizar perfil na URL: $url');
+      print('Dados enviados: $updateData');
+
+      // Changed from put to post
+      final response = await _client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(updateData),
+      );
+
+      print('Status code: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final decodedResponse = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': decodedResponse['data'] ?? decodedResponse,
+          'message': 'Perfil atualizado com sucesso',
+        };
+      } else {
+        // Simplified error message
+        String errorMessage = 'Erro ao atualizar perfil';
+        try {
+          final errorResponse = jsonDecode(response.body);
+          errorMessage = errorResponse['message'] ?? errorMessage;
+        } catch (_) {}
+
+        return {
+          'success': false,
+          'message': errorMessage,
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
+      };
     }
   }
 

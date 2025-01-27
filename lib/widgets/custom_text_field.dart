@@ -11,19 +11,20 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final String? errorText;
   final Function(String)? onChanged;
+  final Widget? leadingIcon;
 
-  const CustomTextField({
-    super.key,
-    required this.hintText,
-    this.obscureText = false,
-    this.showTogglePasswordIcon = false,
-    this.keyboardType = TextInputType.text,
-    required this.labelText,
-    required this.controller,
-    this.isRequired = false,
-    this.errorText,
-    this.onChanged,
-  });
+  const CustomTextField(
+      {super.key,
+      required this.hintText,
+      this.obscureText = false,
+      this.showTogglePasswordIcon = false,
+      this.keyboardType = TextInputType.text,
+      required this.labelText,
+      required this.controller,
+      this.isRequired = false,
+      this.errorText,
+      this.onChanged,
+      this.leadingIcon});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -114,7 +115,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         });
                       },
                     )
-                  : null,
+                  : (widget.leadingIcon != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: widget.leadingIcon,
+                        )
+                      : null),
             ),
           ),
         ),
