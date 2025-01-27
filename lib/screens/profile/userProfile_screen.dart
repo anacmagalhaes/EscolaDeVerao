@@ -1,3 +1,4 @@
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/scan_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
@@ -157,8 +158,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         ],
                                       )),
                                   GestureDetector(
-                                    onTap: () =>
-                                        _saveContact(widget.user.telefone!),
                                     child: Padding(
                                       padding: EdgeInsets.only(
                                           top: 16.h,
@@ -189,6 +188,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                         ],
                                       ),
                                     ),
+                                    onTap: () async {
+                                      final AndroidIntent intent =
+                                          AndroidIntent(
+                                        action: 'android.intent.action.INSERT',
+                                        type: 'vnd.android.cursor.dir/contact',
+                                        arguments: <String, dynamic>{
+                                          // Use `arguments` ao invés de `extras`
+                                          'name': widget.user.name,
+                                          'phone': widget.user.telefone,
+                                        },
+                                      );
+                                      try {
+                                        await intent.launch();
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Não foi possível adicionar o contato.')),
+                                        );
+                                      }
+                                    },
                                   ),
                                   Padding(
                                       padding: EdgeInsets.only(
