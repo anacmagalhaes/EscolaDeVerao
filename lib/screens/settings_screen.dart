@@ -244,14 +244,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserProfileScreen(
-                                              user: widget.user,
-                                              scannedUser: widget.scannedUser,
-                                            )),
-                                  );
+                                  // Navigator.pushReplacement(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //       builder: (context) => UserProfileScreen(
+                                  //             user: widget.user,
+                                  //             scannedUser: widget.scannedUser,
+                                  //           )),
+                                  // );
                                 },
                               ),
                               Padding(
@@ -281,13 +281,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textPrimary,
                                       ),
-                                      const Spacer(), // Usando Spacer para empurrar a seta para a direita
+                                      const Spacer(),
                                       Image.asset(
                                         'assets/icons/angle-rigth.png',
-                                        width: 24
-                                            .h, // Define o tamanho fixo da seta
-                                        height: 24
-                                            .h, // Define o tamanho fixo da seta
+                                        width: 24.h,
+                                        height: 24.h,
                                       ),
                                     ],
                                   ),
