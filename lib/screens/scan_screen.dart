@@ -119,12 +119,10 @@ class _ScanScreenState extends State<ScanScreen> {
                           final String? rawValue = barcode.rawValue;
 
                           if (rawValue != null) {
-                            // Decodifica os dados do QR Code
                             final Map<String, dynamic> userData =
                                 jsonDecode(rawValue);
 
-                            // Cria o objeto User
-                            final user = User(
+                            final scannedUser = User(
                               id: userData['id'],
                               name: userData['name'],
                               sobrenome: userData['sobrenome'],
@@ -141,7 +139,7 @@ class _ScanScreenState extends State<ScanScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    UserProfileScreen(user: user),
+                                    UserProfileScreen(user: widget.user, scannedUser: scannedUser),
                               ),
                             );
                           }

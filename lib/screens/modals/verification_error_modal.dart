@@ -4,7 +4,9 @@ import 'package:escoladeverao/utils/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void VerificationErrorModal(BuildContext context) {
+void VerificationErrorModal(
+  BuildContext context,
+) {
   showDialog(
     context: context,
     barrierColor:
@@ -86,7 +88,7 @@ void VerificationErrorModal(BuildContext context) {
                   ),
                   SizedBox(height: 4.h),
                   Fonts(
-                    text: 'VerTente novamente',
+                    text: 'Tente novamente!',
                     maxLines: 4,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,

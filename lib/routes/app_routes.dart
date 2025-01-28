@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppRoutes {
+  late final User scannedUser;
+
   static const String splashScreen = '/splash_screen';
   static const String signInOrSignUpScreen = '/sign_in_or_sign_up_screen';
   static const String loginScreen = '/login_screen';
@@ -51,11 +53,14 @@ class AppRoutes {
       changePasswordScreen: (__) => const ChangePasswordScreen(),
       settingsScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
-        return SettingsScreen(user: routeUser ?? initialUser!);
+        return SettingsScreen(
+            user: initialUser!, scannedUser: routeUser ?? initialUser);
       },
       userProfileScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
-        return UserProfileScreen(user: routeUser ?? initialUser!);
+        return UserProfileScreen(
+            user: routeUser ?? initialUser!,
+            scannedUser: routeUser ?? initialUser!);
       },
       initialRoute: (context) => initialUser != null
           ? HomeScreen(user: User(id: '', name: ''))

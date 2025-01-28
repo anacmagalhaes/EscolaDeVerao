@@ -17,7 +17,7 @@ Widget getScreenFromIndex(int index, User user) {
     case 3:
       return ProfileScreen(user: user);
     case 4:
-      return SettingsScreen(user: user);
+      return SettingsScreen(user: user, scannedUser: user);
     default:
       return HomeScreen(user: user);
   }

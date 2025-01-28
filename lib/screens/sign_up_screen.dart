@@ -21,6 +21,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final ApiService apiService = ApiService(); // Instância do ApiService
 
+
   String _nameError = '';
   // String _sobrenomeError = '';
   String _emailError = '';

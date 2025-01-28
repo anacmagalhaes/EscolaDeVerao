@@ -1,6 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/change_password_screen.dart';
-import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
 import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -10,9 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key, required this.user}) : super(key: key);
+  const SettingsScreen(
+      {Key? key, required this.user, required this.scannedUser})
+      : super(key: key);
 
   final User user;
+  final User scannedUser;
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
@@ -174,15 +176,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProfileEditScreen(
-                                        origin: 'settings',
-                                        user: widget.user,
-                                      ),
-                                    ),
-                                  );
+                                  // Navigator.pushReplacement(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => ProfileEditScreen(
+                                  //       origin: 'settings',
+                                  //       user: widget.user,
+                                  //     ),
+                                  //   ),
+                                  // );
                                 },
                               ),
                               SizedBox(height: 34.84.h),
@@ -246,7 +248,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => UserProfileScreen(
-                                            user: widget.user)),
+                                              user: widget.user,
+                                              scannedUser: widget.scannedUser,
+                                            )),
                                   );
                                 },
                               ),

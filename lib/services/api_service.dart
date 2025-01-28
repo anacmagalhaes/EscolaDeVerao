@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://0c9b-187-44-55-253.ngrok-free.app';
+  final String baseUrl = 'https://69a0-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
   User? currentUser; // Inicializado como null
 
