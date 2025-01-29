@@ -1,4 +1,3 @@
-import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
