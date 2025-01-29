@@ -181,6 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   //     builder: (context) => ProfileEditScreen(
                                   //       origin: 'settings',
                                   //       user: widget.user,
+                                  //       scannedUser: widget.scannedUser,
                                   //     ),
                                   //   ),
                                   // );
