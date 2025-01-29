@@ -7,12 +7,10 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://69a0-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://e23d-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
-  User? currentUser; // Inicializado como null
 
   ApiService() {
-    // Configurar um cliente HTTP personalizado que aceita certificados inválidos
     final httpClient = HttpClient()
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
@@ -50,6 +48,7 @@ class ApiService {
 
         final userData = decodedResponse['data']['user'];
         final token = decodedResponse['data']['token'];
+        print('Token recebido no login: $token');
 
         if (token != null && userData != null) {
           return {
@@ -215,8 +214,7 @@ class ApiService {
     }
   }
 
-  // Add this method to your ApiService class
-// Update this method in your ApiService class
+  // Atalizar perfil
   Future<Map<String, dynamic>> updateProfile(
       String userId, Map<String, dynamic> updateData) async {
     try {
@@ -272,6 +270,130 @@ class ApiService {
         'success': false,
         'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
       };
+    }
+  }
+
+  // Método para salvar conexão com autenticação JWT
+  Future<Map<String, dynamic>> saveConnection(
+      String userId, String scannedUserId) async {
+    try {
+      final token = await _getToken();
+      print('Token atual: $token');
+
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Sessão expirada. Por favor, faça login novamente.',
+        };
+      }
+
+      final url = Uri.parse('$baseUrl/api/conexao');
+      print('Salvando conexão na URL: $url');
+      print('Token: $token'); // Para debug - remover em produção
+
+      final Map<String, dynamic> connectionData = {
+        'user_id': userId,
+        'connected_user_id': scannedUserId,
+      };
+
+      print('Dados enviados: $connectionData');
+
+      final response = await _client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $token', // Garantindo que o token está no formato correto
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+          'X-Requested-With':
+              'XMLHttpRequest', // Adiciona header para APIs Laravel
+        },
+        body: jsonEncode(connectionData),
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Resposta do servidor: ${response.body}');
+      print(
+          'Headers enviados: ${response.request?.headers}'); // Para debug - remover em produção
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final decodedResponse = jsonDecode(response.body);
+        return {
+          'success': true,
+          'data': decodedResponse['data'] ?? decodedResponse,
+          'message': 'Conexão salva com sucesso',
+        };
+      } else if (response.statusCode == 401) {
+        return {
+          'success': false,
+          'message': 'Sessão expirada. Por favor, faça login novamente.',
+          'needsReauth': true
+        };
+      } else if (response.statusCode == 403) {
+        return {
+          'success': false,
+          'message':
+              'Você não tem permissão para realizar esta ação. Verifique se você está logado corretamente.',
+        };
+      } else {
+        String errorMessage = 'Erro ao salvar conexão';
+        try {
+          final errorResponse = jsonDecode(response.body);
+          errorMessage = errorResponse['message'] ?? errorMessage;
+        } catch (_) {}
+
+        return {
+          'success': false,
+          'message': errorMessage,
+        };
+      }
+    } catch (e) {
+      print('Erro ao salvar conexão: $e');
+      return {
+        'success': false,
+        'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
+      };
+    }
+  }
+
+// Método para buscar conexões com autenticação JWT
+  Future<List<User>> fetchUserConnections(String userId) async {
+    try {
+      final token = await _getToken();
+
+      if (token == null) {
+        throw Exception(
+            'Token não encontrado. Por favor, faça login novamente.');
+      }
+
+      final response = await _client.get(
+        Uri.parse('$baseUrl/api/conexao/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Token JWT no header
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Resposta do servidor: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> connectionsData = data['data'] ?? [];
+        return connectionsData
+            .map((userData) => User.fromJson(userData))
+            .toList();
+      } else if (response.statusCode == 401) {
+        throw Exception('Sessão expirada. Por favor, faça login novamente.');
+      } else {
+        throw Exception('Falha ao carregar conexões: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro ao buscar conexões: $e');
+      throw Exception('Falha na conexão com o servidor: $e');
     }
   }
 

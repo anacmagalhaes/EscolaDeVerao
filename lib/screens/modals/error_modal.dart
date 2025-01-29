@@ -4,7 +4,7 @@ import 'package:escoladeverao/utils/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void ErrorProfileModal(BuildContext context, {required String errorMessage}) {
+void ErrorModal(BuildContext context, {required String errorMessage}) {
   showDialog(
     context: context,
     barrierColor:
