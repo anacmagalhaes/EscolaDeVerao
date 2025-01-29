@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -210,7 +211,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'icon': 'assets/icons/person_icon.png',
         'text': 'Minhas \nconexões',
         'onTap': () {
-          // Navigator.pushReplacement(...);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyConnectionsScreen(
+                user: widget.user,
+                scannedUser: widget.user,
+                origin: 'profile', 
+              ),
+            ),
+          );
         },
       },
       {
