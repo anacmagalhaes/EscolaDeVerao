@@ -218,7 +218,18 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                           return GestureDetector(
                             child:
                                 CustomCardConnections(connection: connection),
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserProfileScreen(
+                                    user: widget.user,
+                                    scannedUser:
+                                        user, // Este é o usuário do card que foi clicado
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
