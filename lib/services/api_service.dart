@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://e23d-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://de88-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -287,7 +287,7 @@ class ApiService {
         };
       }
 
-      final url = Uri.parse('$baseUrl/api/conexao');
+      final url = Uri.parse('$baseUrl/api/user/$scannedUserId');
       print('Salvando conexão na URL: $url');
       print('Token: $token'); // Para debug - remover em produção
 
@@ -298,7 +298,7 @@ class ApiService {
 
       print('Dados enviados: $connectionData');
 
-      final response = await _client.post(
+      final response = await _client.get(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ class ApiService {
           'X-Requested-With':
               'XMLHttpRequest', // Adiciona header para APIs Laravel
         },
-        body: jsonEncode(connectionData),
+        // body: jsonEncode(connectionData),
       );
 
       print('Status code: ${response.statusCode}');
