@@ -1,5 +1,6 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/change_password_screen.dart';
+import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -244,14 +245,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //       builder: (context) => UserProfileScreen(
-                                  //             user: widget.user,
-                                  //             scannedUser: widget.scannedUser,
-                                  //           )),
-                                  // );
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MyConnectionsScreen(
+                                        origin: 'settings',
+                                        scannedUser: widget.scannedUser,
+                                        user: widget.user,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                               Padding(
