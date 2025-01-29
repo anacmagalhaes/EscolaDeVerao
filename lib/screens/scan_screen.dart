@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/modals/error_modal.dart';
-import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
+import 'package:escoladeverao/screens/profile/user_profile_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
