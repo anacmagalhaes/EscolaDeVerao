@@ -368,7 +368,7 @@ class ApiService {
       }
 
       final response = await _client.get(
-        Uri.parse('$baseUrl/api/conexao/$userId'),
+        Uri.parse('$baseUrl/api/conexao'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Token JWT no header
