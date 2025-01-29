@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/userProfile_screen.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -119,37 +121,59 @@ class _ScanScreenState extends State<ScanScreen> {
                           final String? rawValue = barcode.rawValue;
 
                           if (rawValue != null) {
-                            final Map<String, dynamic> userData =
-                                jsonDecode(rawValue);
+                            try {
+                              final apiService = ApiService();
 
-                            final scannedUser = User(
-                              id: userData['id'],
-                              name: userData['name'],
-                              sobrenome: userData['sobrenome'],
-                              email: userData['email'],
-                              cpf: userData['cpf'],
-                              telefone: userData['telefone'],
-                              github: userData['github'],
-                              linkedin: userData['linkedin'],
-                              lattes: userData['lattes'],
-                            );
+                              final Map<String, dynamic> userData =
+                                  jsonDecode(rawValue);
 
-                            // Navega para a tela de detalhes
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    UserProfileScreen(user: widget.user, scannedUser: scannedUser),
-                              ),
-                            );
+                              final scannedUser = User(
+                                id: userData['id'],
+                                name: userData['name'],
+                                sobrenome: userData['sobrenome'],
+                                email: userData['email'],
+                                cpf: userData['cpf'],
+                                telefone: userData['telefone'],
+                                github: userData['github'],
+                                linkedin: userData['linkedin'],
+                                lattes: userData['lattes'],
+                              );
+
+                              // Tenta salvar a conexão
+                              final result = await apiService.saveConnection(
+                                  widget.user.id, scannedUser.id);
+
+                              if (result['success']) {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfileScreen(
+                                        user: widget.user,
+                                        scannedUser: scannedUser),
+                                  ),
+                                );
+                              } else {
+                                if (mounted) {
+                                  if (result['needsReauth'] == true) {
+                                    Navigator.of(context)
+                                        .pushReplacementNamed('/login');
+                                  }
+                                  ErrorModal(context,
+                                      errorMessage: (result['message']));
+                                }
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ErrorModal(context,
+                                    errorMessage:
+                                        'Erro ao processar QR Code: $e');
+                              }
+                            }
                           }
                         }
                       } catch (e) {
-                        // Exibe erro caso algo dê errado
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('Erro ao processar QR Code: $e')),
-                        );
+                        ErrorModal(context,
+                            errorMessage: 'Erro ao processar QR Code: $e');
                       } finally {
                         setState(() {
                           _isProcessing = false; // Libera para nova leitura
