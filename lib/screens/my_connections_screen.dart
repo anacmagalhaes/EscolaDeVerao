@@ -45,17 +45,15 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
         error = null;
       });
 
-      print(
-          'Iniciando carregamento de conexões para usuário: ${widget.user.id}');
       final connections =
           await _apiService.fetchUserConnections(widget.user.id);
-      print('Conexões carregadas: ${connections.length}');
 
       if (connections.isEmpty) {
         setState(() {
           isLoading = false;
-          error = 'Nenhuma conexão encontrada';
+          groupedConnections = {}; // Lista vazia, sem erro
         });
+        print('Nenhuma conexão encontrada.');
         return;
       }
 
@@ -78,37 +76,101 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
     } catch (e) {
       print('Erro ao carregar conexões: $e');
       setState(() {
-        error = 'Erro ao carregar conexões. Tente novamente.';
+        error = '$e';
         isLoading = false;
       });
     }
   }
 
   Widget _buildErrorWidget() {
+    // Verifique se a variável `error` contém uma mensagem específica
+    String errorMessage = error ?? 'Erro desconhecido';
+
+    // Define a cor e o texto baseados no tipo de erro
+    Color errorColor;
+    String errorTitle;
+    String errorSubtitle;
+    String imagePath = 'assets/images/error_505.png';
+
+    // Exemplos de diferentes tipos de erro
+    if (errorMessage.contains('SocketException') ||
+        errorMessage.contains('No Internet')) {
+      errorColor = AppColors.orangePrimary;
+      errorTitle = 'Sem Conexão';
+      errorSubtitle = 'Nenhuma conexão com a internet foi encontrada.';
+      imagePath = 'assets/images/error_conection.png';
+    }
+    // Verifica outros tipos de erro, como timeout ou 404
+    else if (errorMessage.contains('Timeout')) {
+      errorColor = Colors.red;
+      errorTitle = 'Tempo de espera excedido';
+      errorSubtitle = 'Por favor, tente novamente mais tarde.';
+    } else if (errorMessage.contains('404')) {
+      errorColor = Colors.blue;
+      errorTitle = 'Página não encontrada';
+      errorSubtitle = 'O recurso solicitado não está disponível.';
+    } else {
+      errorColor = Colors.grey;
+      errorTitle = 'Erro desconhecido';
+      errorSubtitle = 'Algo deu errado, por favor, tente novamente.';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            error ?? 'Erro desconhecido',
-            style: TextStyle(color: Colors.red),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
-          CustomOutlinedButton(
-            text: 'Acessar',
-            height: 56.h,
-            buttonFonts: const Fonts(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.background),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
+          Padding(
+            padding: EdgeInsets.only(left: 23.h, right: 25.h),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 380.h,
+                  height: 271.03.h,
+                  child: Image.asset(imagePath),
+                ),
+                SizedBox(height: 20.h),
+                Fonts(
+                  text: errorTitle,
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  fontSize: 40,
+                  fontWeight: FontWeight.w700,
+                  color: errorColor,
+                ),
+                SizedBox(height: 23.h),
+                Fonts(
+                  text: errorSubtitle,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+                SizedBox(height: 8.h),
+                SizedBox(height: 35.h),
+                CustomOutlinedButton(
+                  text: 'Recarregar',
+                  height: 56.h,
+                  width: double.maxFinite,
+                  buttonFonts: const Fonts(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  buttonStyle: OutlinedButton.styleFrom(
+                    side: BorderSide(color: errorColor),
+                    backgroundColor: errorColor,
+                  ),
+                  onPressed: () {
+                    _loadConnections();
+                  },
+                ),
+              ],
             ),
-            buttonStyle: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.orangePrimary),
-                backgroundColor: AppColors.orangePrimary),
-            onPressed: _loadConnections,
           ),
         ],
       ),
@@ -122,25 +184,26 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
         slivers: [
           CustomAppBarError(
             onBackPressed: () {
-              if (widget.origin == 'settings') {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(
-                      user: widget.user,
-                      scannedUser: widget.scannedUser,
-                    ),
-                  ),
-                );
-              } else if (widget.origin == 'profile') {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfileScreen(user: widget.user),
-                  ),
-                );
-              } else {
-                Navigator.pop(context);
+              switch (widget.origin) {
+                case 'settings':
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingsScreen(
+                              user: widget.user,
+                              scannedUser: widget.scannedUser,
+                            )),
+                  );
+                  break;
+                case 'profile':
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfileScreen(user: widget.user)),
+                  );
+                  break;
+                default:
+                  Navigator.pop(context);
               }
             },
             leadingIcon: Image.asset('assets/icons/angle-left-orange.png'),
@@ -167,8 +230,29 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                           ),
                         ),
                       ),
+                    )
+                  else if (error != null)
+                    _buildErrorWidget()
+                  else if (groupedConnections.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.person_off,
+                                size: 80, color: Colors.grey),
+                            SizedBox(height: 16),
+                            Text(
+                              'Nenhuma conexão encontrada.',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  if (!isLoading && error != null) _buildErrorWidget(),
                 ],
               ),
             ),
@@ -224,8 +308,9 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                                 MaterialPageRoute(
                                   builder: (context) => UserProfileScreen(
                                     user: widget.user,
-                                    scannedUser:
-                                        user, // Este é o usuário do card que foi clicado
+                                    scannedUser: user,
+                                    origin:
+                                        'user_profile', // Este é o usuário do card que foi clicado
                                   ),
                                 ),
                               );
