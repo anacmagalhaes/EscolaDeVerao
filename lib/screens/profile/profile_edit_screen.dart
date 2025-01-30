@@ -2,12 +2,15 @@ import 'package:escoladeverao/controllers/profile_edit_controller.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+//verificar por quê não está enviando o telefone
 
 class ProfileEditScreen extends StatefulWidget {
   final String origin;
@@ -25,14 +28,27 @@ class ProfileEditScreen extends StatefulWidget {
 }
 
 class _ProfileEditScreenState extends State<ProfileEditScreen> {
+  final apiService = ApiService();
   late ScrollController _scrollController;
   bool _showAppBar = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
+    initializeControllers();
+  }
+
+  void initializeControllers() {
+    // Initialize with user data
+    nameEditController.text = widget.user.name ?? '';
+    emailEditController.text = widget.user.email ?? '';
+    phoneEditController.text = widget.user.telefone ?? '';
+    linkedinEditController.text = widget.user.linkedin ?? '';
+    githubEditController.text = widget.user.github ?? '';
+    latesEditController.text = widget.user.lattes ?? '';
   }
 
   void _scrollListener() {
@@ -44,6 +60,86 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       setState(() {
         _showAppBar = true;
       });
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final updateData = {
+        'name': nameEditController.text,
+        'email': emailEditController.text,
+        'phone': phoneEditController.text,
+        'linkedin': linkedinEditController.text,
+        'github': githubEditController.text,
+        'lattes': latesEditController.text,
+      };
+
+      final result = await apiService.updateProfile(
+        widget.user.id ?? '',
+        updateData,
+      );
+
+      if (result['success']) {
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Perfil atualizado com sucesso'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate back based on origin
+          if (widget.origin == 'settings') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SettingsScreen(
+                  user: widget.user,
+                  scannedUser: widget.scannedUser,
+                ),
+              ),
+            );
+          } else if (widget.origin == 'profile') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(
+                  user: widget.user,
+                ),
+              ),
+            );
+          } else {
+            Navigator.pop(context);
+          }
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message'] ?? 'Erro ao atualizar perfil'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao atualizar perfil. Tente novamente.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -124,21 +220,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 child: Column(
                   children: [
                     SizedBox(height: 80.h), // Space for profile image
-                    const Fonts(
-                      text: 'Allyson Steve Mota Lacerda',
+                    Fonts(
+                      text: widget.user.name,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                     SizedBox(height: 8.h),
-                    const Fonts(
+                    Fonts(
                       text: 'ID: ',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.blueMarine,
                       additionalSpans: [
                         TextSpan(
-                          text: '0000',
+                          text: widget.user.id.padLeft(4, '0'),
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
@@ -191,7 +287,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                     ),
                     SizedBox(height: 22.h),
                     CustomOutlinedButton(
-                      text: 'Salvar alterações',
+                      text: _isLoading ? 'Salvando...' : 'Salvar alterações ',
                       height: 56.h,
                       width: double.maxFinite,
                       buttonFonts: const Fonts(
@@ -206,9 +302,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         side: const BorderSide(color: AppColors.orangePrimary),
                         backgroundColor: AppColors.orangePrimary,
                       ),
-                      onPressed: () {
-                        // Implementar lógica de salvar alterações
-                      },
+                      onPressed: _isLoading ? null : _updateProfile,
                     ),
                     SizedBox(height: 20.h), // Add some bottom padding
                   ],
