@@ -5,6 +5,7 @@ import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
+import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_qr_code.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
@@ -177,11 +178,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                      'Erro ao carregar perfil: ${snapshot.error}'),
-                                  ElevatedButton(
-                                    onPressed: _loadUserData,
-                                    child: const Text('Tentar novamente'),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 23.h, right: 25.h),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 23.h),
+                                        const Fonts(
+                                            text: 'Erro ao carregar QRCode',
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.textPrimary),
+                                        SizedBox(height: 8.h),
+                                        const Fonts(
+                                            text: 'Por favor, tente novamente',
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColors.textPrimary),
+                                        SizedBox(height: 30.h),
+                                        CustomOutlinedButton(
+                                          text: 'Tentar novamente',
+                                          height: 56.h,
+                                          width: double.maxFinite,
+                                          buttonFonts: const Fonts(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.background),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          buttonStyle: OutlinedButton.styleFrom(
+                                              side: const BorderSide(
+                                                  color:
+                                                      AppColors.orangePrimary),
+                                              backgroundColor:
+                                                  AppColors.orangePrimary),
+                                          onPressed: () {
+                                            _loadUserData();
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -217,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               builder: (context) => MyConnectionsScreen(
                 user: widget.user,
                 scannedUser: widget.user,
-                origin: 'profile', 
+                origin: 'profile',
               ),
             ),
           );
