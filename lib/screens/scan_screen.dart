@@ -148,8 +148,10 @@ class _ScanScreenState extends State<ScanScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => UserProfileScreen(
-                                        user: widget.user,
-                                        scannedUser: scannedUser),
+                                      user: widget.user,
+                                      scannedUser: scannedUser,
+                                      origin: 'user_profile',
+                                    ),
                                   ),
                                 );
                               } else {
