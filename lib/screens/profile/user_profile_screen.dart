@@ -1,5 +1,6 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/scan_screen.dart';
 import 'package:escoladeverao/utils/colors.dart';
 import 'package:escoladeverao/utils/fonts.dart';
@@ -10,10 +11,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen(
-      {Key? key, required this.user, required this.scannedUser})
+      {Key? key, required this.user, required this.scannedUser, required this.origin})
       : super(key: key);
   final User user;
   final User scannedUser;
+  final String origin;
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
@@ -77,11 +79,27 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               alignment: Alignment.centerLeft,
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ScanScreen(user: widget.user)),
-                  );
+                  switch (widget.origin) {
+                    case 'scan':
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ScanScreen(
+                                  user: widget.user,
+                                )),
+                      );
+                      break;
+                    case 'connections':
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                MyConnectionsScreen(user: widget.user, scannedUser: widget.scannedUser, origin: 'connections',)),
+                      );
+                      break;
+                    default:
+                      Navigator.pop(context);
+                  }
                 },
                 child: Image.asset('assets/icons/angle-left-white.png'),
               ),

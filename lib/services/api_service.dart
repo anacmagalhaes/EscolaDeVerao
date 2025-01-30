@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://7e34-191-240-61-49.ngrok-free.app';
+  final String baseUrl = 'https://e0af-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -380,16 +380,25 @@ class ApiService {
       print('Status code: ${response.statusCode}');
       print('Resposta do servidor: ${response.body}');
 
+      final decodedResponse = json.decode(response.body);
+
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final List<dynamic> connectionsData = data['data'] ?? [];
+        final List<dynamic> connectionsData = decodedResponse['data'] ?? [];
         return connectionsData
             .map((userData) => User.fromJson(userData))
             .toList();
+      } else if (response.statusCode == 400) {
+        if (decodedResponse['message'] == "Não existem conexões feitas!") {
+          print('Nenhuma conexão encontrada.');
+          return []; // Retorna lista vazia sem erro
+        }
+        throw Exception(decodedResponse['message'] ??
+            'Erro desconhecido ao buscar conexões.');
       } else if (response.statusCode == 401) {
         throw Exception('Sessão expirada. Por favor, faça login novamente.');
       } else {
-        throw Exception('Falha ao carregar conexões: ${response.body}');
+        throw Exception(
+            'Falha ao carregar conexões: ${decodedResponse['message'] ?? response.body}');
       }
     } catch (e) {
       print('Erro ao buscar conexões: $e');
