@@ -59,8 +59,10 @@ class AppRoutes {
       userProfileScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
         return UserProfileScreen(
-            user: routeUser ?? initialUser!,
-            scannedUser: routeUser ?? initialUser!);
+          user: routeUser ?? initialUser!,
+          scannedUser: routeUser ?? initialUser!,
+          origin: 'user_profile',
+        );
       },
       initialRoute: (context) => initialUser != null
           ? HomeScreen(user: User(id: '', name: ''))
