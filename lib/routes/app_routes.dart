@@ -1,7 +1,7 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/auth/login_screen.dart';
-import 'package:escoladeverao/screens/auth/password_screen.dart';
-import 'package:escoladeverao/screens/change_password_screen.dart';
+import 'package:escoladeverao/screens/password/password_screen.dart';
+import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/screens/profile/user_profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
