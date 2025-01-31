@@ -2,8 +2,9 @@ import 'dart:math';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_qr_code.dart';
@@ -88,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       SizedBox(height: min(48.h, 52)),
                       Fonts(
-                        text: currentUser.name,
+                        text: StringUtils.formatUserName(currentUser.name),
                         maxLines: 2,
                         fontSize: 20,
                         fontWeight: FontWeight.w700,

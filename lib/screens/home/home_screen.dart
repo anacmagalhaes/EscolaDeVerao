@@ -1,7 +1,8 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/services/auth_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_card_home.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
@@ -19,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
-
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
@@ -128,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Fonts(
-                                        text: 'Oi, ${widget.user.name}',
+                                        text:
+                                            'Oi, ${StringUtils.formatUserName(widget.user.name)}',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w400,
                                         color: AppColors.white,
