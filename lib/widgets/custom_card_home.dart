@@ -31,8 +31,8 @@ class CustomCardHome extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       color: AppColors.background,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.quaternaryGrey)),
+          borderRadius: BorderRadius.circular(30),
+          side: BorderSide(color: AppColors.quaternaryGrey.withOpacity(0.2))),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

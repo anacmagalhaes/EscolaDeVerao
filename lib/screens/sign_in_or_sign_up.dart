@@ -35,7 +35,7 @@ class SignInOrSignUp extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Fonts(
-                    text: 'Bem-vindo(a) \nà escola de verão!',
+                    text: 'Bem-vindo(a) \nà Escola de Verão!',
                     maxLines: 2,
                     fontSize: 34,
                     fontWeight: FontWeight.w600,

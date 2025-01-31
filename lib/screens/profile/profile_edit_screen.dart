@@ -1,5 +1,7 @@
 import 'package:escoladeverao/controllers/profile_edit_controller.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/modals/checked_modal.dart';
+import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
@@ -84,15 +86,9 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       );
 
       if (result['success']) {
+        CheckedModal(context, checkedMessage: result['success']);
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Perfil atualizado com sucesso'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
           // Navigate back based on origin
           if (widget.origin == 'settings') {
             Navigator.pushReplacement(
@@ -119,22 +115,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result['message'] ?? 'Erro ao atualizar perfil'),
-              backgroundColor: Colors.red,
-            ),
-          );
+          ErrorModal(context,
+              errorMessage: result['message'] ?? 'Erro ao atualizar perfil');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro ao atualizar perfil. Tente novamente.'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        ErrorModal(context,
+            errorMessage: 'Erro ao atualizar perfil. Tente novamente.');
       }
     } finally {
       if (mounted) {
