@@ -1,7 +1,7 @@
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utils/colors.dart';
+import '../utils/colors_utils.dart';
 
 enum CardType { imageOnly, imageAndText, textOnly }
 

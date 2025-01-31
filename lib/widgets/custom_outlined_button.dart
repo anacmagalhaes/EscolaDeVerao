@@ -1,4 +1,4 @@
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:flutter/material.dart';
 
 // Classe para botões personalizados

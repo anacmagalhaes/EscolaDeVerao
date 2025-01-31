@@ -1,8 +1,8 @@
 import 'package:escoladeverao/controllers/change_password_controllers.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
