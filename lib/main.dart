@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:app_links/app_links.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/routes/app_routes.dart';
 import 'package:escoladeverao/services/auth_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 void main() async {
@@ -17,7 +19,11 @@ void main() async {
   final savedUser = await authService.loadUser();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(MyApp(initialUser: savedUser));
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      child: MyApp(
+        initialUser: savedUser,
+      )));
 }
 
 class MyApp extends StatefulWidget {

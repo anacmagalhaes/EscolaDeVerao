@@ -4,8 +4,8 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/user_profile_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
@@ -148,8 +148,10 @@ class _ScanScreenState extends State<ScanScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => UserProfileScreen(
-                                        user: widget.user,
-                                        scannedUser: scannedUser, origin: 'user_profile',),
+                                      user: widget.user,
+                                      scannedUser: scannedUser,
+                                      origin: 'user_profile',
+                                    ),
                                   ),
                                 );
                               } else {

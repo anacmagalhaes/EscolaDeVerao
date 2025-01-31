@@ -2,8 +2,9 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
@@ -126,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             Padding(
                               padding: EdgeInsets.only(top: 10.h),
                               child: Fonts(
-                                  text: widget.user.name,
+                                  text: StringUtils.formatUserName(widget.user.name),
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.black),

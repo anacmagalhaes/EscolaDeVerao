@@ -1,4 +1,4 @@
-import 'package:escoladeverao/utils/colors.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

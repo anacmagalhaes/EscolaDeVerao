@@ -1,6 +1,6 @@
 import 'package:escoladeverao/screens/auth/login_screen.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../utils/colors.dart';
+import '../utils/colors_utils.dart';
 
 class CustomTextField extends StatefulWidget {
   final TextInputType keyboardType;

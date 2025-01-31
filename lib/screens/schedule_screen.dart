@@ -5,7 +5,7 @@ import 'package:escoladeverao/widgets/custom_card_schedule.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utils/colors.dart';
+import '../utils/colors_utils.dart';
 
 //falta adicionar a mudança de tela de acordo com o botão hoje e cronograma
 

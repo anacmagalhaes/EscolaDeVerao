@@ -1,4 +1,4 @@
-import 'package:escoladeverao/utils/colors.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBarError extends StatelessWidget implements PreferredSizeWidget {

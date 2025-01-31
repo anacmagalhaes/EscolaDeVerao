@@ -1,16 +1,19 @@
 import 'package:escoladeverao/controllers/profile_edit_controller.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/modals/checked_modal.dart';
 import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
-import 'package:escoladeverao/utils/colors.dart';
-import 'package:escoladeverao/utils/fonts.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 //verificar por quê não está enviando o telefone
 
@@ -85,33 +88,21 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         updateData,
       );
 
-      if (result['success']) {
-        CheckedModal(context, checkedMessage: result['success']);
-        // Show success message
+      // Explicitly check the result type
+      if (result is Map && result['success'] == true) {
+        final updatedUser =
+            await apiService.fetchUserById(widget.user.id ?? '');
+
+        Provider.of<UserProvider>(context, listen: false)
+            .updateUser(updatedUser);
+
         if (mounted) {
-          // Navigate back based on origin
-          if (widget.origin == 'settings') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SettingsScreen(
-                  user: widget.user,
-                  scannedUser: widget.scannedUser,
-                ),
-              ),
-            );
-          } else if (widget.origin == 'profile') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfileScreen(
-                  user: widget.user,
-                ),
-              ),
-            );
-          } else {
-            Navigator.pop(context);
-          }
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(user: updatedUser),
+            ),
+          );
         }
       } else {
         if (mounted) {
@@ -119,10 +110,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               errorMessage: result['message'] ?? 'Erro ao atualizar perfil');
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('Detailed error: $e');
+      print('Stack trace: $stackTrace');
+
       if (mounted) {
         ErrorModal(context,
-            errorMessage: 'Erro ao atualizar perfil. Tente novamente.');
+            errorMessage: 'Erro ao atualizar perfil. Tente novamente: $e');
       }
     } finally {
       if (mounted) {
@@ -209,7 +203,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   children: [
                     SizedBox(height: 80.h), // Space for profile image
                     Fonts(
-                      text: widget.user.name,
+                      text: StringUtils.formatUserName(widget.user.name),
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -290,7 +284,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         side: const BorderSide(color: AppColors.orangePrimary),
                         backgroundColor: AppColors.orangePrimary,
                       ),
-                      onPressed: _isLoading ? null : _updateProfile,
+                      onPressed: () {
+                        if (!_isLoading) {
+                          _updateProfile(); // Apenas chama a função, sem navegar ainda
+                        }
+                      },
                     ),
                     SizedBox(height: 20.h), // Add some bottom padding
                   ],
