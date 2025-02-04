@@ -4,7 +4,8 @@ import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void ErrorModal(BuildContext context, {required String errorMessage}) {
+void ErrorModal(BuildContext context,
+    {required String errorMessage, required String title}) {
   showDialog(
     context: context,
     barrierColor:
@@ -49,16 +50,9 @@ void ErrorModal(BuildContext context, {required String errorMessage}) {
                         ),
                       ],
                     ),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()),
-                      );
-                    },
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(), // Fecha o modal
+                    onTap: () => Navigator.of(context).pop(),
                     child: Container(
                       width: 60.h,
                       height: 60.h,
@@ -75,7 +69,7 @@ void ErrorModal(BuildContext context, {required String errorMessage}) {
               Column(
                 children: [
                   Fonts(
-                    text: 'Erro ao tentar cadastrar!',
+                    text: title,
                     maxLines: 3,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -84,6 +78,7 @@ void ErrorModal(BuildContext context, {required String errorMessage}) {
                   SizedBox(height: 4.h),
                   Fonts(
                     text: errorMessage, // Mensagem de erro dinâmica
+                    textAlign: TextAlign.center,
                     maxLines: 4,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,

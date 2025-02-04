@@ -1,5 +1,6 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/auth/login_screen.dart';
+import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/password/password_screen.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
@@ -24,6 +25,7 @@ class AppRoutes {
   static const String changePasswordScreen = '/change_password_screen';
   static const String settingsScreen = '/settings_screen';
   static const String userProfileScreen = '/user_profile_screen';
+  static const String myConnectionsScreen = '/my_connections_screen';
   static const String initialRoute = '/initialRoute';
 
   // Adicionando o método para verificar o status de login
@@ -62,6 +64,25 @@ class AppRoutes {
           user: routeUser ?? initialUser!,
           scannedUser: routeUser ?? initialUser!,
           origin: 'user_profile',
+        );
+      },
+      myConnectionsScreen: (context) {
+        final args =
+            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+        if (args == null ||
+            !args.containsKey('scannedUser') ||
+            !args.containsKey('user')) {
+          return Scaffold(
+            body:
+                Center(child: Text("Erro: Argumentos inválidos para a rota.")),
+          );
+        }
+
+        return MyConnectionsScreen(
+          origin: args['origin'] ?? 'my_connection_screen',
+          scannedUser: args['scannedUser'],
+          user: args['user'],
         );
       },
       initialRoute: (context) => initialUser != null

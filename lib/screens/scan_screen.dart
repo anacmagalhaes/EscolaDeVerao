@@ -4,6 +4,7 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/user_profile_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
@@ -160,22 +161,18 @@ class _ScanScreenState extends State<ScanScreen> {
                                     Navigator.of(context)
                                         .pushReplacementNamed('/login');
                                   }
-                                  ErrorModal(context,
-                                      errorMessage: (result['message']));
+                                  ErrorHandler();
                                 }
                               }
                             } catch (e) {
                               if (mounted) {
-                                ErrorModal(context,
-                                    errorMessage:
-                                        'Erro ao processar QR Code: $e');
+                                ErrorHandler();
                               }
                             }
                           }
                         }
                       } catch (e) {
-                        ErrorModal(context,
-                            errorMessage: 'Erro ao processar QR Code: $e');
+                        ErrorHandler();
                       } finally {
                         setState(() {
                           _isProcessing = false; // Libera para nova leitura
