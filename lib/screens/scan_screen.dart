@@ -138,6 +138,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                 github: userData['github'],
                                 linkedin: userData['linkedin'],
                                 lattes: userData['lattes'],
+                                roles: [],
                               );
 
                               // Tenta salvar a conexão
