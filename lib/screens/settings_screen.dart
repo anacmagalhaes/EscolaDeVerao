@@ -2,6 +2,8 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
+import 'package:escoladeverao/screens/terms/privacy_policy_screen.dart';
+import 'package:escoladeverao/screens/terms/terms_and_conditions_screen.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -127,7 +129,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             Padding(
                               padding: EdgeInsets.only(top: 10.h),
                               child: Fonts(
-                                  text: StringUtils.formatUserName(widget.user.name),
+                                  text: StringUtils.formatUserName(
+                                      widget.user.name),
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.black),
@@ -295,9 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
                                 ),
-                                onTap: () {
-                                  // adicionar ir para a tela editar perfil
-                                },
+                                onTap: () {},
                               ),
                               SizedBox(height: 34.84.h),
                               GestureDetector(
@@ -323,7 +324,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  // adicionar ir para a tela editar perfil
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PrivacyPolicyScreen(
+                                        scannedUser: widget.scannedUser,
+                                        user: widget.user,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                               SizedBox(height: 34.84.h),
@@ -350,7 +359,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {
-                                  // adicionar ir para a tela editar perfil
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          TermsAndConditionsScreen(
+                                        scannedUser: widget.scannedUser,
+                                        user: widget.user,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
                               SizedBox(height: 34.84.h),
