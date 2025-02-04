@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/posts_admin/image_upload_screen.dart';
 import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -20,8 +21,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
-
   int _currentIndex = 0;
+
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -35,14 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
             return getScreenFromIndex(index, widget.user);
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            // Animação de fade
             const begin = 0.0;
             const end = 1.0;
             const curve = Curves.easeInOut;
             var tween =
                 Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
             var fadeAnimation = animation.drive(tween);
-
             return FadeTransition(opacity: fadeAnimation, child: child);
           },
         ),
@@ -52,19 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _logout() async {
     try {
-      await authService.logout(); // Limpa todos os dados salvos
-
+      await authService.logout();
       if (!mounted) return;
-
-      // Remove todas as rotas da pilha e navega para a tela de login
       Navigator.of(context).pushNamedAndRemoveUntil(
-        '/login_screen', // ou '/login_screen' dependendo da sua rota
+        '/login_screen',
         (Route<dynamic> route) => false,
       );
     } catch (e) {
-      // Tratamento de erro opcional
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro ao fazer logout. Tente novamente.'),
@@ -72,6 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+  }
+
+  void _navigateToCreatePost() {
+    Navigator.pushNamed(context, '/create_post_screen');
   }
 
   @override
@@ -82,14 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
       ),
       appBar: PreferredSize(
-        preferredSize:
-            Size.fromHeight(90.h), // Limita o tamanho máximo da AppBar
+        preferredSize: Size.fromHeight(90.h),
         child: Container(
           width: double.maxFinite,
           color: AppColors.orangePrimary,
           child: Padding(
-            padding: EdgeInsets.only(
-                left: 24.h, right: 10.h, top: 19.h), // Limita padding superior
+            padding: EdgeInsets.only(left: 24.h, right: 10.h, top: 19.h),
             child: Row(
               children: [
                 Expanded(
@@ -100,21 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.only(left: 12.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize
-                              .min, // Garante que o conteúdo não extrapole
                           children: [
                             Row(
                               children: [
-                                SizedBox(
-                                    height:
-                                        16.h), // Limita espaçamento vertical
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                    top: 24.h,
-                                  ), // Limita espaçamento superior do avatar
+                                  padding: EdgeInsets.only(top: 24.h),
                                   child: SizedBox(
-                                    width: 56
-                                        .h, // Define tamanho máximo para avatar
+                                    width: 56.h,
                                     height: 56.h,
                                     child:
                                         Image.asset('assets/images/person.png'),
@@ -154,11 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                   ),
                                 ),
+                                const Spacer(),
                                 IconButton(
-                                    onPressed: () {
-                                      _logout();
-                                    },
-                                    icon: Icon(Icons.logout))
+                                  onPressed: _logout,
+                                  icon: const Icon(Icons.logout),
+                                  color: AppColors.white,
+                                ),
                               ],
                             ),
                           ],
@@ -188,43 +177,79 @@ class _HomeScreenState extends State<HomeScreen> {
                     topRight: Radius.circular(25),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.h),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            switch (index) {
-                              case 0:
-                                return CustomCardHome(
-                                    index: index,
-                                    cardType: CardType.imageOnly,
-                                    imagePath: 'assets/images/peoples.png');
-                              case 1:
-                                return CustomCardHome(
-                                    index: index,
-                                    cardType: CardType.imageAndText,
-                                    description:
-                                        'Descrição detalhada do conteúdo',
-                                    imagePath: 'assets/images/peoples.png');
-                              case 2:
-                                return CustomCardHome(
-                                    index: index,
-                                    cardType: CardType.textOnly,
-                                    description:
-                                        'Descrição detalhada do conteúdo');
-                              default:
-                                return Container(); // Caso padrão, se necessário
-                            }
-                          },
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 16.h),
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: 3,
+                              itemBuilder: (context, index) {
+                                switch (index) {
+                                  case 0:
+                                    return CustomCardHome(
+                                      index: index,
+                                      cardType: CardType.imageOnly,
+                                      imagePath: 'assets/images/peoples.png',
+                                    );
+                                  case 1:
+                                    return CustomCardHome(
+                                      index: index,
+                                      cardType: CardType.imageAndText,
+                                      description:
+                                          'Descrição detalhada do conteúdo',
+                                      imagePath: 'assets/images/peoples.png',
+                                    );
+                                  case 2:
+                                    return CustomCardHome(
+                                      index: index,
+                                      cardType: CardType.textOnly,
+                                      description:
+                                          'Descrição detalhada do conteúdo',
+                                    );
+                                  default:
+                                    return Container();
+                                }
+                              },
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    if (widget.user.isAdmin) ...[
+                      Positioned(
+                        right: 17.h,
+                        bottom: 17.h,
+                        child: FloatingActionButton(
+                          onPressed: _navigateToCreatePost,
+                          backgroundColor: AppColors.orangePrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: GestureDetector(
+                            child: Image.asset('assets/icons/post-icon.png'),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible:
+                                    true, // Permite fechar ao clicar fora
+                                barrierColor: Colors.black
+                                    .withOpacity(0.5), // Opacidade do fundo
+                                builder: (BuildContext context) =>
+                                    const ImageUploadScreen(),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ],

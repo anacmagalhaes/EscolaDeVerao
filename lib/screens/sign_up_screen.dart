@@ -188,9 +188,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     try {
-      final response = await apiService.register(userData);
-      if (!response['success']) {
-        ErrorHandler.handleError(context, response);
+      final result = await apiService.register(userData);
+      if (result['success']) {
+        VerificationEmailModal(context, emailController.text);
+      } else {
+        VerificationErrorModal(context, result['message']);
       }
     } catch (e) {
       ErrorHandler.handleError(context, e);

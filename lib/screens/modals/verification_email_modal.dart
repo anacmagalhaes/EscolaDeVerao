@@ -48,38 +48,30 @@ void VerificationEmailModal(BuildContext context, String email) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    child: Stack(
-                      alignment: Alignment
-                          .center, // Centraliza o círculo interno no externo
-                      children: [
-                        Container(
-                          width: 60.h,
-                          height: 60.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryGreen,
-                            shape: BoxShape.circle, // Forma circular
-                          ),
+                  Stack(
+                    alignment: Alignment
+                        .center, // Centraliza o círculo interno no externo
+                    children: [
+                      Container(
+                        width: 60.h,
+                        height: 60.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryGreen,
+                          shape: BoxShape.circle, // Forma circular
                         ),
-                        Container(
-                          width: 40.h, // Menor que o círculo externo
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryGreen,
-                            shape: BoxShape.circle, // Forma circular
-                          ),
-                          child: GestureDetector(
-                            child: Image.asset('assets/icons/check-icon.png'),
-                          ),
+                      ),
+                      Container(
+                        width: 40.h, // Menor que o círculo externo
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryGreen,
+                          shape: BoxShape.circle, // Forma circular
                         ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()));
-                    },
+                        child: GestureDetector(
+                          child: Image.asset('assets/icons/check-icon.png'),
+                        ),
+                      ),
+                    ],
                   ),
                   GestureDetector(
                     child: Container(
@@ -95,7 +87,7 @@ void VerificationEmailModal(BuildContext context, String email) {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LoginScreen()));
+                              builder: (context) => const LoginScreen()));
                     },
                   ),
                 ],
