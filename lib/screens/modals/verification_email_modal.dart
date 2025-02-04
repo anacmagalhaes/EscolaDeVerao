@@ -82,7 +82,6 @@ void VerificationEmailModal(BuildContext context, String email) {
                     },
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(), // Fecha o modal
                     child: Container(
                       width: 60.h,
                       height: 60.h,
@@ -92,7 +91,12 @@ void VerificationEmailModal(BuildContext context, String email) {
                       ),
                       child: Image.asset('assets/icons/close-icon.png'),
                     ),
-                    onTapCancel: () {},
+                    onTap: () {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginScreen()));
+                    },
                   ),
                 ],
               ),

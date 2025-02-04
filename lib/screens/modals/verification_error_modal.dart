@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void VerificationErrorModal(
   BuildContext context,
+  String errorMessage,
 ) {
   showDialog(
     context: context,
@@ -28,38 +29,30 @@ void VerificationErrorModal(
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    child: Stack(
-                      alignment: Alignment
-                          .center, // Centraliza o círculo interno no externo
-                      children: [
-                        Container(
-                          width: 60.h,
-                          height: 60.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.red.withOpacity(0.15),
-                            shape: BoxShape.circle, // Forma circular
-                          ),
+                  Stack(
+                    alignment: Alignment
+                        .center, // Centraliza o círculo interno no externo
+                    children: [
+                      Container(
+                        width: 60.h,
+                        height: 60.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.red.withOpacity(0.15),
+                          shape: BoxShape.circle, // Forma circular
                         ),
-                        Container(
-                          width: 40.h, // Menor que o círculo externo
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            color: AppColors.red.withOpacity(0.20),
-                            shape: BoxShape.circle, // Forma circular
-                          ),
-                          child: GestureDetector(
-                            child: Image.asset('assets/icons/error-icon.png'),
-                          ),
+                      ),
+                      Container(
+                        width: 40.h, // Menor que o círculo externo
+                        height: 40.h,
+                        decoration: BoxDecoration(
+                          color: AppColors.red.withOpacity(0.20),
+                          shape: BoxShape.circle, // Forma circular
                         ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()));
-                    },
+                        child: GestureDetector(
+                          child: Image.asset('assets/icons/error-icon.png'),
+                        ),
+                      ),
+                    ],
                   ),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(), // Fecha o modal
@@ -88,7 +81,8 @@ void VerificationErrorModal(
                   ),
                   SizedBox(height: 4.h),
                   Fonts(
-                    text: 'Tente novamente!',
+                    text: errorMessage,
+                    textAlign: TextAlign.center,
                     maxLines: 4,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
