@@ -6,6 +6,7 @@ import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -106,8 +107,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         }
       } else {
         if (mounted) {
-          ErrorModal(context,
-              errorMessage: result['message'] ?? 'Erro ao atualizar perfil');
+          ErrorHandler();
         }
       }
     } catch (e, stackTrace) {
@@ -115,8 +115,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       print('Stack trace: $stackTrace');
 
       if (mounted) {
-        ErrorModal(context,
-            errorMessage: 'Erro ao atualizar perfil. Tente novamente: $e');
+        ErrorHandler();
       }
     } finally {
       if (mounted) {

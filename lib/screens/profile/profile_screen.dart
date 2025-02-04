@@ -1,7 +1,10 @@
 import 'dart:math';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
+import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
+import 'package:escoladeverao/screens/schedule_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -42,9 +45,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
       return userData;
-    } catch (e) {
-      print('Erro ao carregar dados do usuário: $e');
-      throw e;
+    } catch (error) {
+      if (mounted) {
+        ErrorHandler.handleError(
+          context,
+          error,
+          onRetry: () => _loadUserData(), // Permite tentar novamente
+        );
+      }
+      throw error; // Opcional: para manter o FutureBuilder ciente do erro
     }
   }
 
@@ -170,68 +179,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return const Center(
-                                child: CircularProgressIndicator(
-                                    color: AppColors.orangePrimary));
-                          }
-
-                          if (snapshot.hasError) {
-                            return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 23.h, right: 25.h),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 23.h),
-                                        const Fonts(
-                                            text: 'Erro ao carregar QRCode',
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.textPrimary),
-                                        SizedBox(height: 8.h),
-                                        const Fonts(
-                                            text: 'Por favor, tente novamente',
-                                            textAlign: TextAlign.center,
-                                            maxLines: 2,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.textPrimary),
-                                        SizedBox(height: 30.h),
-                                        CustomOutlinedButton(
-                                          text: 'Tentar novamente',
-                                          height: 56.h,
-                                          width: double.maxFinite,
-                                          buttonFonts: const Fonts(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.background),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                          ),
-                                          buttonStyle: OutlinedButton.styleFrom(
-                                              side: const BorderSide(
-                                                  color:
-                                                      AppColors.orangePrimary),
-                                              backgroundColor:
-                                                  AppColors.orangePrimary),
-                                          onPressed: () {
-                                            _loadUserData();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              child: CircularProgressIndicator(
+                                  color: AppColors.orangePrimary),
                             );
                           }
 
-                          // QR Code Widget
+                          if (snapshot.hasError) {
+                            // Agende a execução do erro após a renderização da árvore de widgets
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              ErrorHandler.handleError(
+                                context,
+                                snapshot.error,
+                                onRetry: () =>
+                                    _loadUserData(), // Tenta novamente
+                              );
+                            });
+                            return const SizedBox(); // Não exibe mais o erro diretamente aqui
+                          }
+
+                          // Se não houver erro e os dados estiverem carregados, exibe o QR Code
                           return CustomQrCode(
                               user: snapshot.data ?? currentUser);
                         },
@@ -270,14 +236,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
         'icon': 'assets/icons/sofa_icon.png',
         'text': 'Meus \neventos',
         'onTap': () {
-          // Navigator.pushReplacement(...);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ScheduleScreen(
+                user: widget.user,
+              ),
+            ),
+          );
         },
       },
       {
         'icon': 'assets/icons/pen_icon.png',
         'text': 'Editar \nperfil',
         'onTap': () {
-          // Navigator.push(...);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileEditScreen(
+                user: widget.user,
+                scannedUser: widget.user,
+                origin: 'profile',
+              ),
+            ),
+          );
         },
       },
     ];
