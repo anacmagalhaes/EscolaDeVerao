@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://7d66-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://f685-177-130-173-224.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -113,8 +113,7 @@ class ApiService {
             'Erro no cadastro. Status: ${response.statusCode}, Body: ${response.body}');
         return {
           'success': false,
-          'message':
-              'Erro no cadastro: ${response.statusCode} - ${response.body}',
+          'message': jsonDecode(response.body)['message'],
         };
       }
     } catch (e, stackTrace) {
@@ -396,6 +395,8 @@ class ApiService {
             'Erro desconhecido ao buscar conexões.');
       } else if (response.statusCode == 401) {
         throw Exception('Sessão expirada. Por favor, faça login novamente.');
+      } else if (response.statusCode == 403) {
+        throw Exception('Email não verificado! Verifique seu email.');
       } else {
         throw Exception(
             'Falha ao carregar conexões: ${decodedResponse['message'] ?? response.body}');
