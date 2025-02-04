@@ -36,7 +36,7 @@ class AppRoutes {
 
     if (userId != null && userName != null) {
       // Retorna um usuário com os dados armazenados
-      return User(id: userId, name: userName);
+      return User(id: userId, name: userName, roles: []);
     }
     return null; // Caso não tenha dados salvos, retorna null
   }
@@ -86,7 +86,7 @@ class AppRoutes {
         );
       },
       initialRoute: (context) => initialUser != null
-          ? HomeScreen(user: User(id: '', name: ''))
+          ? HomeScreen(user: User(id: '', name: '', roles: []))
           : const LoginScreen(),
     };
   }
