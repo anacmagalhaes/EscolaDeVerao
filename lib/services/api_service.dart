@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://f685-177-130-173-224.ngrok-free.app';
+  final String baseUrl = 'https://6b18-177-130-173-224.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -404,6 +404,34 @@ class ApiService {
     } catch (e) {
       print('Erro ao buscar conexões: $e');
       throw Exception('Falha na conexão com o servidor: $e');
+    }
+  }
+
+  Future<void> createPost(String title, String content, String token) async {
+    final url = Uri.parse('$baseUrl/api/post');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'title': title, 'content': content}),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
+        print('Post criado com sucesso!');
+      } else if (response.statusCode == 403) {
+        throw Exception(responseData[
+            'message']); // "Apenas administradores podem fazer posts!"
+      } else {
+        throw Exception('Erro ao criar o post: ${responseData['message']}');
+      }
+    } catch (error) {
+      print('Erro: $error');
     }
   }
 
