@@ -12,6 +12,7 @@ class CustomTextField extends StatefulWidget {
   final String? errorText;
   final Function(String)? onChanged;
   final Widget? leadingIcon;
+  final FocusNode? focusNode;
 
   const CustomTextField(
       {super.key,
@@ -24,7 +25,8 @@ class CustomTextField extends StatefulWidget {
       this.isRequired = false,
       this.errorText,
       this.onChanged,
-      this.leadingIcon});
+      this.leadingIcon,
+      this.focusNode});
 
   @override
   // ignore: library_private_types_in_public_api
