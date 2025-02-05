@@ -52,6 +52,7 @@ void CheckedModal(BuildContext context, {required String checkedMessage}) {
                       ],
                     ),
                     onTap: () {
+                      // Navega para a tela de login
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -59,7 +60,8 @@ void CheckedModal(BuildContext context, {required String checkedMessage}) {
                     },
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(), // Fecha o modal
+                    onTap: () => Navigator.pushNamed(
+                        context, '/home_screen'), // Fecha o modal
                     child: Container(
                       width: 60.h,
                       height: 60.h,
