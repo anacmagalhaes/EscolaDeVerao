@@ -1,3 +1,5 @@
+import 'package:escoladeverao/controllers/posts_controllers.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +14,35 @@ class PostsScreen extends StatefulWidget {
 }
 
 class _PostsScreenState extends State<PostsScreen> {
+  ApiService apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    postsController = TextEditingController();
+  }
+
+  Future<void> _handlePost() async {
+    String? token = await apiService.getToken();
+    String content = postsController.text.trim();
+
+    print(
+        "Conteúdo do post: '$content'"); // <-- Adiciona um print para depuração
+
+    if (token == null) {
+      print('Erro: Token não encontrado. Usuário não autenticado.');
+      return;
+    }
+
+    if (content.isNotEmpty) {
+      await apiService.createPost(content, token);
+      Navigator.pop(context);
+    } else {
+      print(
+          'O campo de texto está vazio!'); // <-- Confirma se a verificação está funcionando
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -68,6 +99,7 @@ class _PostsScreenState extends State<PostsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: TextField(
+                        controller: postsController,
                         expands: true,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -136,7 +168,9 @@ class _PostsScreenState extends State<PostsScreen> {
                                 side: const BorderSide(
                                     color: AppColors.orangePrimary),
                                 backgroundColor: AppColors.orangePrimary),
-                            onPressed: () {},
+                            onPressed: () {
+                              _handlePost();
+                            },
                           ),
                         ),
                         SizedBox(width: 16.h),
@@ -156,7 +190,7 @@ class _PostsScreenState extends State<PostsScreen> {
                                     color: AppColors.textPrimary),
                                 backgroundColor: AppColors.background),
                             onPressed: () {
-                              Navigator.pushNamed(context, '/sign_up_screen');
+                              Navigator.pushNamed(context, '/home_screen');
                             },
                           ),
                         ),

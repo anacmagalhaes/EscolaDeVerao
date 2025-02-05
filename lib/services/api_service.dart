@@ -12,7 +12,7 @@ class ApiService {
 
   ApiService() {
     final httpClient = HttpClient()
-      ..badCertificateCallback = 
+      ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
 
     _client = IOClient(httpClient);
@@ -176,6 +176,10 @@ class ApiService {
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
+  }
+
+  Future<String?> getToken() async {
+    return await _getToken();
   }
 
   Future<User> fetchUserById(String userId) async {
@@ -407,31 +411,26 @@ class ApiService {
     }
   }
 
-  Future<void> createPost(String title, String content, String token) async {
+  Future<void> createPost(String content, String token) async {
     final url = Uri.parse('$baseUrl/api/post');
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'title': title, 'content': content}),
-      );
+    final body = {
+      "texto": content, // ✅ Nome do campo corrigido
+    };
 
-      final responseData = jsonDecode(response.body);
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
 
-      if (response.statusCode == 201) {
-        print('Post criado com sucesso!');
-      } else if (response.statusCode == 403) {
-        throw Exception(responseData[
-            'message']); // "Apenas administradores podem fazer posts!"
-      } else {
-        throw Exception('Erro ao criar o post: ${responseData['message']}');
-      }
-    } catch (error) {
-      print('Erro: $error');
+    if (response.statusCode == 200) {
+      print("Post enviado com sucesso!");
+    } else {
+      print("Erro ao criar o post: ${response.body}");
     }
   }
 
