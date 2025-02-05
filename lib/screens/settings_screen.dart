@@ -2,8 +2,6 @@ import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
-import 'package:escoladeverao/screens/terms/privacy_policy_screen.dart';
-import 'package:escoladeverao/screens/terms/terms_and_conditions_screen.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -299,77 +297,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
                                 onTap: () {},
-                              ),
-                              SizedBox(height: 34.84.h),
-                              GestureDetector(
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 60.09.h),
-                                  child: Row(
-                                    children: [
-                                      const Fonts(
-                                        text: 'Política de privacidade',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary,
-                                      ),
-                                      const Spacer(), // Usando Spacer para empurrar a seta para a direita
-                                      Image.asset(
-                                        'assets/icons/angle-rigth.png',
-                                        width: 24
-                                            .h, // Define o tamanho fixo da seta
-                                        height: 24
-                                            .h, // Define o tamanho fixo da seta
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => PrivacyPolicyScreen(
-                                        scannedUser: widget.scannedUser,
-                                        user: widget.user,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 34.84.h),
-                              GestureDetector(
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 60.09.h),
-                                  child: Row(
-                                    children: [
-                                      const Fonts(
-                                        text: 'Termos e condições',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary,
-                                      ),
-                                      const Spacer(), // Usando Spacer para empurrar a seta para a direita
-                                      Image.asset(
-                                        'assets/icons/angle-rigth.png',
-                                        width: 24
-                                            .h, // Define o tamanho fixo da seta
-                                        height: 24
-                                            .h, // Define o tamanho fixo da seta
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          TermsAndConditionsScreen(
-                                        scannedUser: widget.scannedUser,
-                                        user: widget.user,
-                                      ),
-                                    ),
-                                  );
-                                },
                               ),
                               SizedBox(height: 34.84.h),
                             ],
