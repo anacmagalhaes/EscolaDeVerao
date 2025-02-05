@@ -153,10 +153,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 const Spacer(),
-                                IconButton(
-                                  onPressed: _logout,
-                                  icon: const Icon(Icons.logout),
-                                  color: AppColors.white,
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 20.h, right: 10.h),
+                                  child: IconButton(
+                                    onPressed: _logout,
+                                    icon: Image.asset(
+                                        'assets/icons/out-icon.png'),
+                                    color: AppColors.white,
+                                  ),
                                 ),
                               ],
                             ),
@@ -241,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return PostsScreen();
+                                  return PostsScreen(user: widget.user);
                                 });
                           },
                           backgroundColor: AppColors.orangePrimary,

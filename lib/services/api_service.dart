@@ -411,26 +411,26 @@ class ApiService {
     }
   }
 
-  Future<void> createPost(String content, String token) async {
-    final url = Uri.parse('$baseUrl/api/post');
+  Future<Map<String, dynamic>> createPost(String content, String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/api/post'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+        body: {
+          'texto': content,
+        },
+      );
 
-    final body = {
-      "texto": content, // ✅ Nome do campo corrigido
-    };
-
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 200) {
-      print("Post enviado com sucesso!");
-    } else {
-      print("Erro ao criar o post: ${response.body}");
+      if (response.statusCode == 200) {
+        return json.decode(response.body); // Retorna a resposta da API como Map
+      } else {
+        throw Exception('Erro ao criar post: ${response.body}');
+      }
+    } catch (e) {
+      print("Erro ao criar post: $e");
+      return {'success': false, 'message': 'Erro ao criar post'}; // Retorna um erro genérico
     }
   }
 

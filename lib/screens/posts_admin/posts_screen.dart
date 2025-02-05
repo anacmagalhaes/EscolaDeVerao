@@ -1,4 +1,7 @@
 import 'package:escoladeverao/controllers/posts_controllers.dart';
+import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/modals/checked_modal.dart';
+import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +10,8 @@ import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 
 class PostsScreen extends StatefulWidget {
-  const PostsScreen({Key? key}) : super(key: key);
+  final User user;
+  const PostsScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   _PostsScreenState createState() => _PostsScreenState();
@@ -26,20 +30,31 @@ class _PostsScreenState extends State<PostsScreen> {
     String? token = await apiService.getToken();
     String content = postsController.text.trim();
 
-    print(
-        "Conteúdo do post: '$content'"); // <-- Adiciona um print para depuração
-
     if (token == null) {
       print('Erro: Token não encontrado. Usuário não autenticado.');
       return;
     }
 
     if (content.isNotEmpty) {
-      await apiService.createPost(content, token);
-      Navigator.pop(context);
+      try {
+        // Chama a função da API e captura a resposta
+        var response = await apiService.createPost(content, token);
+
+        if (response['success'] == true) {
+          // Exibe a mensagem da API no modal de sucesso
+          CheckedModal(context, checkedMessage: response['message']);
+        } else {
+          ErrorModal(context,
+              errorMessage: response['message'], title: 'Erro ao criar o post');
+          print("Erro ao criar o post: ${response['message']}");
+        }
+      } catch (e) {
+        print("Erro ao criar o post: $e");
+      }
     } else {
-      print(
-          'O campo de texto está vazio!'); // <-- Confirma se a verificação está funcionando
+      ErrorModal(context,
+          errorMessage: 'O campo de texto está vazio!',
+          title: 'Erro ao criar o post');
     }
   }
 
@@ -72,7 +87,7 @@ class _PostsScreenState extends State<PostsScreen> {
                         child: Image.asset('assets/images/person.png'),
                       ),
                       Fonts(
-                        text: 'John Doe',
+                        text: widget.user.name,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
