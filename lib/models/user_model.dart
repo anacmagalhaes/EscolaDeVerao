@@ -11,38 +11,43 @@ class User {
   final String? linkedin;
   final String? lattes;
   final String? cargo;
-  final List<Role> roles; // Removido o nullable (?)
+  final List<Role> roles;
+  bool? _overrideAdminStatus;
 
-  User({
-    required this.id,
-    required this.name,
-    this.sobrenome,
-    this.email,
-    this.cpf,
-    this.telefone,
-    this.github,
-    this.linkedin,
-    this.lattes,
-    this.cargo,
-    required this.roles, // Adicionado required
-  });
+  User(
+      {required this.id,
+      required this.name,
+      this.sobrenome,
+      this.email,
+      this.cpf,
+      this.telefone,
+      this.github,
+      this.linkedin,
+      this.lattes,
+      this.cargo,
+      required this.roles,
+      bool? overrideAdminStatus})
+      : _overrideAdminStatus = overrideAdminStatus;
 
-  factory User.fromJson(Map<String, dynamic> json) {
+  factory User.fromJson(Map<String, dynamic> json,
+      {bool? overrideAdminStatus}) {
     return User(
-      id: json['id'].toString(),
-      name: json['name'] ?? '',
-      sobrenome: json['sobrenome'],
-      email: json['email'] ?? '',
-      cpf: json['cpf'] ?? '',
-      telefone: json['telefone'],
-      github: json['github'],
-      linkedin: json['linkedin'],
-      lattes: json['lattes'],
-      cargo: json['cargo'],
-      roles: json['roles'] != null
-          ? (json['roles'] as List).map((role) => Role.fromJson(role)).toList()
-          : [], // Retorna lista vazia se roles for null
-    );
+        id: json['id'].toString(),
+        name: json['name'] ?? '',
+        sobrenome: json['sobrenome'],
+        email: json['email'] ?? '',
+        cpf: json['cpf'] ?? '',
+        telefone: json['telefone'],
+        github: json['github'],
+        linkedin: json['linkedin'],
+        lattes: json['lattes'],
+        cargo: json['cargo'],
+        roles: json['roles'] != null
+            ? (json['roles'] as List)
+                .map((role) => Role.fromJson(role))
+                .toList()
+            : [],
+        overrideAdminStatus: overrideAdminStatus);
   }
 
   Map<String, dynamic> toJson() {
@@ -60,6 +65,12 @@ class User {
     };
   }
 
-  bool get isAdmin => roles.any((role) => role.name == 'admin');
-  bool get isUser => roles.any((role) => role.name == 'usuario');
+  bool get isAdmin {
+    if (_overrideAdminStatus != null) return _overrideAdminStatus!;
+    return roles.any((role) => role.name == 'admin');
+  }
+
+  void setAdminOverride(bool status) {
+    _overrideAdminStatus = status;
+  }
 }

@@ -9,6 +9,7 @@ import 'package:escoladeverao/widgets/custom_card_home.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key, required this.user}) : super(key: key);
@@ -22,10 +23,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
   int _currentIndex = 0;
+  bool _isAdmin = false;
 
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
+      _checkAdminStatus();
     });
 
     if (index != 0) {
@@ -66,6 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
+  }
+
+  void _checkAdminStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isAdmin = prefs.getBool('is_admin') ?? widget.user.isAdmin ?? false;
+    });
   }
 
   void _navigateToCreatePost() {
