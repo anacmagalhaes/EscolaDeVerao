@@ -55,17 +55,20 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  // Verifica se o usuário já está logado
   _checkExistingUser() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    final isAdmin = prefs.getBool('is_admin') ?? false;
+
     if (token != null) {
-      // Token encontrado, verifica o usuário
       User? user = await authService.loadUser();
       if (user != null) {
+        // Use fromJson with overrideAdminStatus
+        user = User.fromJson(user.toJson(), overrideAdminStatus: isAdmin);
+
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+          MaterialPageRoute(builder: (context) => HomeScreen(user: user!)),
         );
       }
     }

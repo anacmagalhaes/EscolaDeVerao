@@ -7,8 +7,10 @@ class AuthService {
   Future<User?> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString('user');
+    final isAdmin = prefs.getBool('is_admin') ?? false;
+
     if (userJson != null) {
-      return User.fromJson(jsonDecode(userJson));
+      return User.fromJson(jsonDecode(userJson), overrideAdminStatus: isAdmin);
     }
     return null;
   }
@@ -16,6 +18,7 @@ class AuthService {
   Future<void> saveUser(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user', jsonEncode(user.toJson()));
+    await prefs.setBool('is_admin', user.isAdmin);
   }
 
   Future<void> saveCredentials(String email, String password) async {
