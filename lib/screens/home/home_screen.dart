@@ -1,5 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/posts_admin/image_upload_screen.dart';
+import 'package:escoladeverao/screens/posts_admin/posts_screen.dart';
 import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -227,25 +227,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         right: 17.h,
                         bottom: 17.h,
                         child: FloatingActionButton(
-                          onPressed: _navigateToCreatePost,
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return PostsScreen();
+                                });
+                          },
                           backgroundColor: AppColors.orangePrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          child: GestureDetector(
-                            child: Image.asset('assets/icons/post-icon.png'),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible:
-                                    true, // Permite fechar ao clicar fora
-                                barrierColor: Colors.black
-                                    .withOpacity(0.5), // Opacidade do fundo
-                                builder: (BuildContext context) =>
-                                    const ImageUploadScreen(),
-                              );
-                            },
-                          ),
+                          child: Image.asset('assets/icons/post-icon.png'),
                         ),
                       ),
                     ],
