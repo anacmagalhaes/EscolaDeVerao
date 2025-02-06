@@ -24,8 +24,7 @@ class CustomCardHome extends StatelessWidget {
     print('Post data: $post');
     // Safely extract user name with a default value
 
-    final userName =
-        post['user']?['name']?.split('-')[0].toUpperCase() ?? 'Usuário';
+    final userName = post['user']?['name'] ?? 'Usuário';
     final postText = post['texto'] ?? '';
     final likesCount = post['likes_count'] ?? 0;
 
