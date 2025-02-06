@@ -87,6 +87,7 @@ void CheckedModal(BuildContext context, {required String checkedMessage}) {
                   SizedBox(height: 4.h),
                   Fonts(
                     text: checkedMessage,
+                    textAlign: TextAlign.center,
                     maxLines: 4,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,

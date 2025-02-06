@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://87c6-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://47ae-177-130-173-224.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -430,7 +430,65 @@ class ApiService {
       }
     } catch (e) {
       print("Erro ao criar post: $e");
-      return {'success': false, 'message': 'Erro ao criar post'}; // Retorna um erro genérico
+      return {
+        'success': false,
+        'message': 'Erro ao criar post'
+      }; // Retorna um erro genérico
+    }
+  }
+
+  Future<Map<String, dynamic>> changePassword(
+      String password, String confirmPassword) async {
+    try {
+      final token = await _getToken();
+
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Sessão expirada. Por favor, faça login novamente.',
+        };
+      }
+
+      final url = Uri.parse('$baseUrl/api/user/update_password');
+      print('Enviando solicitação de alteração de senha para URL: $url');
+
+      final Map<String, dynamic> body = {
+        'password': password,
+        'password_confirmation': confirmPassword,
+      };
+
+      final response = await _client.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Resposta do servidor: ${response.body}');
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': 'Senha alterada com sucesso!',
+        };
+      } else {
+        final errorResponse = jsonDecode(response.body);
+        return {
+          'success': false,
+          'message': errorResponse['message'] ?? 'Erro ao alterar senha.',
+        };
+      }
+    } catch (e) {
+      print('Erro ao alterar senha: $e');
+      return {
+        'success': false,
+        'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
+      };
     }
   }
 
