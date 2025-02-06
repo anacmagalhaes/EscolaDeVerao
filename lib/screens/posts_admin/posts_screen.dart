@@ -29,6 +29,13 @@ class _PostsScreenState extends State<PostsScreen> {
   Future<void> _handlePost() async {
     String? token = await apiService.getToken();
     String content = postsController.text.trim();
+    String userId = widget.user.id;
+
+    // Verifique o conteúdo, o token e o userId
+    print('Nome do Usuário: ${widget.user.name}');
+    print('Token: $token');
+    print('Conteúdo do Post: $content');
+    print('ID do Usuário: $userId');
 
     if (token == null) {
       print('Erro: Token não encontrado. Usuário não autenticado.');
@@ -38,7 +45,7 @@ class _PostsScreenState extends State<PostsScreen> {
     if (content.isNotEmpty) {
       try {
         // Chama a função da API e captura a resposta
-        var response = await apiService.createPost(content, token);
+        var response = await apiService.createPost(content, token, userId);
 
         if (response['success'] == true) {
           // Exibe a mensagem da API no modal de sucesso

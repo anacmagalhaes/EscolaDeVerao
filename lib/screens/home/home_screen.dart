@@ -36,18 +36,30 @@ class _HomeScreenState extends State<HomeScreen> {
     _checkAdminStatus();
   }
 
-  void _fetchPosts() async {
+  Future<void> _fetchPosts() async {
     try {
       final result = await apiService.fetchPosts();
-      setState(() {
-        _posts = result['success'] ? result['data'] ?? [] : [];
-        _isLoading = false;
-      });
+
+      if (result['success']) {
+        setState(() {
+          _posts = result['data']['data'] ??
+              []; // Agora os posts são extraídos corretamente
+          _isLoading = false;
+        });
+      } else {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message'] ?? 'Erro ao carregar posts'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } catch (e) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Erro ao carregar posts'),
+          content: Text('Erro de conexão ao carregar posts'),
           backgroundColor: Colors.red,
         ),
       );
