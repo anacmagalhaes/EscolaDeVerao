@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://f018-177-130-173-224.ngrok-free.app';
+  final String baseUrl = 'https://f47b-177-130-173-224.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -519,6 +519,23 @@ class ApiService {
         'success': false,
         'message': 'Erro de conexão',
       };
+    }
+  }
+
+  Future<Map<String, dynamic>> likePost(String postId, String token) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/like'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({'post_id': postId}),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to like post');
     }
   }
 
