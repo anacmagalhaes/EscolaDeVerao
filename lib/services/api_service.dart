@@ -411,7 +411,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> createPost(String content, String token) async {
+  Future<Map<String, dynamic>> createPost(
+      String content, String token, String userID) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/api/post'),
@@ -497,8 +498,7 @@ class ApiService {
       final token = await _getToken();
 
       final response = await _client.get(
-        Uri.parse(
-            '$baseUrl/api/post?page=$page&include=user'), // Add include=user to fetch user details
+        Uri.parse('$baseUrl/api/post?page=$page&include=user'),
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
@@ -507,11 +507,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final decodedResponse = json.decode(response.body);
-        return {
-          'success': true,
-          'data': decodedResponse['data']
-              ['data'], // Ensure correct data extraction
-        };
+        return decodedResponse; // Retorna tudo, sem filtrar nada
       } else {
         return {
           'success': false,
