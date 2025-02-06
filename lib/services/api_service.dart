@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://47ae-177-130-173-224.ngrok-free.app';
+  final String baseUrl = 'https://f018-177-130-173-224.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -488,6 +488,40 @@ class ApiService {
       return {
         'success': false,
         'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchPosts({int page = 1}) async {
+    try {
+      final token = await _getToken();
+
+      final response = await _client.get(
+        Uri.parse(
+            '$baseUrl/api/post?page=$page&include=user'), // Add include=user to fetch user details
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final decodedResponse = json.decode(response.body);
+        return {
+          'success': true,
+          'data': decodedResponse['data']
+              ['data'], // Ensure correct data extraction
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Erro ao buscar posts: ${response.body}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Erro de conexão',
       };
     }
   }

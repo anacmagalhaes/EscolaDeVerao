@@ -6,26 +6,28 @@ import '../utils/colors_utils.dart';
 enum CardType { imageOnly, imageAndText, textOnly }
 
 class CustomCardHome extends StatelessWidget {
-  final int index;
+  final dynamic post;
   final CardType cardType;
   final String? title;
-  final String? description;
   final String? imagePath;
 
-  const CustomCardHome(
-      {super.key,
-      required this.index,
-      this.cardType = CardType.imageAndText,
-      this.title,
-      this.description,
-      this.imagePath});
+  const CustomCardHome({
+    super.key,
+    required this.post,
+    this.cardType = CardType.imageAndText,
+    this.title,
+    this.imagePath,
+  });
+
   @override
   Widget build(BuildContext context) {
-    final List<String> palestrantes = [
-      'Rafael Monteiro Silva',
-      'Ana Beatriz Almeida',
-      'José Carlos Oliveira',
-    ];
+    print('Post data: $post');
+    // Safely extract user name with a default value
+
+    final userName =
+        post['user']?['name']?.split('-')[0].toUpperCase() ?? 'Usuário';
+    final postText = post['texto'] ?? '';
+    final likesCount = post['likes_count'] ?? 0;
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -55,84 +57,45 @@ class CustomCardHome extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(top: 14.45.h),
                     child: Fonts(
-                        text: palestrantes[index],
+                        text: userName,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: AppColors.black),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Adicione a lógica de detalhes aqui
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 10.h),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                            child:
-                                Image.asset('assets/icons/rectangle_icon.png')),
-                        SizedBox(height: 4.h),
-                        SizedBox(
-                            child:
-                                Image.asset('assets/icons/rectangle_icon.png')),
-                        SizedBox(height: 4.h),
-                        SizedBox(
-                            height: 5.h,
-                            child:
-                                Image.asset('assets/icons/rectangle_icon.png')),
-                      ],
-                    ),
-                  ),
-                ),
+                // Rest of the code remains the same...
               ],
             ),
 
-            // Descrição movida para antes da imagem
-            if (cardType != CardType.imageOnly && description != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 22.91.h),
-                  Fonts(
-                      text: description!,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textPrimary)
-                ],
-              ),
-
-            // Imagem (opcional)
-            if (cardType != CardType.textOnly && imagePath != null)
-              Column(
-                children: [
-                  SizedBox(height: 16.h),
-                  Container(
-                    width: 344.h,
-                    height: 344.h,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(12),
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(12),
-                      ),
-                      child: Image.asset(
-                        imagePath!,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // Descrição do post
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 22.91.h),
+                Fonts(
+                    text: postText,
+                    maxLines: 20,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textPrimary)
+              ],
+            ),
 
             Column(
               children: [
                 SizedBox(height: 22.91.h),
-                Image.asset('assets/icons/likes_icon.png'),
+                Row(
+                  children: [
+                    Image.asset('assets/icons/likes_icon.png'),
+                    SizedBox(width: 8.h),
+                    Fonts(
+                      text: '$likesCount likes',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textPrimary,
+                    ),
+                  ],
+                ),
                 SizedBox(height: 8.h),
               ],
             ),

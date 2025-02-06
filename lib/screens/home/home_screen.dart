@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/screens/posts_admin/posts_screen.dart';
 import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
@@ -22,8 +23,36 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
+  ApiService apiService = ApiService();
   int _currentIndex = 0;
   bool _isAdmin = false;
+  List<dynamic> _posts = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosts();
+    _checkAdminStatus();
+  }
+
+  void _fetchPosts() async {
+    try {
+      final result = await apiService.fetchPosts();
+      setState(() {
+        _posts = result['success'] ? result['data'] ?? [] : [];
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao carregar posts'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -76,10 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _isAdmin = prefs.getBool('is_admin') ?? widget.user.isAdmin ?? false;
     });
-  }
-
-  void _navigateToCreatePost() {
-    Navigator.pushNamed(context, '/create_post_screen');
   }
 
   @override
@@ -194,49 +219,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Stack(
                   children: [
-                    SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.h),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 16.h),
-                            ListView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: 3,
-                              itemBuilder: (context, index) {
-                                switch (index) {
-                                  case 0:
-                                    return CustomCardHome(
-                                      index: index,
-                                      cardType: CardType.imageOnly,
-                                      imagePath: 'assets/images/peoples.png',
-                                    );
-                                  case 1:
-                                    return CustomCardHome(
-                                      index: index,
-                                      cardType: CardType.imageAndText,
-                                      description:
-                                          'Descrição detalhada do conteúdo',
-                                      imagePath: 'assets/images/peoples.png',
-                                    );
-                                  case 2:
-                                    return CustomCardHome(
-                                      index: index,
-                                      cardType: CardType.textOnly,
-                                      description:
-                                          'Descrição detalhada do conteúdo',
-                                    );
-                                  default:
-                                    return Container();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                            color: AppColors.orangePrimary,
+                          ))
+                        : _posts.isEmpty
+                            ? const Center(
+                                child: Text('Não há posts'),
+                              )
+                            : SingleChildScrollView(
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 16.h),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(height: 16.h),
+                                      ListView.builder(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: _posts.length,
+                                        itemBuilder: (context, index) {
+                                          return CustomCardHome(
+                                            post: _posts[index],
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                     if (widget.user.isAdmin) ...[
                       Positioned(
                         right: 17.h,
