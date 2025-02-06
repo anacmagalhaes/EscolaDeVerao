@@ -1,4 +1,4 @@
-import 'package:escoladeverao/controllers/change_password_controllers.dart';
+import 'package:escoladeverao/screens/modals/checked_modal.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
@@ -18,113 +18,79 @@ class ChangePasswordScreen extends StatefulWidget {
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final ApiService apiService = ApiService();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
-  String? cpfError;
-  String? emailError;
+  String? passwordError;
+  String? confirmPasswordError;
 
-  // Validação para formato de e-mail
-  bool isValidEmail(String email) {
-    final emailRegex =
-        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
-    return emailRegex.hasMatch(email);
-  }
+  void _changePassword() async {
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-  bool isValidCPF(String cpf) {
-    cpf = cpf.replaceAll(RegExp(r'\D'), '');
-    if (cpf.length != 11 || RegExp(r'^(\d)\1*$').hasMatch(cpf)) {
-      return false;
-    }
-
-    List<int> numbers = cpf.split('').map((e) => int.parse(e)).toList();
-
-    for (int j = 9; j < 11; j++) {
-      int sum = 0;
-      for (int i = 0; i < j; i++) {
-        sum += numbers[i] * ((j + 1) - i);
-      }
-      int digit = (sum * 10) % 11;
-      if (digit == 10) digit = 0;
-      if (digit != numbers[j]) return false;
-    }
-
-    return true;
-  }
-
-  void _recoverPassword() async {
-    final cpf = cpfChangePassController.text.trim();
-    final email = emailChangePassController.text.trim();
-
-    // Limpar mensagens de erro antes de validar novamente
+    // Limpa mensagens de erro antes de validar novamente
     setState(() {
-      cpfError = null;
-      emailError = null;
+      passwordError = null;
+      confirmPasswordError = null;
     });
 
-    bool hasError = false;
+    bool isValid = true;
 
-    // Validações dos campos
-    if (cpf.isEmpty) {
+    // Validações
+    if (password.isEmpty || password.length < 6) {
       setState(() {
-        cpfError = 'Por favor, insira o CPF.';
+        passwordError = 'A senha deve ter pelo menos 6 caracteres.';
       });
-      hasError = true;
-    } else if (!isValidCPF(cpf)) {
+      isValid = false;
+    }
+    if (confirmPassword.isEmpty) {
       setState(() {
-        cpfError = 'Por favor, insira um CPF válido.';
+        confirmPasswordError = 'Por favor, confirme sua senha.';
       });
-      hasError = true;
+      isValid = false;
+    } else if (confirmPassword != password) {
+      setState(() {
+        confirmPasswordError = 'As senhas não coincidem.';
+      });
+      isValid = false;
     }
 
-    if (email.isEmpty) {
-      setState(() {
-        emailError = 'Por favor, insira o e-mail.';
-      });
-      hasError = true;
-    } else if (!isValidEmail(email)) {
-      setState(() {
-        emailError = 'Por favor, insira um e-mail válido.';
-      });
-      hasError = true;
-    }
-
-    if (hasError) return;
+    if (!isValid) return;
 
     try {
-      final response = await apiService.resetPasswordWithCpfEmail(cpf, email);
+      final response =
+          await apiService.changePassword(password, confirmPassword);
 
       if (response['success']) {
-        // Sucesso: exibir modal e limpar campos
-        NewPasswordModal(context, email);
-        setState(() {
-          cpfChangePassController.clear();
-          emailChangePassController.clear();
-        });
+        // Senha alterada com sucesso: exibir modal
+        CheckedModal(context,
+            checkedMessage: 'Sua senha foi alterada com sucesso!');
+        passwordController.clear();
+        confirmPasswordController.clear();
       } else {
-        // Erro: tratar mensagem retornada pela API
+        // Se a API retornar erro, exibir mensagem adequada
         setState(() {
-          final serverMessage =
-              response['data']?['email']?.first ?? response['message'];
-
-          // Mapeamento de mensagens para mensagens amigáveis
-          emailError = _mapServerErrorToFriendlyMessage(serverMessage);
+          final serverMessage = response['message'] ?? 'Erro desconhecido.';
+          passwordError = _mapServerErrorToFriendlyMessage(serverMessage);
         });
       }
     } catch (e) {
-      // Erro inesperado (problemas de conexão, etc.)
       setState(() {
-        emailError = 'Erro ao se conectar ao servidor. Tente novamente.';
+        passwordError = 'Erro ao se conectar ao servidor. Tente novamente.';
       });
     }
   }
 
-  /// Mapeia mensagens de erro do servidor para mensagens amigáveis
+  /// Mapeia mensagens de erro da API para mensagens amigáveis
   String _mapServerErrorToFriendlyMessage(String? serverMessage) {
-    if (serverMessage == null) return 'Erro desconhecido. Tente novamente.';
+    if (serverMessage == null) return 'Erro desconhecido.';
 
     final errorMapping = {
-      "O campo email selecionado é inválido.": "E-mail inválido.",
-      "O campo cpf selecionado é inválido.": "CPF inválido.",
-      // Adicione outros mapeamentos de mensagens conforme necessário
+      "password_too_short": "A senha deve ter pelo menos 6 caracteres.",
+      "password_mismatch": "As senhas informadas não coincidem.",
+      "A senha não pode ser a mesma!":
+          "A nova senha deve ser diferente da anterior.",
     };
 
     return errorMapping[serverMessage] ??
@@ -133,11 +99,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   void dispose() {
-    // Limpar os campos ao sair da tela
-    cpfChangePassController.clear();
-    emailChangePassController.clear();
-    cpfChangePassController.dispose();
-    emailChangePassController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -159,73 +122,69 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Fonts(
-                  text: 'Alteração de senha',
-                  maxLines: 2,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary),
+                text: 'Alteração de senha',
+                maxLines: 2,
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
               SizedBox(height: 8.h),
               const Fonts(
-                  text: 'Informe o e-mail cadastrado para alteração',
-                  maxLines: 2,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textPrimary),
+                text: 'Digite uma nova senha para sua conta.',
+                maxLines: 2,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
               SizedBox(height: 32.h),
               CustomTextField(
-                labelText: 'E-mail',
-                hintText: 'Digite seu e-mail',
-                keyboardType: TextInputType.emailAddress,
-                controller: emailChangePassController,
+                labelText: 'Nova Senha',
+                hintText: 'Crie sua nova senha',
+                obscureText: true,
+                showTogglePasswordIcon: true,
+                controller: passwordController,
+                isRequired: true,
               ),
-              if (emailError != null)
-                Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: Text(
-                    emailError!,
-                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
+              SizedBox(height: 8.h),
+              if (passwordError != null)
+                Text(
+                  passwordError!,
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
                 ),
               SizedBox(height: 16.h),
               CustomTextField(
-                labelText: 'CPF',
-                hintText: 'Digite seu CPF',
-                keyboardType: TextInputType.number,
-                controller: cpfChangePassController,
+                labelText: 'Confirme a Senha',
+                hintText: 'Digite novamente sua nova senha',
+                obscureText: true,
+                showTogglePasswordIcon: true,
+                controller: confirmPasswordController,
+                isRequired: true,
               ),
-              if (cpfError != null)
-                Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: Text(
-                    cpfError!,
-                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
+              SizedBox(height: 8.h),
+              if (confirmPasswordError != null)
+                Text(
+                  confirmPasswordError!,
+                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
                 ),
-              SizedBox(height: 16.h),
+              SizedBox(height: 24.h),
               SizedBox(
-                width: double.maxFinite,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomOutlinedButton(
-                        text: 'Recuperar senha',
-                        height: 56.h,
-                        buttonFonts: const Fonts(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        buttonStyle: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: AppColors.orangePrimary),
-                            backgroundColor: AppColors.orangePrimary),
-                        onPressed: _recoverPassword,
-                      ),
-                    ),
-                    SizedBox(width: 16.h),
-                  ],
+                width: double.infinity,
+                child: CustomOutlinedButton(
+                  text: 'Alterar Senha',
+                  height: 56.h,
+                  buttonFonts: const Fonts(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.background,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  buttonStyle: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AppColors.orangePrimary),
+                    backgroundColor: AppColors.orangePrimary,
+                  ),
+                  onPressed: _changePassword,
                 ),
               ),
             ],
