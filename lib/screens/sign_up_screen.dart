@@ -158,6 +158,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return isValid;
   }
 
+  void _clearFields() {
+    nameController.clear();
+    emailController.clear();
+    cpfController.clear();
+    phoneController.clear();
+    linkedinController?.clear();
+    githubController?.clear();
+    lattesController?.clear();
+    passwordController.clear();
+    confirmPassController.clear();
+  }
+
+  @override
+  void dispose() {
+    _clearFields();
+    super.dispose();
+  }
+
   Future<void> _signUp() async {
     setState(() {
       _nameError = '';
@@ -208,6 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           CustomAppBarError(
             onBackPressed: () {
               FocusScope.of(context).unfocus();
+              _clearFields();
               Navigator.pop(context);
             },
             backgroundColor: AppColors.background,
