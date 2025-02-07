@@ -68,6 +68,7 @@ class _PostsScreenState extends State<PostsScreen> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.all(20.h),
       backgroundColor: AppColors.background,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -86,19 +87,20 @@ class _PostsScreenState extends State<PostsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         width: 56.h,
                         height: 56.h,
-                        child: Image.asset('assets/images/person.png'),
+                        child: Image.asset('assets/images/profile.png'),
                       ),
+                      SizedBox(width: 10.h),
                       Fonts(
                         text: widget.user.name,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
+                      SizedBox(width: 50.h),
                       GestureDetector(
                         onTap: () => Navigator.pop(context), // Fecha o Dialog
                         child: Padding(
@@ -112,21 +114,34 @@ class _PostsScreenState extends State<PostsScreen> {
                   SizedBox(height: 20.h),
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                        maxHeight: 200.h // Limita altura do campo
-                        ),
+                      maxHeight: 200.h,
+                      maxWidth: 320.h, // Limita altura do campo
+                    ),
                     child: Container(
-                      width: 332.h,
+                      width: 300.h,
                       decoration: BoxDecoration(
-                        color: AppColors.sextennialGrey.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          color: Color(0xFFF3F3F3),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Color(0xFFB4B7C9))),
                       child: TextField(
+                        style: TextStyle(
+                          fontSize: 12,
+
+                          color: AppColors
+                              .textPrimary, // Cor do texto digitado (opcional)
+                          fontFamily:
+                              'Montserrat', // Fonte personalizada (opcional)
+                        ),
                         controller: postsController,
                         expands: true,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
-                          hintText: 'Escreva aqui sua mensagem',
+                          hintText: 'Escreva sua mensagem aqui',
+                          hintStyle: TextStyle(
+                              fontSize: 12,
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w400),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.all(12),
                         ),

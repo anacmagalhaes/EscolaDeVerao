@@ -74,7 +74,7 @@ class _CustomCardHomeState extends State<CustomCardHome> {
     final postText = widget.post['texto'] ?? '';
 
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 16.h),
       color: AppColors.background,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -123,32 +123,35 @@ class _CustomCardHomeState extends State<CustomCardHome> {
               ],
             ),
             // Área de Likes
-            Column(
-              children: [
-                SizedBox(height: 22.91.h),
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: _toggleLike, // Altera o estado do like
-                      child: Image.asset(
-                        isLiked
-                            ? 'assets/icons/like-red-icon.png' // Ícone preenchido
-                            : 'assets/icons/like-black-icon.png', // Ícone vazio
-                        width: 24.h,
-                        height: 24.h,
+            GestureDetector(
+              onTap: _toggleLike,
+              child: Column(
+                children: [
+                  SizedBox(height: 22.91.h),
+                  Row(
+                    children: [
+                      GestureDetector(
+                        // Altera o estado do like
+                        child: Image.asset(
+                          isLiked
+                              ? 'assets/icons/like-red-icon.png' // Ícone preenchido
+                              : 'assets/icons/like-black-icon.png', // Ícone vazio
+                          width: 24.h,
+                          height: 24.h,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 8.h),
-                    Fonts(
-                      text: '$likesCount likes',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textPrimary,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-              ],
+                      SizedBox(width: 8.h),
+                      Fonts(
+                        text: '$likesCount likes',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textPrimary,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                ],
+              ),
             ),
           ],
         ),

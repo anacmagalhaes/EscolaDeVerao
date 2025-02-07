@@ -10,6 +10,7 @@ import 'package:escoladeverao/widgets/custom_app_bar_error.dart';
 import 'package:escoladeverao/widgets/custom_card_connections.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyConnectionsScreen extends StatefulWidget {
   final String origin;
@@ -186,61 +187,64 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                     String letter = groupedConnections.keys.elementAt(index);
                     List<User> connections = groupedConnections[letter]!;
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 16.0,
-                          ),
-                          child: Text(
-                            letter,
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.orangePrimary,
+                    return Padding(
+                      padding: EdgeInsets.only(left: 8.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 8.h,
+                              horizontal: 16.h,
+                            ),
+                            child: Text(
+                              letter,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.orangePrimary,
+                              ),
                             ),
                           ),
-                        ),
-                        GridView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8.0,
-                            mainAxisSpacing: 8.0,
-                            childAspectRatio: 0.9,
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          itemCount: connections.length,
-                          itemBuilder: (context, index) {
-                            final user = connections[index];
-                            final connection = Connection(
-                              image: AssetImage('assets/images/profile.png'),
-                              name: user.name,
-                              id: user.id,
-                            );
-                            return GestureDetector(
-                              child:
-                                  CustomCardConnections(connection: connection),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserProfileScreen(
-                                      user: widget.user,
-                                      scannedUser: user,
-                                      origin: 'user_profile',
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio: 0.9,
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            itemCount: connections.length,
+                            itemBuilder: (context, index) {
+                              final user = connections[index];
+                              final connection = Connection(
+                                image: AssetImage('assets/images/profile.png'),
+                                name: user.name,
+                                id: user.id,
+                              );
+                              return GestureDetector(
+                                child: CustomCardConnections(
+                                    connection: connection),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserProfileScreen(
+                                        user: widget.user,
+                                        scannedUser: user,
+                                        origin: 'user_profile',
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     );
                   },
                   childCount: groupedConnections.keys.length,
