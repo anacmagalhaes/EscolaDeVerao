@@ -1,3 +1,4 @@
+import 'package:escoladeverao/controllers/sign_up_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
@@ -52,8 +53,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
   }
 
   void _recoverPassword() async {
-    final cpf = cpfPassController.text.trim();
+    final cpf = cpfPassController.text.trim().replaceAll(RegExp(r'\D'), '');
+
     final email = emailPassController.text.trim();
+
+    print('CPF digitado: $cpf');
+    print('E-mail digitado: $email');
 
     // Limpar mensagens de erro antes de validar novamente
     setState(() {
