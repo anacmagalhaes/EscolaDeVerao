@@ -1,8 +1,6 @@
 import 'package:escoladeverao/controllers/profile_edit_controller.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/models/user_provider_model.dart';
-import 'package:escoladeverao/screens/modals/checked_modal.dart';
-import 'package:escoladeverao/screens/modals/error_modal.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
@@ -85,6 +83,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         'lattes': latesEditController.text,
       };
 
+      print(nameEditController);
       final result = await apiService.updateProfile(
         widget.user.id ?? '',
         updateData,
@@ -242,13 +241,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       keyboardType: TextInputType.name,
                       controller: nameEditController,
                     ),
-                    SizedBox(height: 20.h),
-                    CustomTextField(
-                      labelText: 'E-mail',
-                      hintText: 'Edite seu e-mail',
-                      keyboardType: TextInputType.emailAddress,
-                      controller: emailEditController,
-                    ),
+
                     SizedBox(height: 20.h),
                     CustomTextField(
                       labelText: 'Telefone',
