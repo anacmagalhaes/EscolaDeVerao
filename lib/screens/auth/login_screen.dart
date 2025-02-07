@@ -1,4 +1,6 @@
+import 'package:escoladeverao/controllers/sign_up_controllers.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/modals/resend_email_modal.dart';
 import 'package:escoladeverao/screens/password/password_screen.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
@@ -35,6 +37,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _checkExistingUser();
+    emailInput.clear();
+    passwordInput.clear();
     _loadSavedCredentials();
 
     // Limpando os erros ao digitar nos campos
@@ -108,16 +112,22 @@ class _LoginScreenState extends State<LoginScreen> {
     prefs.setString('user_name', user.name);
   }
 
-  // Carrega as credenciais salvas
-  _loadSavedCredentials() async {
-    final credentials = await authService.loadCredentials();
+  Future<void> _loadSavedCredentials() async {
     final hasRemember = await authService.hasRememberLogin();
+    final credentials = await authService.loadCredentials();
 
     if (mounted) {
       setState(() {
-        emailInput.text = credentials['email'] ?? '';
-        passwordInput.text = credentials['password'] ?? '';
         _isChecked = hasRemember;
+
+        // Only load credentials if 'remember' is explicitly checked
+        if (hasRemember) {
+          emailInput.text = credentials['email'] ?? '';
+          passwordInput.text = credentials['password'] ?? '';
+        } else {
+          emailInput.clear();
+          passwordInput.clear();
+        }
       });
     }
   }
@@ -168,26 +178,21 @@ class _LoginScreenState extends State<LoginScreen> {
         final token = result['data']['token'];
 
         if (userData != null && token != null) {
-          // Criar instância do User antes de salvar
           final user = User.fromJson(userData);
 
-          // Salvando o token
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
 
-          // Salvando dados do usuário
           await authService.saveUser(user);
 
           if (!_isChecked) {
             await authService.clearSavedCredentials();
           } else {
-            // Se estiver marcado, salva as credenciais
             await authService.saveCredentials(email, password);
           }
 
           if (!mounted) return;
 
-          // Navegando para a tela principal
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -200,10 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
       } else {
-        setState(() {
-          _passwordError =
-              _getLoginErrorMessage(result['message'] ?? 'Erro ao fazer login');
-        });
+        if (result['message'] == 'email_not_verified') {
+          ResendEmailModal(context, emailController.text);
+        } else {
+          setState(() {
+            _passwordError = _getLoginErrorMessage(
+                result['message'] ?? 'Erro ao fazer login');
+          });
+        }
       }
     } catch (e) {
       if (!mounted) return;
@@ -272,6 +281,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: () {
                       setState(() {
                         _isChecked = !_isChecked;
+                        if (!_isChecked) {
+                          // Clear credentials when checkbox is unchecked
+                          emailInput.clear();
+                          passwordInput.clear();
+                        }
                       });
                     },
                     child: Container(
