@@ -136,6 +136,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     SizedBox(height: 80.h),
                     Fonts(
                       text: widget.scannedUser.name,
+                      maxLines: 2,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -159,6 +160,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     SizedBox(height: 15.h),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Fonts(
                           text: 'Informações de contato:',

@@ -1,6 +1,8 @@
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomCardConnections extends StatelessWidget {
   final Connection connection;
@@ -12,8 +14,8 @@ class CustomCardConnections extends StatelessWidget {
     return Card(
       color: AppColors.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: AppColors.grey, width: 1),
+        borderRadius: BorderRadius.circular(30),
+        side: BorderSide(color: Color(0xFFE8E8E8), width: 1),
       ),
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -26,7 +28,7 @@ class CustomCardConnections extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Fonts(
-              text: connection.name,
+              text: StringUtils.formatUserName(connection.name),
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.black,
@@ -40,7 +42,7 @@ class CustomCardConnections extends StatelessWidget {
               color: AppColors.blueMarine,
               additionalSpans: [
                 TextSpan(
-                  text: connection.id,
+                  text: connection.id.padLeft(4, '0'),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,

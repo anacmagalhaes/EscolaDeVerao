@@ -39,10 +39,10 @@ class CustomCardSchedule extends StatelessWidget {
     ];
 
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(16.h),
       color: AppColors.background,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(30),
           side: BorderSide(color: AppColors.quaternaryGrey)),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -88,7 +88,7 @@ class CustomCardSchedule extends StatelessWidget {
             Divider(height: 20.h, color: AppColors.quaternaryGrey),
             SizedBox(height: 8.h),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset('assets/icons/local_icon.png'),
                 SizedBox(width: 5.h),
@@ -97,7 +97,7 @@ class CustomCardSchedule extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.quaternaryGrey),
-                SizedBox(width: 30.h),
+                SizedBox(width: 20.h),
                 Image.asset('assets/icons/calendar_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
@@ -106,7 +106,7 @@ class CustomCardSchedule extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.quaternaryGrey),
-                SizedBox(width: 30.h),
+                SizedBox(width: 20.h),
                 Image.asset('assets/icons/clock_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
