@@ -35,7 +35,7 @@
     </queries>
 
     <application
-        android:label="escoladeverao"
+        android:label="Escola de Verão"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:enableOnBackInvokedCallback="true">
