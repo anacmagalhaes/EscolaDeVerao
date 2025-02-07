@@ -120,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               child: SizedBox(
                                 width: 48.h,
                                 height: 72.h,
-                                child: Image.asset('assets/images/person.png'),
+                                child: Image.asset('assets/images/profile.png'),
                               ),
                             ),
                             SizedBox(width: 12.h),
@@ -220,7 +220,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            const ChangePasswordScreen()),
+                                            ChangePasswordScreen(
+                                              user: widget.user,
+                                              scannedUser: widget.scannedUser,
+                                            )),
                                   );
                                 },
                               ),

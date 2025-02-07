@@ -11,7 +11,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen(
-      {Key? key, required this.user, required this.scannedUser, required this.origin})
+      {Key? key,
+      required this.user,
+      required this.scannedUser,
+      required this.origin})
       : super(key: key);
   final User user;
   final User scannedUser;
@@ -93,8 +96,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                MyConnectionsScreen(user: widget.user, scannedUser: widget.scannedUser, origin: 'connections',)),
+                            builder: (context) => MyConnectionsScreen(
+                                  user: widget.scannedUser,
+                                  scannedUser: widget.scannedUser,
+                                  origin: 'connections',
+                                )),
                       );
                       break;
                     default:
@@ -418,7 +424,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 height: 104.h,
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/person.png',
+                    'assets/images/profile.png',
                     fit: BoxFit.cover,
                   ),
                 ),

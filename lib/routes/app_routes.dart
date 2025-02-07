@@ -50,11 +50,19 @@ class AppRoutes {
       loginScreen: (context) => const LoginScreen(),
       homeScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
+
         return HomeScreen(user: routeUser ?? initialUser!);
       },
       signUpScreen: (context) => const SignUpScreen(origin: '/signup'),
       passwordScreen: (__) => const PasswordScreen(origin: '/password_screen'),
-      changePasswordScreen: (__) => const ChangePasswordScreen(),
+      changePasswordScreen: (context) {
+        final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
+        return UserProfileScreen(
+          user: routeUser ?? initialUser!,
+          scannedUser: routeUser ?? initialUser!,
+          origin: 'change_password_screen',
+        );
+      },
       settingsScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
         return SettingsScreen(

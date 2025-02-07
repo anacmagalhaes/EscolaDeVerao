@@ -130,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SizedBox(
                   width: 96.h,
                   height: 96.h,
-                  child: Image.asset('assets/images/person.png'),
+                  child: Image.asset('assets/images/profile.png'),
                 ),
               ),
             ],

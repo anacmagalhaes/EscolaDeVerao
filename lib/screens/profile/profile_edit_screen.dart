@@ -14,6 +14,7 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 //verificar por quê não está enviando o telefone
@@ -98,12 +99,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             .updateUser(updatedUser);
 
         if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileScreen(user: updatedUser),
-            ),
+          Fluttertoast.showToast(
+            msg: "Perfil atualizado",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black87,
+            textColor: Colors.white,
           );
+
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileScreen(user: updatedUser),
+              ),
+            );
+          });
         }
       } else {
         if (mounted) {
@@ -304,7 +315,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 height: 104.h,
                 child: ClipOval(
                   child: Image.asset(
-                    'assets/images/person.png',
+                    'assets/images/profile.png',
                     fit: BoxFit.cover,
                   ),
                 ),

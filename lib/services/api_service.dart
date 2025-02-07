@@ -7,7 +7,7 @@ import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://f47b-177-130-173-224.ngrok-free.app';
+  final String baseUrl = 'https://3a3e-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -17,6 +17,8 @@ class ApiService {
 
     _client = IOClient(httpClient);
   }
+
+  // Método de Login
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/api/login');
     print('Tentando login na URL: $url');
@@ -48,14 +50,24 @@ class ApiService {
 
         final userData = decodedResponse['data']['user'];
         final token = decodedResponse['data']['token'];
+        final isEmailVerified = userData['email_verified_at'] != null;
+
         print('Token recebido no login: $token');
+
+        if (!isEmailVerified) {
+          return {
+            'success': false,
+            'message': 'email_not_verified',
+            'email': email
+          };
+        }
 
         if (token != null && userData != null) {
           return {
             'success': true,
             'data': {
               'user': userData,
-              'token': token, // Simplificado, sem o nível adicional de "data"
+              'token': token,
             },
           };
         } else {

@@ -1,5 +1,7 @@
+import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/modals/checked_modal.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
+import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -10,7 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({Key? key}) : super(key: key);
+  final User user;
+  final User scannedUser;
+  const ChangePasswordScreen(
+      {Key? key, required this.scannedUser, required this.user})
+      : super(key: key);
 
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
@@ -111,8 +117,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       appBar: CustomAppBar(
         onBackPressed: () {
           FocusScope.of(context).unfocus();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SettingsScreen(
+                      user: widget.user, scannedUser: widget.scannedUser)));
         },
-        fallbackRoute: '/settings_screen',
         backgroundColor: AppColors.background,
       ),
       body: SingleChildScrollView(
