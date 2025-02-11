@@ -13,9 +13,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.user}) : super(key: key);
-
   final User user;
+  final String? imageUrl;
+  const HomeScreen({Key? key, required this.user, this.imageUrl})
+      : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

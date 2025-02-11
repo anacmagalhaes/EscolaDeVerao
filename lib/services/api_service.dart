@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://6748-187-44-58-94.ngrok-free.app';
+  final String baseUrl = 'https://2af8-177-36-196-227.ngrok-free.app';
   late final http.Client _client;
+  late Dio _dio;
 
   ApiService() {
     final httpClient = HttpClient()
@@ -17,6 +20,12 @@ class ApiService {
           (X509Certificate cert, String host, int port) => true;
 
     _client = IOClient(httpClient);
+
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    ));
   }
 
   // Método de Login
@@ -424,6 +433,24 @@ class ApiService {
     }
   }
 
+  String getFullImageUrl(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return '';
+    }
+
+    // If the image path is a file path (e.g., file://), ignore it.
+    if (imagePath.startsWith('file://')) {
+      return ''; // Or handle it differently depending on your app logic.
+    }
+
+    // If it starts with a slash, remove it to prevent double slashes in the URL
+    final cleanPath =
+        imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+
+    // Returns the complete URL with the base URL
+    return '$baseUrl/$cleanPath';
+  }
+
   Future<Map<String, dynamic>> createPost({
     required String content,
     required String token,
@@ -431,51 +458,105 @@ class ApiService {
     File? imageFile,
   }) async {
     try {
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse('$baseUrl/api/post'),
-      );
+      // Prepare form data
+      final formData = FormData();
 
-      request.headers['Authorization'] = 'Bearer $token';
-      request.fields['texto'] = content;
-      request.fields['user_id'] = userId;
+      // Adiciona os campos de texto
+      formData.fields.addAll([
+        MapEntry('texto', content),
+        MapEntry('user_id', userId),
+      ]);
 
+      // Adiciona a imagem se existir
       if (imageFile != null) {
-        print("Enviando imagem: ${imageFile.path}");
-        var imageStream = http.ByteStream(imageFile.openRead());
-        var length = await imageFile.length();
+        final fileName = path.basename(imageFile.path);
+        final extension = path.extension(fileName).toLowerCase();
 
-        String mimeType = imageFile.path.endsWith('.png') ? 'png' : 'jpeg';
-        var multipartFile = http.MultipartFile(
-          'imagem',
-          imageStream,
-          length,
-          filename: imageFile.path.split('/').last,
-          contentType: MediaType('image', mimeType),
+        // Cria o MultipartFile com o tipo de conteúdo correto
+        final file = await MultipartFile.fromFile(
+          imageFile.path,
+          filename: fileName,
+          contentType: MediaType('image', extension.replaceAll('.', '')),
         );
 
-        request.files.add(multipartFile);
+        // Adiciona a imagem com a chave correta que o backend espera
+        formData.files.add(MapEntry('imagem', file));
       }
 
-      print("Enviando requisição para ${request.url}");
-      print("Headers: ${request.headers}");
-      print("Campos do formulário: ${request.fields}");
-      print(
-          "Arquivos anexados: ${request.files.map((file) => file.filename).toList()}");
+      // Configura os headers corretamente
+      final headers = {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        // Não definimos Content-Type aqui, o Dio vai configurar automaticamente para multipart/form-data
+      };
 
-      var streamedResponse = await request.send();
-      var response = await http.Response.fromStream(streamedResponse);
+      // Faz a requisição com logging detalhado
+      print('Enviando requisição...');
+      print('Headers: $headers');
+      print('FormData fields: ${formData.fields}');
+      print('FormData files: ${formData.files}');
 
-      print("Resposta da API: ${response.statusCode}");
-      print("Corpo da resposta: ${response.body}");
+      final response = await _dio.post(
+        '/api/post',
+        data: formData,
+        options: Options(
+          headers: headers,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+        onSendProgress: (sent, total) {
+          if (total != -1) {
+            final progress = (sent / total * 100).toStringAsFixed(2);
+            print('Progress: $progress%');
+          }
+        },
+      );
 
-      if (response.statusCode == 200) {
-        return json.decode(response.body);
+      print('Resposta recebida:');
+      print('Status code: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = response.data;
+        String? imageUrl;
+
+        // Processa a URL da imagem
+        if (responseData['data'] != null) {
+          String? imagePath;
+          if (responseData['data']['link_direto'] != null) {
+            imagePath = responseData['data']['link_direto'];
+          } else if (responseData['data']['imagem'] != null) {
+            imagePath = responseData['data']['imagem'];
+          }
+
+          // Converte o caminho relativo em URL completa
+          if (imagePath != null) {
+            imageUrl = getFullImageUrl(imagePath);
+          }
+        }
+
+        return {
+          'success': true,
+          'message': responseData['message'] ?? 'Post criado com sucesso',
+          'image': imageUrl,
+          'data': responseData['data'],
+        };
       } else {
-        throw Exception('Erro ao criar post: ${response.body}');
+        print('Erro na resposta: ${response.data}');
+        return {
+          'success': false,
+          'message': response.data['message'] ?? 'Erro ao criar post',
+        };
       }
+    } on DioException catch (e) {
+      print('DioException durante upload:');
+      print('Message: ${e.message}');
+      print('Response: ${e.response?.data}');
+      print('Request: ${e.requestOptions.data}');
+      print('Headers: ${e.requestOptions.headers}');
+      return {'success': false, 'message': 'Erro na requisição: ${e.message}'};
     } catch (e) {
-      print("Erro ao criar post: $e");
+      print('Erro inesperado durante upload: $e');
       return {'success': false, 'message': 'Erro ao criar post'};
     }
   }
@@ -538,7 +619,6 @@ class ApiService {
   Future<Map<String, dynamic>> fetchPosts({int page = 1}) async {
     try {
       final token = await _getToken();
-
       final response = await _client.get(
         Uri.parse('$baseUrl/api/post?page=$page&include=user'),
         headers: {
@@ -549,14 +629,28 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final decodedResponse = json.decode(response.body);
-        return decodedResponse; // Retorna tudo, sem filtrar nada
+
+        // Usa o link_completo ao invés do campo imagem
+        if (decodedResponse['data'] != null &&
+            decodedResponse['data']['data'] != null) {
+          var posts = decodedResponse['data']['data'] as List;
+          for (var post in posts) {
+            if (post['link_completo'] != null) {
+              post['imagem'] = post['link_completo'];
+            }
+          }
+        }
+
+        return decodedResponse;
       } else {
+        print('Error response: ${response.body}');
         return {
           'success': false,
           'message': 'Erro ao buscar posts: ${response.body}',
         };
       }
     } catch (e) {
+      print('Exception in fetchPosts: $e');
       return {
         'success': false,
         'message': 'Erro de conexão',

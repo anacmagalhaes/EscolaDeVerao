@@ -37,6 +37,8 @@ class _PostsScreenState extends State<PostsScreen> {
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    print('Imagem selecionada: ${image?.path}');
+
     if (image != null) {
       final File file = File(image.path);
       final int fileSize = await file.length();
@@ -47,6 +49,10 @@ class _PostsScreenState extends State<PostsScreen> {
         _imageName = image.name;
         _imageSize = size;
       });
+
+      print('Imagem carregada: $_imageName, Tamanho: $_imageSize');
+    } else {
+      print('Nenhuma imagem foi selecionada.');
     }
   }
 
@@ -59,57 +65,123 @@ class _PostsScreenState extends State<PostsScreen> {
   }
 
   Future<void> _handlePost() async {
-    String? token = await apiService.getToken();
-    String content = postsController.text.trim();
-    String userId = widget.user.id;
-
-    if (token == null) {
-      print('Erro: Token não encontrado. Usuário não autenticado.');
-      return;
-    }
-
-    if (content.isNotEmpty || _selectedImage != null) {
-      try {
-        var response = await apiService.createPost(
-          content: content,
-          token: token,
-          userId: userId,
-          imageFile: _selectedImage,
+    try {
+      // 1. Verificação do token
+      String? token = await apiService.getToken();
+      if (token == null) {
+        print('Erro: Token não encontrado.');
+        Fluttertoast.showToast(
+          msg: 'Erro de autenticação',
+          backgroundColor: Colors.red,
         );
+        return;
+      }
 
-        if (response['success'] == true) {
-          Fluttertoast.showToast(
-            msg: response['message'],
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.greenAccent,
-            textColor: Colors.white,
-          );
+      // 2. Verificação do conteúdo
+      String content = postsController.text.trim();
+      String userId = widget.user.id.toString();
 
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(user: widget.user),
-              ),
+      // 3. Verificação detalhada da imagem
+      if (_selectedImage != null) {
+        print('\nVerificando imagem selecionada:');
+        print('Path: ${_selectedImage!.path}');
+        print('Nome do arquivo: ${_selectedImage!.path.split('/').last}');
+
+        // Verifica se o arquivo existe
+        bool fileExists = await _selectedImage!.exists();
+        print('Arquivo existe: $fileExists');
+
+        if (fileExists) {
+          // Verifica o tamanho do arquivo
+          int fileSize = await _selectedImage!.length();
+          print(
+              'Tamanho do arquivo: ${(fileSize / 1024).toStringAsFixed(2)}KB');
+
+          // Verifica a extensão do arquivo
+          String extension = _selectedImage!.path.split('.').last.toLowerCase();
+          print('Extensão do arquivo: $extension');
+
+          // Valida a extensão
+          if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+            Fluttertoast.showToast(
+              msg: 'Formato de arquivo inválido. Use JPG ou PNG.',
+              backgroundColor: Colors.red,
             );
-          });
+            return;
+          }
         } else {
           Fluttertoast.showToast(
-            msg: "${response['message']}. Tente novamente!",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
+            msg: 'Arquivo de imagem não encontrado',
             backgroundColor: Colors.red,
-            textColor: Colors.white,
           );
+          return;
         }
-      } catch (e) {
-        print("Erro ao criar o post: $e");
       }
-    } else {
-      ErrorModal(context,
+
+      // 4. Validação de conteúdo
+      if (content.isEmpty && _selectedImage == null) {
+        ErrorModal(
+          context,
           errorMessage: 'Adicione um texto ou uma imagem!',
-          title: 'Erro ao criar o post');
+          title: 'Erro ao criar post',
+        );
+        return;
+      }
+
+      // 5. Criação do post com logs detalhados
+      print('\nIniciando criação do post:');
+      print('Conteúdo: $content');
+      print('User ID: $userId');
+      print('Imagem incluída: ${_selectedImage != null}');
+
+      var response = await apiService.createPost(
+        content: content,
+        token: token,
+        userId: userId,
+        imageFile: _selectedImage,
+      );
+
+      print('\nResposta do servidor:');
+      print('Success: ${response['success']}');
+      print('Message: ${response['message']}');
+      print('Image URL: ${response['image']}');
+      print('Data: ${response['data']}');
+
+      // 6. Tratamento da resposta
+      if (response['success'] == true) {
+        // Verifica se a imagem foi processada corretamente
+        if (_selectedImage != null && response['image'] == null) {
+          print('Alerta: Imagem foi enviada mas URL não retornou do servidor');
+        }
+
+        Fluttertoast.showToast(
+          msg: response['message'],
+          backgroundColor: Colors.green,
+        );
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(
+              user: widget.user,
+              imageUrl: response['image'],
+            ),
+          ),
+        );
+      } else {
+        print('Erro na resposta: ${response['message']}');
+        Fluttertoast.showToast(
+          msg: response['message'] ?? 'Erro ao criar post',
+          backgroundColor: Colors.red,
+        );
+      }
+    } catch (e, stackTrace) {
+      print("Erro ao criar post: $e");
+      print("Stack trace: $stackTrace");
+      Fluttertoast.showToast(
+        msg: 'Erro inesperado ao criar post',
+        backgroundColor: Colors.red,
+      );
     }
   }
 
