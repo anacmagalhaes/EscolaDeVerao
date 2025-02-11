@@ -1,4 +1,5 @@
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/widgets/custom_app_bar_error.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_card_schedule.dart';
@@ -19,16 +20,16 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  final List<String> cronogramas = [
-    'Automação com Python: Do Básico aos Bots',
-    'Engenharia de Dados e a Nova era da Análise Preditiva',
-    'Machine Learning para Profissionais de TI',
-  ];
-  final List<String> palestrantes = [
-    'Rafael Monteiro Silva',
-    'Ana Beatriz Almeida',
-    'José Carlos Oliveira',
-  ];
+  final ApiService _apiService = ApiService();
+  List<dynamic> events = [];
+  bool isLoading = true;
+  String? error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents(); // Adicione esta linha
+  }
 
   int _currentIndex = 1;
   void _onItemTapped(int index) {
@@ -57,6 +58,34 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           },
         ),
       );
+    }
+  }
+
+  Future<void> _loadEvents() async {
+    try {
+      setState(() {
+        isLoading = true;
+        error = null; // Limpa erros anteriores
+      });
+
+      print('Iniciando carregamento de eventos');
+      final result = await _apiService.fetchEvents();
+      print('Resultado da API: $result');
+
+      setState(() {
+        isLoading = false;
+        if (result['success']) {
+          events = result['data'];
+        } else {
+          error = result['message'] ?? 'Erro desconhecido ao carregar eventos';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        error = 'Erro ao carregar eventos: $e';
+      });
+      print('Erro ao carregar eventos: $e'); // Para debug
     }
   }
 
@@ -97,14 +126,45 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                           ],
                         ),
                       ),
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: cronogramas.length,
-                        itemBuilder: (context, index) {
-                          return CustomCardSchedule(index: index);
-                        },
-                      ),
+                      if (isLoading)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: CircularProgressIndicator(
+                              color: AppColors.orangePrimary,
+                            ),
+                          ),
+                        )
+                      else if (error != null)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(error!),
+                          ),
+                        )
+                      else if (events.isEmpty)
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(20.0),
+                            child: Text(
+                              'Não existem eventos',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.quaternaryGrey,
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: events.length,
+                          itemBuilder: (context, index) {
+                            return CustomCardSchedule(event: events[index]);
+                          },
+                        ),
                     ],
                   ),
                 )

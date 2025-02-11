@@ -43,6 +43,8 @@ dependencies:
   android_intent_plus:
   provider:
   fluttertoast:
+  image_picker: 
+  http_parser: 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

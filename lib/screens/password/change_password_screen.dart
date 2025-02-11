@@ -1,6 +1,7 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/screens/modals/checked_modal.dart';
 import 'package:escoladeverao/screens/modals/new_password_modal.dart';
+import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
@@ -10,6 +11,7 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   final User user;
@@ -70,8 +72,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
       if (response['success']) {
         // Senha alterada com sucesso: exibir modal
-        CheckedModal(context,
-            checkedMessage: 'Sua senha foi alterada com sucesso!');
+        Fluttertoast.showToast(
+          msg: "Senha alterada",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.greenAccent,
+          textColor: Colors.white,
+        );
+
+        Future.delayed(const Duration(seconds: 1), () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SettingsScreen(
+                  user: widget.user, scannedUser: widget.scannedUser),
+            ),
+          );
+        });
         passwordController.clear();
         confirmPasswordController.clear();
       } else {

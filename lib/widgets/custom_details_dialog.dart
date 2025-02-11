@@ -4,31 +4,18 @@ import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-void CustomDetailsDialog(BuildContext context, int index) {
-  final List<String> texto = [
-    'Rafael Monteiro Silva - Nesta palestra, serão exploradas as principais tendências de IA na educação, incluindo plataformas de aprendizado adaptativo e análise de dados educacionais.Nesta palestra, serão exploradas as principais tendências de IA na educação.',
-    'Ana Beatriz Almeida - Nesta palestra, serão exploradas as principais tendências de IA na educação, incluindo plataformas de aprendizado adaptativo e análise de dados educacionais.Nesta palestra, serão exploradas as principais tendências de IA na educação.',
-    'José Carlos Oliveira - Nesta palestra, serão exploradas as principais tendências de IA na educação, incluindo plataformas de aprendizado adaptativo e análise de dados educacionais.Nesta palestra, serão exploradas as principais tendências de IA na educação.',
-  ];
-  final List<String> titulo = [
-    'Automação com Python: Do Básico aos Bots',
-    'Engenharia de Dados e a Nova era da Análise Preditiva',
-    'Machine Learning para Profissionais de TI',
-  ];
-
+void CustomDetailsDialog(BuildContext context, Map<String, dynamic> event) {
   showDialog(
     context: context,
-    barrierColor:
-        AppColors.background.withOpacity(0.3), // Fundo semi-transparente
-    barrierDismissible: true, // Permite fechar o dialog tocando fora
+    barrierColor: AppColors.background.withOpacity(0.3),
+    barrierDismissible: true,
     builder: (context) {
       return Dialog(
-        backgroundColor:
-            Colors.transparent, // Tornar o fundo do dialog transparente
+        backgroundColor: Colors.transparent,
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white, // Cor do conteúdo do dialog
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -37,7 +24,7 @@ void CustomDetailsDialog(BuildContext context, int index) {
               Column(
                 children: [
                   Fonts(
-                      text: titulo[index],
+                      text: event['titulo'],
                       fontSize: 24,
                       textAlign: TextAlign.center,
                       maxLines: 4,
@@ -45,7 +32,7 @@ void CustomDetailsDialog(BuildContext context, int index) {
                       color: AppColors.blueMarine),
                   SizedBox(height: 20.h),
                   Fonts(
-                      text: texto[index],
+                      text: '${event['descricao']}',
                       fontSize: 16,
                       textAlign: TextAlign.center,
                       maxLines: 10,
