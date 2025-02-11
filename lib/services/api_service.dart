@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  final String baseUrl = 'https://f9bc-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://6748-187-44-58-94.ngrok-free.app';
   late final http.Client _client;
 
   ApiService() {
@@ -423,30 +424,59 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> createPost(
-      String content, String token, String userID) async {
+  Future<Map<String, dynamic>> createPost({
+    required String content,
+    required String token,
+    required String userId,
+    File? imageFile,
+  }) async {
     try {
-      final response = await http.post(
+      var request = http.MultipartRequest(
+        'POST',
         Uri.parse('$baseUrl/api/post'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
-        body: {
-          'texto': content,
-        },
       );
 
+      request.headers['Authorization'] = 'Bearer $token';
+      request.fields['texto'] = content;
+      request.fields['user_id'] = userId;
+
+      if (imageFile != null) {
+        print("Enviando imagem: ${imageFile.path}");
+        var imageStream = http.ByteStream(imageFile.openRead());
+        var length = await imageFile.length();
+
+        String mimeType = imageFile.path.endsWith('.png') ? 'png' : 'jpeg';
+        var multipartFile = http.MultipartFile(
+          'imagem',
+          imageStream,
+          length,
+          filename: imageFile.path.split('/').last,
+          contentType: MediaType('image', mimeType),
+        );
+
+        request.files.add(multipartFile);
+      }
+
+      print("Enviando requisição para ${request.url}");
+      print("Headers: ${request.headers}");
+      print("Campos do formulário: ${request.fields}");
+      print(
+          "Arquivos anexados: ${request.files.map((file) => file.filename).toList()}");
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      print("Resposta da API: ${response.statusCode}");
+      print("Corpo da resposta: ${response.body}");
+
       if (response.statusCode == 200) {
-        return json.decode(response.body); // Retorna a resposta da API como Map
+        return json.decode(response.body);
       } else {
         throw Exception('Erro ao criar post: ${response.body}');
       }
     } catch (e) {
       print("Erro ao criar post: $e");
-      return {
-        'success': false,
-        'message': 'Erro ao criar post'
-      }; // Retorna um erro genérico
+      return {'success': false, 'message': 'Erro ao criar post'};
     }
   }
 
@@ -548,6 +578,52 @@ class ApiService {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to like post');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchEvents() async {
+    try {
+      final token = await _getToken();
+
+      if (token == null) {
+        return {
+          'success': false,
+          'message': 'Sessão expirada. Por favor, faça login novamente.',
+        };
+      }
+
+      final response = await _client.get(
+        Uri.parse('$baseUrl/api/eventos'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json',
+        },
+      );
+
+      print('Status code: ${response.statusCode}');
+      print('Resposta do servidor: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final decodedResponse = jsonDecode(response.body);
+        return {
+          'success': true,
+          'message': decodedResponse['message'],
+          'data': decodedResponse['data'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Erro ao buscar eventos: ${response.body}',
+        };
+      }
+    } catch (e) {
+      print('Erro ao buscar eventos: $e');
+      return {
+        'success': false,
+        'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
+      };
     }
   }
 
