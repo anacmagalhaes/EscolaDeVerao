@@ -6,37 +6,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utils/colors_utils.dart';
 
 class CustomCardSchedule extends StatelessWidget {
-  final int index;
+  final Map<String, dynamic> event;
 
-  const CustomCardSchedule({super.key, required this.index});
+  const CustomCardSchedule({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> cronogramas = [
-      'Automação com Python: Do Básico aos Bots',
-      'Engenharia de Dados e a Nova era da Análise Preditiva',
-      'Machine Learning para Profissionais de TI',
-    ];
-    final List<String> palestrantes = [
-      'Rafael Monteiro Silva',
-      'Ana Beatriz Almeida',
-      'José Carlos Oliveira',
-    ];
-    final List<String> dia = [
-      '25 Fev',
-      '25 Fev',
-      '26 Fev',
-    ];
-    final List<String> hora = [
-      '11:00 - 12:00',
-      '11:00 - 12:00',
-      '11:00 - 12:00',
-    ];
-    final List<String> local = [
-      'Unimontes',
-      'IFNMG',
-      'Unimontes',
-    ];
+    // Format date and time strings
+    DateTime startDate = DateTime.parse(event['data_inicio']);
+    DateTime endDate = DateTime.parse(event['data_fim']);
+
+    String dia = '${startDate.day} ${_getMonthAbbreviation(startDate.month)}';
+    String hora = '${_formatTime(startDate)} - ${_formatTime(endDate)}';
 
     return Card(
       margin: EdgeInsets.all(16.h),
@@ -59,8 +40,9 @@ class CustomCardSchedule extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: Image.asset(
-                      'assets/images/person.png'), //puxar de acordo com o bd (se vier pelo bd)
+                  child: event['imagem'] != null && event['imagem'].isNotEmpty
+                      ? Image.network(event['link_completo'])
+                      : Image.asset('assets/images/person.png'),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -68,14 +50,14 @@ class CustomCardSchedule extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Fonts(
-                          text: cronogramas[index],
+                          text: event['titulo'],
                           maxLines: 2,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.blueMarine),
                       const SizedBox(height: 4),
                       Fonts(
-                          text: palestrantes[index],
+                          text: event['palestrante'],
                           maxLines: 2,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -93,7 +75,7 @@ class CustomCardSchedule extends StatelessWidget {
                 Image.asset('assets/icons/local_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
-                    text: local[index],
+                    text: event['local'],
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.quaternaryGrey),
@@ -101,7 +83,7 @@ class CustomCardSchedule extends StatelessWidget {
                 Image.asset('assets/icons/calendar_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
-                    text: dia[index],
+                    text: dia,
                     maxLines: 2,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -110,7 +92,7 @@ class CustomCardSchedule extends StatelessWidget {
                 Image.asset('assets/icons/clock_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
-                    text: hora[index],
+                    text: hora,
                     maxLines: 2,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -135,12 +117,34 @@ class CustomCardSchedule extends StatelessWidget {
                 backgroundColor: AppColors.orangePrimary,
               ),
               onPressed: () {
-                CustomDetailsDialog(context, index);
+                CustomDetailsDialog(context, event);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  String _getMonthAbbreviation(int month) {
+    const months = [
+      'Jan',
+      'Fev',
+      'Mar',
+      'Abr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Set',
+      'Out',
+      'Nov',
+      'Dez'
+    ];
+    return months[month - 1];
+  }
+
+  String _formatTime(DateTime date) {
+    return '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 }
