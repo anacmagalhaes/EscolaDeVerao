@@ -72,6 +72,7 @@ class _CustomCardHomeState extends State<CustomCardHome> {
   Widget build(BuildContext context) {
     final userName = widget.post['user']?['name'] ?? 'Usuário';
     final postText = widget.post['texto'] ?? '';
+    print('Image URL: ${widget.post['imagem']}');
 
     return Card(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -119,7 +120,48 @@ class _CustomCardHomeState extends State<CustomCardHome> {
                     maxLines: 20,
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
-                    color: AppColors.textPrimary)
+                    color: AppColors.textPrimary),
+                if (widget.post['imagem'] != null)
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.h),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        widget.post['imagem'],
+                        width: double.infinity,
+                        height: 200.h,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            print(
+                                'Imagem carregada com sucesso: ${widget.post['imagem']}');
+                            return child;
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          print('Erro ao carregar imagem: $error');
+                          print('URL que falhou: ${widget.post['imagem']}');
+                          return const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.image_not_supported, size: 50),
+                                Text('Não foi possível carregar a imagem'),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
               ],
             ),
             // Área de Likes
