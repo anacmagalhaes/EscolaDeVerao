@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://2af8-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://b9a4-187-44-58-94.ngrok-free.app';
   late final http.Client _client;
   late Dio _dio;
 
@@ -207,7 +207,6 @@ class ApiService {
   Future<User> fetchUserById(String userId) async {
     try {
       final token = await _getToken();
-
       if (token == null) {
         throw Exception('Token não encontrado');
       }
@@ -222,79 +221,94 @@ class ApiService {
         },
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
-
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // Verificar se os dados estão dentro de uma chave 'data' ou 'user'
         final userData = data['data'] ?? data['user'] ?? data;
-        return User.fromJson(userData);
+
+        // Construa a URL completa da imagem
+        String? imagemUrl = userData['imagem'];
+        if (imagemUrl != null && !imagemUrl.startsWith('http')) {
+          imagemUrl = '$baseUrl/storage/$imagemUrl';
+        }
+
+        return User.fromJson({
+          ...userData,
+          'imagem': imagemUrl,
+        });
       } else {
         throw Exception('Falha ao carregar usuário: ${response.body}');
       }
     } catch (e) {
-      print('Erro ao buscar usuário: $e');
       throw Exception('Falha na conexão com o servidor: $e');
     }
   }
 
-  // Atalizar perfil
+  String getFullImageUrlNew(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return '';
+    }
+
+    // If the image path is a file path (e.g., file://), ignore it.
+    if (imagePath.startsWith('file://')) {
+      return ''; // Or handle it differently depending on your app logic.
+    }
+
+    // If it starts with a slash, remove it to prevent double slashes in the URL
+    final cleanPath =
+        imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+
+    // Returns the complete URL with the base URL
+    return '$baseUrl/$cleanPath';
+  }
+
+  // In your ApiService class, update the updateProfile method to include image handling
   Future<Map<String, dynamic>> updateProfile(
-      String userId, Map<String, dynamic> updateData) async {
+      String userId, Map<String, dynamic> updateData,
+      {File? imageFile}) async {
     try {
       final token = await _getToken();
-
       if (token == null) {
         return {
           'success': false,
-          'message': 'Sessão expirada. Por favor, faça login novamente.',
+          'message': 'Sessão expirada. Faça login novamente.'
         };
       }
 
-      final url = Uri.parse('$baseUrl/api/user/$userId');
-      print('Tentando atualizar perfil na URL: $url');
-      print('Dados enviados: $updateData');
+      final url = '$baseUrl/api/user/$userId';
 
-      // Changed from put to post
-      final response = await _client.post(
+      FormData formData = FormData.fromMap(updateData);
+
+      if (imageFile != null) {
+        formData.files.add(MapEntry(
+          'imagem', // Make sure this field name matches your API expectation
+          await MultipartFile.fromFile(imageFile.path, filename: 'profile.jpg'),
+        ));
+      }
+
+      final response = await Dio().post(
         url,
-        headers: {
-          'Content-Type': 'application/json',
+        data: formData,
+        options: Options(headers: {
           'Authorization': 'Bearer $token',
-          'ngrok-skip-browser-warning': 'true',
           'Accept': 'application/json',
-        },
-        body: jsonEncode(updateData),
+          'Content-Type': 'multipart/form-data',
+        }),
       );
 
-      print('Status code: ${response.statusCode}');
+      print('Response data: ${response.data}');
 
       if (response.statusCode == 200) {
-        final decodedResponse = jsonDecode(response.body);
         return {
           'success': true,
-          'data': decodedResponse['data'] ?? decodedResponse,
-          'message': 'Perfil atualizado com sucesso',
+          'data': response.data,
+          'message': 'Perfil atualizado com sucesso'
         };
       } else {
-        // Simplified error message
-        String errorMessage = 'Erro ao atualizar perfil';
-        try {
-          final errorResponse = jsonDecode(response.body);
-          errorMessage = errorResponse['message'] ?? errorMessage;
-        } catch (_) {}
-
-        return {
-          'success': false,
-          'message': errorMessage,
-        };
+        return {'success': false, 'message': 'Erro ao atualizar perfil'};
       }
     } catch (e) {
-      return {
-        'success': false,
-        'message': 'Erro de conexão. Verifique sua internet e tente novamente.',
-      };
+      print('Erro: $e');
+      return {'success': false, 'message': 'Erro de conexão. Tente novamente.'};
     }
   }
 

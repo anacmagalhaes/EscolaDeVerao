@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:escoladeverao/controllers/profile_edit_controller.dart';
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/models/user_provider_model.dart';
@@ -13,6 +15,7 @@ import 'package:escoladeverao/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 //verificar por quê não está enviando o telefone
@@ -37,6 +40,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   late ScrollController _scrollController;
   bool _showAppBar = true;
   bool _isLoading = false;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -68,6 +72,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   Future<void> _updateProfile() async {
     if (_isLoading) return;
 
@@ -83,21 +97,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
         'lattes': latesEditController.text,
       };
 
-      print(nameEditController);
       final result = await apiService.updateProfile(
         widget.user.id ?? '',
         updateData,
+        imageFile: _selectedImage,
       );
 
-      // Explicitly check the result type
-      if (result is Map && result['success'] == true) {
+      if (result['success'] == true) {
+        // Fetch the updated user data immediately after update
         final updatedUser =
             await apiService.fetchUserById(widget.user.id ?? '');
 
-        Provider.of<UserProvider>(context, listen: false)
-            .updateUser(updatedUser);
-
         if (mounted) {
+          // Update the provider with the new user data
+          Provider.of<UserProvider>(context, listen: false)
+              .updateUser(updatedUser);
+
           Fluttertoast.showToast(
             msg: "Perfil atualizado",
             toastLength: Toast.LENGTH_SHORT,
@@ -116,21 +131,13 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
           });
         }
       } else {
-        if (mounted) {
-          ErrorHandler();
-        }
-      }
-    } catch (e, stackTrace) {
-      print('Detailed error: $e');
-      print('Stack trace: $stackTrace');
-
-      if (mounted) {
         ErrorHandler();
       }
+    } catch (e, stackTrace) {
+      print('Erro: $e\nStack trace: $stackTrace');
+      ErrorHandler();
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -300,6 +307,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             ),
 
             // Positioned profile image
+            // Replace the existing image widget with this:
             Positioned(
               top: 120.h - 52.h,
               left: MediaQuery.of(context).size.width / 2 - 52.h,
@@ -307,22 +315,63 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 width: 104.h,
                 height: 104.h,
                 child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/profile.png',
-                    fit: BoxFit.cover,
-                  ),
+                  child: _selectedImage != null
+                      ? Image.file(_selectedImage!, fit: BoxFit.cover)
+                      : Consumer<UserProvider>(
+                          builder: (context, userProvider, child) {
+                            String? imageUrl = widget.user.imagemUrl;
+
+                            return imageUrl != null && imageUrl.isNotEmpty
+                                ? Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    headers: const {
+                                      'Accept': 'image/*',
+                                      'ngrok-skip-browser-warning': 'true',
+                                    },
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: CircularProgressIndicator(
+                                          value: loadingProgress
+                                                      .expectedTotalBytes !=
+                                                  null
+                                              ? loadingProgress
+                                                      .cumulativeBytesLoaded /
+                                                  loadingProgress
+                                                      .expectedTotalBytes!
+                                              : null,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      print('Erro ao carregar imagem: $error');
+                                      return Image.asset(
+                                        'assets/images/profile.png',
+                                        fit: BoxFit.cover,
+                                        width: 104.h,
+                                        height: 104.h,
+                                      );
+                                    },
+                                  )
+                                : Image.asset(
+                                    'assets/images/profile.png',
+                                    fit: BoxFit.cover,
+                                    width: 104.h,
+                                    height: 104.h,
+                                  );
+                          },
+                        ),
                 ),
               ),
             ),
-
             // Edit profile image icon
             Positioned(
               top: 120.h + 24.h,
               left: MediaQuery.of(context).size.width / 2 + 24.h,
               child: GestureDetector(
-                onTap: () {
-                  // Ação para editar a imagem
-                },
+                onTap: _pickImage,
                 child: Container(
                   width: 27.h,
                   height: 27.h,
