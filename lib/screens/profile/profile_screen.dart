@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
 import 'package:escoladeverao/screens/schedule_screen.dart';
@@ -14,6 +15,7 @@ import 'package:escoladeverao/widgets/custom_qr_code.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key, required this.user}) : super(key: key);
@@ -126,12 +128,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 30.h),
+                padding: EdgeInsets.only(top: 30.h, bottom: 10.h),
                 child: SizedBox(
-                  width: 96.h,
-                  height: 96.h,
-                  child: Image.asset('assets/images/profile.png'),
-                ),
+                    width: 95.h,
+                    height: 95.h,
+                    child: Consumer<UserProvider>(
+                      builder: (context, userProvider, child) {
+                        String? imageUrl = currentUser
+                            .imagemUrl; // Use diretamente do currentUser
+
+                        return ClipOval(
+                          child: imageUrl != null && imageUrl.isNotEmpty
+                              ? Image.network(
+                                  imageUrl,
+                                  fit: BoxFit.cover,
+                                  headers: const {
+                                    'Accept': 'image/*',
+                                    'ngrok-skip-browser-warning': 'true',
+                                  },
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        value: loadingProgress
+                                                    .expectedTotalBytes !=
+                                                null
+                                            ? loadingProgress
+                                                    .cumulativeBytesLoaded /
+                                                loadingProgress
+                                                    .expectedTotalBytes!
+                                            : null,
+                                      ),
+                                    );
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    print('Erro ao carregar imagem: $error');
+                                    return Image.asset(
+                                      'assets/images/profile.png',
+                                      fit: BoxFit.cover,
+                                      width: 95.h,
+                                      height: 95.h,
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  'assets/images/profile.png',
+                                  fit: BoxFit.cover,
+                                  width: 95.h,
+                                  height: 95.h,
+                                ),
+                        );
+                      },
+                    )),
               ),
             ],
           ),
