@@ -31,23 +31,43 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isAdmin = false;
   List<dynamic> _posts = [];
   bool _isLoading = true;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
+  bool _hasMorePosts = true;
+  final ScrollController _scrollController = ScrollController();
   late User currentUser;
 
   @override
   void initState() {
     super.initState();
-    _fetchPosts();
+    _fetchPosts(); // Carrega os posts iniciais
     currentUser = widget.user;
     _checkAdminStatus();
     _fetchUserData();
+    _setupScrollController();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _setupScrollController() {
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !_isLoadingMore &&
+          _hasMorePosts) {
+        _loadMorePosts();
+      }
+    });
   }
 
   Future<void> _fetchUserData() async {
     try {
-      // Busca os dados atualizados do usuário
       final result = await apiService.fetchUserById(widget.user.id);
       if (result != null) {
-        // Atualiza o provider com os dados mais recentes
         if (!mounted) return;
         Provider.of<UserProvider>(context, listen: false).updateUser(result);
       }
@@ -57,33 +77,77 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchPosts() async {
-    try {
-      final result = await apiService.fetchPosts();
+    if (!_hasMorePosts && _currentPage > 1) return;
 
-      if (result['success']) {
-        setState(() {
-          _posts = result['data']['data'] ??
-              []; // Agora os posts são extraídos corretamente
-          _isLoading = false;
-        });
+    try {
+      final result = await apiService.fetchPosts(page: _currentPage);
+
+      if (result['success'] != false) {
+        final newPosts = result['data']['data'] as List;
+        final currentPage = result['data']['current_page'] as int;
+        final lastPage = result['data']['last_page'] as int;
+
+        if (mounted) {
+          setState(() {
+            if (_currentPage == 1) {
+              _posts = newPosts;
+            } else {
+              _posts.addAll(newPosts);
+            }
+            _hasMorePosts = currentPage < lastPage;
+            _isLoading = false;
+            _isLoadingMore = false;
+          });
+        }
       } else {
-        setState(() => _isLoading = false);
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _isLoadingMore = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message'] ?? 'Erro ao carregar posts'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(result['message'] ?? 'Erro ao carregar posts'),
+          const SnackBar(
+            content: Text('Erro de conexão ao carregar posts'),
             backgroundColor: Colors.red,
           ),
         );
       }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro de conexão ao carregar posts'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
+  }
+
+  Future<void> _loadMorePosts() async {
+    if (!_hasMorePosts || _isLoadingMore) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    _currentPage++;
+    await _fetchPosts();
+  }
+
+  Future<void> _refreshPosts() async {
+    setState(() {
+      _currentPage = 1;
+      _hasMorePosts = true;
+      _posts.clear();
+      _isLoading = true;
+    });
+    await _fetchPosts();
   }
 
   void _onItemTapped(int index) {
@@ -302,36 +366,79 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Stack(
                     children: [
-                      _isLoading
+                      _isLoading && _posts.isEmpty
                           ? const Center(
                               child: CircularProgressIndicator(
                               color: AppColors.orangePrimary,
                             ))
                           : _posts.isEmpty
                               ? const Center(
-                                  child: Text('Não há posts'),
+                                  child: Text(
+                                    'Não há posts',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.grey),
+                                  ),
                                 )
-                              : SingleChildScrollView(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 16.h),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(height: 16.h),
-                                        ListView.builder(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          itemCount: _posts.length,
-                                          itemBuilder: (context, index) {
-                                            return CustomCardHome(
-                                              post: _posts[index],
-                                            );
-                                          },
-                                        ),
-                                      ],
+                              : RefreshIndicator(
+                                  onRefresh: _refreshPosts,
+                                  child: SingleChildScrollView(
+                                    controller: _scrollController,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.h),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 16.h),
+                                          if (_isLoading && _posts.isEmpty)
+                                            const Center(
+                                              child: CircularProgressIndicator(
+                                                color: AppColors.orangePrimary,
+                                              ),
+                                            )
+                                          else if (_posts.isEmpty)
+                                            const Center(
+                                              child: Text(
+                                                'Não há posts',
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.grey),
+                                              ),
+                                            )
+                                          else
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemCount: _posts.length +
+                                                  (_hasMorePosts ? 1 : 0),
+                                              itemBuilder: (context, index) {
+                                                if (index == _posts.length) {
+                                                  return _isLoadingMore
+                                                      ? Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  16.h),
+                                                          child: const Center(
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              color: AppColors
+                                                                  .orangePrimary,
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : const SizedBox();
+                                                }
+                                                return CustomCardHome(
+                                                  post: _posts[index],
+                                                );
+                                              },
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

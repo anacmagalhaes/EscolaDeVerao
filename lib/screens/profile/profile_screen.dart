@@ -151,6 +151,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     if (loadingProgress == null) return child;
                                     return Center(
                                       child: CircularProgressIndicator(
+                                        color: AppColors.background,
                                         value: loadingProgress
                                                     .expectedTotalBytes !=
                                                 null
