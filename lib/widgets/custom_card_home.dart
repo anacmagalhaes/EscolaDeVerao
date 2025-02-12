@@ -126,39 +126,46 @@ class _CustomCardHomeState extends State<CustomCardHome> {
                     padding: EdgeInsets.only(top: 10.h),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        widget.post['imagem'],
-                        width: double.infinity,
-                        height: 200.h,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            print(
-                                'Imagem carregada com sucesso: ${widget.post['imagem']}');
-                            return child;
-                          }
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          );
+                      child: GestureDetector(
+                        onTap: () {
+                          _showFullImage(widget.post['imagem']);
                         },
-                        errorBuilder: (context, error, stackTrace) {
-                          print('Erro ao carregar imagem: $error');
-                          print('URL que falhou: ${widget.post['imagem']}');
-                          return const Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.image_not_supported, size: 50),
-                                Text('Não foi possível carregar a imagem'),
-                              ],
-                            ),
-                          );
-                        },
+                        child: Image.network(
+                          widget.post['imagem'],
+                          width: double.infinity,
+                          height: 200.h,
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) {
+                              print(
+                                  'Imagem carregada com sucesso: ${widget.post['imagem']}');
+                              return child;
+                            }
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.orangePrimary,
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            print('Erro ao carregar imagem: $error');
+                            print('URL que falhou: ${widget.post['imagem']}');
+                            return const Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.image_not_supported, size: 50),
+                                  Text('Não foi possível carregar a imagem'),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -198,6 +205,51 @@ class _CustomCardHomeState extends State<CustomCardHome> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showFullImage(String? imageUrl) {
+    if (imageUrl == null || imageUrl.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context), // Fecha ao clicar fora
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.orangeSecond.withOpacity(0.8),
+              ),
+              padding: EdgeInsets.all(2),
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.circular(12), // Define o arredondamento
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  headers: const {
+                    'Accept': 'image/*',
+                    'ngrok-skip-browser-warning': 'true',
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          12), // Também arredonda a imagem de erro
+                      child: Image.asset(
+                        'assets/images/profile.png',
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
