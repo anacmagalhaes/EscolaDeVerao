@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
-import 'package:escoladeverao/screens/modals/verification_email_modal.dart';
-import 'package:escoladeverao/screens/modals/verification_error_modal.dart';
+import 'package:escoladeverao/modals/verification_email_modal.dart';
+import 'package:escoladeverao/modals/verification_error_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';

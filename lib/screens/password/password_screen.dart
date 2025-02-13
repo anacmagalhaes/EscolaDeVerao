@@ -1,7 +1,7 @@
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
-import 'package:escoladeverao/screens/modals/new_password_modal.dart';
+import 'package:escoladeverao/modals/new_password_modal.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
