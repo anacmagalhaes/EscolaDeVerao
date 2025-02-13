@@ -117,7 +117,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             msg: "Perfil atualizado",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.black87,
+            backgroundColor: Colors.green,
             textColor: Colors.white,
           );
 

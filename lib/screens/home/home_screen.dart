@@ -11,6 +11,7 @@ import 'package:escoladeverao/widgets/custom_card_home.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,12 +106,16 @@ class _HomeScreenState extends State<HomeScreen> {
             _isLoading = false;
             _isLoadingMore = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result['message'] ?? 'Erro ao carregar posts'),
-              backgroundColor: Colors.red,
-            ),
+
+          Fluttertoast.showToast(
+            msg: result['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
           );
+
+          Future.delayed(const Duration(seconds: 5));
         }
       }
     } catch (e) {
@@ -119,12 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
           _isLoading = false;
           _isLoadingMore = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro de conexão ao carregar posts'),
-            backgroundColor: Colors.red,
-          ),
+        Fluttertoast.showToast(
+          msg: 'Erro de conexão ao carregar posts',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
         );
+
+        Future.delayed(const Duration(seconds: 5));
       }
     }
   }
@@ -187,12 +195,15 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro ao fazer logout. Tente novamente.'),
-          backgroundColor: Colors.red,
-        ),
+      Fluttertoast.showToast(
+        msg: 'Erro ao fazer logout. Tente novamente.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
       );
+
+      Future.delayed(const Duration(seconds: 5));
     }
   }
 

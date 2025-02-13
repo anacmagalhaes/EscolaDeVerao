@@ -1,4 +1,4 @@
-import 'package:escoladeverao/screens/modals/error_modal.dart';
+import 'package:escoladeverao/modals/error_modal.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';

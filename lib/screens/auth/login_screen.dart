@@ -1,6 +1,6 @@
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/modals/resend_email_modal.dart';
+import 'package:escoladeverao/modals/resend_email_modal.dart';
 import 'package:escoladeverao/screens/password/password_screen.dart';
 import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';

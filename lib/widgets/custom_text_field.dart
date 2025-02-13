@@ -91,8 +91,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             decoration: InputDecoration(
               hintText: widget.hintText,
-              hintStyle: const TextStyle(
-                color: AppColors.textPrimary,
+              hintStyle: TextStyle(
+                color: AppColors.textPrimary.withOpacity(0.3),
                 fontFamily: 'Montserrat',
                 fontSize: 14,
                 fontWeight: FontWeight.w400,

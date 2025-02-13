@@ -1,6 +1,6 @@
 import 'package:escoladeverao/models/user_model.dart';
-import 'package:escoladeverao/screens/modals/checked_modal.dart';
-import 'package:escoladeverao/screens/modals/new_password_modal.dart';
+import 'package:escoladeverao/modals/checked_modal.dart';
+import 'package:escoladeverao/modals/new_password_modal.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
