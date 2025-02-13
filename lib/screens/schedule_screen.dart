@@ -99,17 +99,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   CustomAppBarError(
-                      onBackPressed: () {
-                        FocusScope.of(context).unfocus();
-                        /* Navigator.pushReplacement(
+                    onBackPressed: () {
+                      FocusScope.of(context).unfocus();
+                      /* Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const ProfileScreen()),
                         );*/
-                      },
-                      backgroundColor: AppColors.background,
-                      leadingIcon:
-                          Image.asset('assets/icons/angle-left-orange.png')),
+                    },
+                    backgroundColor: AppColors.background,
+                  ),
                 ],
             body: CustomScrollView(
               slivers: [
