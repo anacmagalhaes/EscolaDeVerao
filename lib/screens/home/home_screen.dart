@@ -30,22 +30,30 @@ class _HomeScreenState extends State<HomeScreen> {
   ApiService apiService = ApiService();
   int _currentIndex = 0;
   bool _isAdmin = false;
-  List<dynamic> _posts = [];
-  bool _isLoading = true;
+  static List<dynamic> _posts = []; // Tornamos a lista de posts estática
+  bool _isLoading = false;
   bool _isLoadingMore = false;
   int _currentPage = 1;
   bool _hasMorePosts = true;
   final ScrollController _scrollController = ScrollController();
   late User currentUser;
+  static bool _isFirstLoad = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchPosts(); // Carrega os posts iniciais
     currentUser = widget.user;
     _checkAdminStatus();
     _fetchUserData();
     _setupScrollController();
+
+    if (_isFirstLoad) {
+      setState(() {
+        _isLoading = true;
+      });
+      _fetchPosts();
+      _isFirstLoad = false;
+    }
   }
 
   @override
@@ -114,8 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
             backgroundColor: Colors.red,
             textColor: Colors.white,
           );
-
-          Future.delayed(const Duration(seconds: 5));
         }
       }
     } catch (e) {
@@ -131,8 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
         );
-
-        Future.delayed(const Duration(seconds: 5));
       }
     }
   }
@@ -391,6 +395,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 )
                               : RefreshIndicator(
+                                  backgroundColor: AppColors.orangePrimary,
+                                  color: AppColors.background,
                                   onRefresh: _refreshPosts,
                                   child: SingleChildScrollView(
                                     controller: _scrollController,
@@ -453,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                      if (widget.user.isAdmin) ...[
+                      if (_isAdmin) ...[
                         Positioned(
                           right: 17.h,
                           bottom: 17.h,
