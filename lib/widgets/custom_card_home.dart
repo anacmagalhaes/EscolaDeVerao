@@ -33,37 +33,51 @@ class _CustomCardHomeState extends State<CustomCardHome> {
   @override
   void initState() {
     super.initState();
-    // Inicializa a contagem de likes e o estado do like
     likesCount = widget.post['likes_count'] ?? 0;
-    isLiked =
-        widget.post['is_liked'] ?? false; // Determina se o post já foi curtido
+    isLiked = widget.post['is_liked'] ?? false;
   }
 
   Future<void> _toggleLike() async {
+    // Atualiza o estado local imediatamente
+    setState(() {
+      isLiked = !isLiked;
+      likesCount = isLiked ? likesCount + 1 : likesCount - 1;
+    });
+
+    // Armazena o estado atual para caso precise reverter
+    final previousIsLiked = isLiked;
+    final previousLikesCount = likesCount;
+
+    // Faz a chamada à API em background
     String? token = await apiService.getToken();
     String postId = widget.post['id'].toString();
 
     if (token == null) {
+      // Reverte o estado se não houver token
+      setState(() {
+        isLiked = !isLiked;
+        likesCount = isLiked ? likesCount + 1 : likesCount - 1;
+      });
       print('Erro: Token não encontrado. Usuário não autenticado.');
       return;
     }
-
     try {
-      // Envia a requisição para a API
       var response = await apiService.likePost(postId, token);
 
-      // Se o like foi alternado com sucesso, atualiza a interface
-      if (response['success'] == true) {
+      if (response['success'] != true) {
+        // Reverte o estado se a API retornar erro
         setState(() {
-          isLiked = !isLiked;
-          likesCount = isLiked ? likesCount + 1 : likesCount - 1;
+          isLiked = previousIsLiked;
+          likesCount = previousLikesCount;
         });
-
-        print(response['message']);
-      } else {
         print('Erro ao registrar o like: ${response['message']}');
       }
     } catch (e) {
+      // Reverte o estado em caso de erro na requisição
+      setState(() {
+        isLiked = previousIsLiked;
+        likesCount = previousLikesCount;
+      });
       print('Erro ao dar like: $e');
     }
   }
