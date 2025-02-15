@@ -129,17 +129,17 @@ class _ScanScreenState extends State<ScanScreen> {
                                   jsonDecode(rawValue);
 
                               final scannedUser = User(
-                                id: userData['id'],
-                                name: userData['name'],
-                                sobrenome: userData['sobrenome'],
-                                email: userData['email'],
-                                cpf: userData['cpf'],
-                                telefone: userData['telefone'],
-                                github: userData['github'],
-                                linkedin: userData['linkedin'],
-                                lattes: userData['lattes'],
-                                roles: [],
-                              );
+                                  id: userData['id'],
+                                  name: userData['name'],
+                                  sobrenome: userData['sobrenome'],
+                                  email: userData['email'],
+                                  cpf: userData['cpf'],
+                                  telefone: userData['telefone'],
+                                  github: userData['github'],
+                                  linkedin: userData['linkedin'],
+                                  lattes: userData['lattes'],
+                                  roles: [],
+                                  imagemUrl: userData['imagem']);
 
                               // Tenta salvar a conexão
                               final result = await apiService.saveConnection(
