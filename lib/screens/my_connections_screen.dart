@@ -221,7 +221,8 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                             itemBuilder: (context, index) {
                               final user = connections[index];
                               final connection = Connection(
-                                image: AssetImage('assets/images/profile.png'),
+                                imageUrl: user
+                                    .linkCompleto, // Usando a URL da imagem do usuário
                                 name: user.name,
                                 id: user.id,
                               );

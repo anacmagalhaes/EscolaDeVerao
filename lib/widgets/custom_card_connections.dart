@@ -22,9 +22,46 @@ class CustomCardConnections extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundImage: connection.image,
-              radius: 40,
+            ClipOval(
+              child: connection.imageUrl != null &&
+                      connection.imageUrl!.isNotEmpty
+                  ? Image.network(
+                      connection.imageUrl!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      headers: const {
+                        'Accept': 'image/*',
+                        'ngrok-skip-browser-warning': 'true',
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.orangePrimary,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Erro ao carregar imagem: $error');
+                        return Image.asset(
+                          'assets/images/profile.png',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      'assets/images/profile.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
             ),
             SizedBox(height: 8.0),
             Fonts(
@@ -59,12 +96,12 @@ class CustomCardConnections extends StatelessWidget {
 }
 
 class Connection {
-  final ImageProvider image;
+  final String? imageUrl;
   final String name;
   final String id;
 
   Connection({
-    required this.image,
+    this.imageUrl,
     required this.name,
     required this.id,
   });

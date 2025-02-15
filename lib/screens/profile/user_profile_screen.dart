@@ -16,11 +16,13 @@ class UserProfileScreen extends StatefulWidget {
       {Key? key,
       required this.user,
       required this.scannedUser,
-      required this.origin})
+      required this.origin,
+      this.imagemUrl})
       : super(key: key);
   final User user;
   final User scannedUser;
   final String origin;
+  final String? imagemUrl;
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
