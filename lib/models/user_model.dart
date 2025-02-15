@@ -8,6 +8,7 @@ class User {
   final String? cpf;
   final String? telefone;
   final String? imagemUrl;
+  final String? linkCompleto;
   final String? github;
   final String? linkedin;
   final String? lattes;
@@ -23,6 +24,7 @@ class User {
       this.cpf,
       this.telefone,
       this.imagemUrl,
+      this.linkCompleto,
       this.github,
       this.linkedin,
       this.lattes,
@@ -41,6 +43,7 @@ class User {
         cpf: json['cpf'] ?? '',
         telefone: json['phone'],
         imagemUrl: json['imagem'],
+        linkCompleto: json['link_completo'],
         github: json['github'],
         linkedin: json['linkedin'],
         lattes: json['lattes'],
@@ -65,6 +68,8 @@ class User {
       'linkedin': linkedin,
       'lattes': lattes,
       'cargo': cargo,
+      'imagem': imagemUrl,
+      'link_completo': linkCompleto
     };
   }
 
