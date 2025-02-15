@@ -139,7 +139,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                   linkedin: userData['linkedin'],
                                   lattes: userData['lattes'],
                                   roles: [],
-                                  imagemUrl: userData['imagem']);
+                                  linkCompleto: userData['link_completo']);
 
                               // Tenta salvar a conexão
                               final result = await apiService.saveConnection(
