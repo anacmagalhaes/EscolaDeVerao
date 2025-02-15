@@ -37,51 +37,6 @@ class _CustomCardHomeState extends State<CustomCardHome> {
     isLiked = widget.post['is_liked'] ?? false;
   }
 
-  Future<void> _toggleLike() async {
-    // Atualiza o estado local imediatamente
-    setState(() {
-      isLiked = !isLiked;
-      likesCount = isLiked ? likesCount + 1 : likesCount - 1;
-    });
-
-    // Armazena o estado atual para caso precise reverter
-    final previousIsLiked = isLiked;
-    final previousLikesCount = likesCount;
-
-    // Faz a chamada à API em background
-    String? token = await apiService.getToken();
-    String postId = widget.post['id'].toString();
-
-    if (token == null) {
-      // Reverte o estado se não houver token
-      setState(() {
-        isLiked = !isLiked;
-        likesCount = isLiked ? likesCount + 1 : likesCount - 1;
-      });
-      print('Erro: Token não encontrado. Usuário não autenticado.');
-      return;
-    }
-    try {
-      var response = await apiService.likePost(postId, token);
-
-      if (response['success'] != true) {
-        // Reverte o estado se a API retornar erro
-        setState(() {
-          isLiked = previousIsLiked;
-          likesCount = previousLikesCount;
-        });
-        print('Erro ao registrar o like: ${response['message']}');
-      }
-    } catch (e) {
-      // Reverte o estado em caso de erro na requisição
-      setState(() {
-        isLiked = previousIsLiked;
-        likesCount = previousLikesCount;
-      });
-      print('Erro ao dar like: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final userName = widget.post['user']?['name'] ?? 'Usuário';
@@ -186,36 +141,7 @@ class _CustomCardHomeState extends State<CustomCardHome> {
               ],
             ),
             // Área de Likes
-            GestureDetector(
-              onTap: _toggleLike,
-              child: Column(
-                children: [
-                  SizedBox(height: 22.91.h),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        // Altera o estado do like
-                        child: Image.asset(
-                          isLiked
-                              ? 'assets/icons/like-red-icon.png' // Ícone preenchido
-                              : 'assets/icons/like-black-icon.png', // Ícone vazio
-                          width: 24.h,
-                          height: 24.h,
-                        ),
-                      ),
-                      SizedBox(width: 8.h),
-                      Fonts(
-                        text: '$likesCount likes',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textPrimary,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                ],
-              ),
-            ),
+            SizedBox(height: 10.h),
           ],
         ),
       ),

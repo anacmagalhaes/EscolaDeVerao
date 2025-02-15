@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/services/cached_manager_service.dart';
+import 'package:escoladeverao/services/image_cache_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
@@ -10,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://8b4b-177-36-196-227.ngrok-free.app';
+  final String baseUrl = 'https://99d4-187-44-58-94.ngrok-free.app';
   late final http.Client _client;
   late Dio _dio;
 
@@ -31,15 +33,8 @@ class ApiService {
   // Método de Login
   Future<Map<String, dynamic>> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/api/login');
-    print('Tentando login na URL: $url');
 
     try {
-      final Map<String, dynamic> body = {
-        'email': email,
-        'password': password,
-      };
-      print('Dados enviados: $body');
-
       final response = await _client.post(
         url,
         headers: {
@@ -48,31 +43,24 @@ class ApiService {
           'Accept': 'application/json',
           'Connection': 'keep-alive',
         },
-        body: jsonEncode(body),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
       );
-
-      print('Status code: ${response.statusCode}');
-      print('Resposta do servidor: ${response.body}');
 
       if (response.statusCode == 200) {
         final decodedResponse = jsonDecode(response.body);
-        print('Resposta decodificada: $decodedResponse');
-
         final userData = decodedResponse['data']['user'];
         final token = decodedResponse['data']['token'];
-        final isEmailVerified = userData['email_verified_at'] != null;
 
-        print('Token recebido no login: $token');
+        if (userData != null && token != null) {
+          // Pré-carregar a imagem do usuário
+          if (userData['link_completo'] != null) {
+            await CachedImageManager()
+                .cacheUserImage(userData['link_completo']);
+          }
 
-        if (!isEmailVerified) {
-          return {
-            'success': false,
-            'message': 'email_not_verified',
-            'email': email
-          };
-        }
-
-        if (token != null && userData != null) {
           return {
             'success': true,
             'data': {
@@ -80,26 +68,18 @@ class ApiService {
               'token': token,
             },
           };
-        } else {
-          return {
-            'success': false,
-            'message': 'Token ou dados do usuário não encontrados na resposta.',
-          };
         }
-      } else {
-        print(
-            'Erro no login. Status: ${response.statusCode}, Body: ${response.body}');
-        return {
-          'success': false,
-          'message': 'Erro no login: ${response.statusCode} - ${response.body}',
-        };
       }
-    } catch (e, stackTrace) {
-      print('Exceção durante o login: $e');
-      print('Stack trace: $stackTrace');
+
       return {
         'success': false,
-        'message': 'Erro ao conectar com a API: $e',
+        'message': 'Login failed',
+      };
+    } catch (e) {
+      print('Login error: $e');
+      return {
+        'success': false,
+        'message': e.toString(),
       };
     }
   }
@@ -669,23 +649,6 @@ class ApiService {
         'success': false,
         'message': 'Erro de conexão',
       };
-    }
-  }
-
-  Future<Map<String, dynamic>> likePost(String postId, String token) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/api/like'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({'post_id': postId}),
-    );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to like post');
     }
   }
 

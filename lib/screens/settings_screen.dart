@@ -3,6 +3,7 @@ import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
+import 'package:escoladeverao/services/cached_user_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -129,59 +130,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Padding(
                                 padding: EdgeInsets.only(top: 10.h, left: 24.h),
                                 child: SizedBox(
-                                  width: 48.h,
-                                  height: 48.h,
-                                  child: ClipOval(
-                                    child: displayUser.imagemUrl != null &&
-                                            displayUser.imagemUrl!.isNotEmpty
-                                        ? Image.network(
-                                            displayUser.imagemUrl!,
-                                            fit: BoxFit.cover,
-                                            headers: const {
-                                              'Accept': 'image/*',
-                                              'ngrok-skip-browser-warning':
-                                                  'true',
-                                            },
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  color:
-                                                      AppColors.orangePrimary,
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes!
-                                                      : null,
-                                                ),
-                                              );
-                                            },
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              print(
-                                                  'Erro ao carregar imagem: $error');
-                                              return Image.asset(
-                                                'assets/images/profile.png',
-                                                fit: BoxFit.cover,
-                                                width: 95.h,
-                                                height: 95.h,
-                                              );
-                                            },
-                                          )
-                                        : Image.asset(
-                                            'assets/images/profile.png',
-                                            fit: BoxFit.cover,
-                                            width: 95.h,
-                                            height: 95.h,
-                                          ),
-                                  ),
-                                ),
+                                    width: 48.h,
+                                    height: 48.h,
+                                    child: CachedUserImage(
+                                      userId: widget.user.id,
+                                      width: 48,
+                                      height: 48,
+                                    )),
                               ),
                               SizedBox(width: 12.h),
                               Padding(

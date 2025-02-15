@@ -21,6 +21,7 @@ class CustomQrCode extends StatelessWidget {
       'github': user.github,
       'linkedin': user.linkedin,
       'lattes': user.lattes,
+      'imagem': user.imagemUrl
     };
 
     print('Dados do usuário para QR code: $userData');

@@ -5,6 +5,7 @@ import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
 import 'package:escoladeverao/screens/schedule_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/cached_user_service.dart';
 import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -137,48 +138,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         String? imageUrl = currentUser
                             .imagemUrl; // Use diretamente do currentUser
 
-                        return ClipOval(
-                          child: imageUrl != null && imageUrl.isNotEmpty
-                              ? Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  headers: const {
-                                    'Accept': 'image/*',
-                                    'ngrok-skip-browser-warning': 'true',
-                                  },
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.background,
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    print('Erro ao carregar imagem: $error');
-                                    return Image.asset(
-                                      'assets/images/profile.png',
-                                      fit: BoxFit.cover,
-                                      width: 95.h,
-                                      height: 95.h,
-                                    );
-                                  },
-                                )
-                              : Image.asset(
-                                  'assets/images/profile.png',
-                                  fit: BoxFit.cover,
-                                  width: 95.h,
-                                  height: 95.h,
-                                ),
+                        return CachedUserImage(
+                          userId: widget.user.id,
+                          width: 48,
+                          height: 48,
                         );
                       },
                     )),
