@@ -6,6 +6,7 @@ import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/profile/profile_screen.dart';
 import 'package:escoladeverao/screens/settings_screen.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/cached_edit_user_service.dart';
 import 'package:escoladeverao/services/error_handler_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -311,78 +312,30 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             Positioned(
               top: 120.h - 52.h,
               left: MediaQuery.of(context).size.width / 2 - 52.h,
-              child: SizedBox(
-                width: 104.h,
-                height: 104.h,
-                child: ClipOval(
-                  child: _selectedImage != null
-                      ? Image.file(_selectedImage!, fit: BoxFit.cover)
-                      : Consumer<UserProvider>(
-                          builder: (context, userProvider, child) {
-                            String? imageUrl = widget.user.imagemUrl;
-
-                            return imageUrl != null && imageUrl.isNotEmpty
-                                ? Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                    headers: const {
-                                      'Accept': 'image/*',
-                                      'ngrok-skip-browser-warning': 'true',
-                                    },
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          value: loadingProgress
-                                                      .expectedTotalBytes !=
-                                                  null
-                                              ? loadingProgress
-                                                      .cumulativeBytesLoaded /
-                                                  loadingProgress
-                                                      .expectedTotalBytes!
-                                              : null,
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      print('Erro ao carregar imagem: $error');
-                                      return Image.asset(
-                                        'assets/images/profile.png',
-                                        fit: BoxFit.cover,
-                                        width: 104.h,
-                                        height: 104.h,
-                                      );
-                                    },
-                                  )
-                                : Image.asset(
-                                    'assets/images/profile.png',
-                                    fit: BoxFit.cover,
-                                    width: 104.h,
-                                    height: 104.h,
-                                  );
-                          },
-                        ),
-                ),
+              child: EditableProfileImage(
+                userId: widget.user.id ?? '',
+                selectedImage: _selectedImage,
+                onEditTap: _pickImage,
+                size: 104.h,
               ),
             ),
             // Edit profile image icon
-            Positioned(
-              top: 120.h + 24.h,
-              left: MediaQuery.of(context).size.width / 2 + 24.h,
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: 27.h,
-                  height: 27.h,
-                  decoration: const BoxDecoration(
-                    color: AppColors.orangePrimary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.asset('assets/icons/pen_black_icon.png'),
-                ),
-              ),
-            ),
+            // Positioned(
+            //   top: 120.h + 24.h,
+            //   left: MediaQuery.of(context).size.width / 2 + 24.h,
+            //   child: GestureDetector(
+            //     onTap: _pickImage,
+            //     child: Container(
+            //       width: 27.h,
+            //       height: 27.h,
+            //       decoration: const BoxDecoration(
+            //         color: AppColors.orangePrimary,
+            //         shape: BoxShape.circle,
+            //       ),
+            //       child: Image.asset('assets/icons/pen_black_icon.png'),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

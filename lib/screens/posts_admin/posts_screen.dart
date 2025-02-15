@@ -119,12 +119,12 @@ class _PostsScreenState extends State<PostsScreen> {
       }
 
       // 4. Validação de conteúdo
-      if (content.isEmpty && _selectedImage == null) {
-        ErrorModal(
-          context,
-          errorMessage: 'Adicione um texto ou uma imagem!',
-          title: 'Erro ao criar post',
+      if (_selectedImage == null && content.isEmpty) {
+        Fluttertoast.showToast(
+          msg: 'Adicione um texto ou uma imagem!',
+          backgroundColor: Colors.red,
         );
+
         return;
       }
 

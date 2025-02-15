@@ -3,6 +3,7 @@ import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/services/api_service.dart';
 import 'package:escoladeverao/screens/posts_admin/posts_screen.dart';
 import 'package:escoladeverao/services/auth_service.dart';
+import 'package:escoladeverao/services/cached_user_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/utils/string_utils.dart';
@@ -251,59 +252,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Padding(
                                     padding: EdgeInsets.only(top: 24.h),
                                     child: SizedBox(
-                                      width: 56.h,
-                                      height: 56.h,
-                                      child: ClipOval(
-                                        child: user.imagemUrl != null &&
-                                                user.imagemUrl!.isNotEmpty
-                                            ? Image.network(
-                                                user.imagemUrl!,
-                                                fit: BoxFit.cover,
-                                                headers: const {
-                                                  'Accept': 'image/*',
-                                                  'ngrok-skip-browser-warning':
-                                                      'true',
-                                                },
-                                                loadingBuilder: (context, child,
-                                                    loadingProgress) {
-                                                  if (loadingProgress == null)
-                                                    return child;
-                                                  return Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color:
-                                                          AppColors.background,
-                                                      value: loadingProgress
-                                                                  .expectedTotalBytes !=
-                                                              null
-                                                          ? loadingProgress
-                                                                  .cumulativeBytesLoaded /
-                                                              loadingProgress
-                                                                  .expectedTotalBytes!
-                                                          : null,
-                                                    ),
-                                                  );
-                                                },
-                                                errorBuilder: (context, error,
-                                                    stackTrace) {
-                                                  print(
-                                                      'Erro ao carregar imagem: $error');
-                                                  return Image.asset(
-                                                    'assets/images/profile.png',
-                                                    fit: BoxFit.cover,
-                                                    width: 95.h,
-                                                    height: 95.h,
-                                                  );
-                                                },
-                                              )
-                                            : Image.asset(
-                                                'assets/images/profile.png',
-                                                fit: BoxFit.cover,
-                                                width: 95.h,
-                                                height: 95.h,
-                                              ),
-                                      ),
-                                    ),
+                                        width: 56.h,
+                                        height: 56.h,
+                                        child: CachedUserImage(
+                                          userId: user.id,
+                                          width: 48,
+                                          height: 48,
+                                        )),
                                   ),
                                   SizedBox(width: 8.h),
                                   Padding(
