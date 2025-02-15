@@ -1,5 +1,6 @@
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/scan_screen.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
@@ -7,6 +8,7 @@ import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -424,11 +426,53 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: SizedBox(
                 width: 104.h,
                 height: 104.h,
-                child: ClipOval(
-                  child: Image.asset(
-                    'assets/images/profile.png',
-                    fit: BoxFit.cover,
-                  ),
+                child: Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    String? imageUrl = widget.scannedUser
+                        .imagemUrl; // Use diretamente do currentUser
+
+                    return ClipOval(
+                      child: imageUrl != null && imageUrl.isNotEmpty
+                          ? Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              headers: const {
+                                'Accept': 'image/*',
+                                'ngrok-skip-browser-warning': 'true',
+                              },
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.background,
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                print('Erro ao carregar imagem: $error');
+                                return Image.asset(
+                                  'assets/images/profile.png',
+                                  fit: BoxFit.cover,
+                                  width: 95.h,
+                                  height: 95.h,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              'assets/images/profile.png',
+                              fit: BoxFit.cover,
+                              width: 95.h,
+                              height: 95.h,
+                            ),
+                    );
+                  },
                 ),
               ),
             ),
