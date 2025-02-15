@@ -12,17 +12,15 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  const UserProfileScreen(
-      {Key? key,
-      required this.user,
-      required this.scannedUser,
-      required this.origin,
-      this.imagemUrl})
-      : super(key: key);
+  const UserProfileScreen({
+    Key? key,
+    required this.user,
+    required this.scannedUser,
+    required this.origin,
+  }) : super(key: key);
   final User user;
   final User scannedUser;
   final String origin;
-  final String? imagemUrl;
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
@@ -431,7 +429,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: Consumer<UserProvider>(
                   builder: (context, userProvider, child) {
                     String? imageUrl = widget.scannedUser
-                        .imagemUrl; // Use diretamente do currentUser
+                        .linkCompleto; // Use diretamente do currentUser
 
                     return ClipOval(
                       child: imageUrl != null && imageUrl.isNotEmpty
