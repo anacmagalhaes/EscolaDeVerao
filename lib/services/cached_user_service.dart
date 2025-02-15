@@ -47,17 +47,12 @@ class CachedUserImage extends StatelessWidget {
   Widget _buildPlaceholder() {
     return placeholder ??
         Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.person,
-            size: width * 0.6,
-            color: Colors.grey[600],
-          ),
-        );
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset('assets/images/profile.png'));
   }
 }
