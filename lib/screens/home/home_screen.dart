@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isFirstLoad = false;
     }
   }
+  
 
   @override
   void dispose() {
