@@ -230,155 +230,160 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(
-        onBackPressed: () {
-          FocusScope.of(context).unfocus();
-          Navigator.pop(context);
-        },
-        fallbackRoute: '/sign_in_or_sign_up_screen',
-        backgroundColor: AppColors.background,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Fonts(
-                  text: 'Acessar',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary),
-              SizedBox(height: 8.h),
-              const Fonts(
-                  text: 'Com e-mail e senha para entrar',
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textPrimary),
-              SizedBox(height: 40.h),
-              CustomTextField(
-                labelText: 'E-mail',
-                hintText: 'Digite seu e-mail',
-                keyboardType: TextInputType.emailAddress,
-                controller: emailInput,
-                errorText: _emailError.isNotEmpty ? _emailError : null,
-              ),
-              SizedBox(height: 16.h),
-              CustomTextField(
-                controller: passwordInput,
-                labelText: 'Senha',
-                hintText: 'Digite sua senha',
-                obscureText: true,
-                showTogglePasswordIcon: true,
-                errorText: _passwordError.isNotEmpty ? _passwordError : null,
-              ),
-              SizedBox(height: 18.h),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isChecked = !_isChecked;
-                        if (!_isChecked) {
-                          // Clear credentials when checkbox is unchecked
-                          emailInput.clear();
-                          passwordInput.clear();
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: 24.h,
-                      height: 24.h,
-                      decoration: BoxDecoration(
-                        color: _isChecked
-                            ? AppColors.orangePrimary
-                            : AppColors.background,
-                        border: Border.all(color: const Color(0xFFFF9E1B)),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: _isChecked
-                          ? const Icon(Icons.check,
-                              color: Colors.white, size: 18)
-                          : null,
-                    ),
-                  ),
-                  SizedBox(width: 8.h),
-                  const Fonts(
-                    text: 'Lembrar minha senha',
-                    fontSize: 12,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: CustomAppBar(
+          onBackPressed: () {
+            FocusScope.of(context).unfocus();
+            Navigator.pop(context);
+          },
+          fallbackRoute: '/sign_in_or_sign_up_screen',
+          backgroundColor: AppColors.background,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Fonts(
+                    text: 'Acessar',
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary),
+                SizedBox(height: 8.h),
+                const Fonts(
+                    text: 'Com e-mail e senha para entrar',
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: AppColors.textPrimary,
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    child: const Fonts(
-                      text: 'Esqueci minha senha',
+                    color: AppColors.textPrimary),
+                SizedBox(height: 40.h),
+                CustomTextField(
+                  labelText: 'E-mail',
+                  hintText: 'Digite seu e-mail',
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailInput,
+                  errorText: _emailError.isNotEmpty ? _emailError : null,
+                ),
+                SizedBox(height: 16.h),
+                CustomTextField(
+                  controller: passwordInput,
+                  labelText: 'Senha',
+                  hintText: 'Digite sua senha',
+                  obscureText: true,
+                  showTogglePasswordIcon: true,
+                  errorText: _passwordError.isNotEmpty ? _passwordError : null,
+                ),
+                SizedBox(height: 18.h),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isChecked = !_isChecked;
+                          if (!_isChecked) {
+                            // Clear credentials when checkbox is unchecked
+                            emailInput.clear();
+                            passwordInput.clear();
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 24.h,
+                        height: 24.h,
+                        decoration: BoxDecoration(
+                          color: _isChecked
+                              ? AppColors.orangePrimary
+                              : AppColors.background,
+                          border: Border.all(color: const Color(0xFFFF9E1B)),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: _isChecked
+                            ? const Icon(Icons.check,
+                                color: Colors.white, size: 18)
+                            : null,
+                      ),
+                    ),
+                    SizedBox(width: 8.h),
+                    const Fonts(
+                      text: 'Lembrar minha senha',
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.red,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.red,
+                      color: AppColors.textPrimary,
                     ),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const PasswordScreen(origin: 'login')));
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: 24.h),
-              SizedBox(
-                width: double.maxFinite,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomOutlinedButton(
-                        text: 'Acessar',
-                        height: 56.h,
-                        buttonFonts: const Fonts(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        buttonStyle: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: AppColors.orangePrimary),
-                            backgroundColor: AppColors.orangePrimary),
-                        onPressed: _isLoading ? null : _login,
+                    const Spacer(),
+                    GestureDetector(
+                      child: const Fonts(
+                        text: 'Esqueci minha senha',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.red,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.red,
                       ),
-                    ),
-                    SizedBox(width: 16.h),
-                    Expanded(
-                      child: CustomOutlinedButton(
-                        text: 'Cadastrar',
-                        height: 56.h,
-                        buttonFonts: const Fonts(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        buttonStyle: OutlinedButton.styleFrom(
-                            side:
-                                const BorderSide(color: AppColors.textPrimary),
-                            backgroundColor: AppColors.background),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/sign_up_screen');
-                        },
-                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const PasswordScreen(origin: 'login')));
+                      },
                     ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: 24.h),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: 'Acessar',
+                          height: 56.h,
+                          buttonFonts: const Fonts(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.background),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          buttonStyle: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: AppColors.orangePrimary),
+                              backgroundColor: AppColors.orangePrimary),
+                          onPressed: _isLoading ? null : _login,
+                        ),
+                      ),
+                      SizedBox(width: 16.h),
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: 'Cadastrar',
+                          height: 56.h,
+                          buttonFonts: const Fonts(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          buttonStyle: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: AppColors.textPrimary),
+                              backgroundColor: AppColors.background),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/sign_up_screen');
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

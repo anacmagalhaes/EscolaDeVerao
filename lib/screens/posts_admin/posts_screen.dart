@@ -187,225 +187,233 @@ class _PostsScreenState extends State<PostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: EdgeInsets.all(20.h),
-      backgroundColor: AppColors.background,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: EdgeInsets.only(
-              left: 24.h,
-              top: 31.5.h,
-              right: 24.h,
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Dialog(
+        insetPadding: EdgeInsets.all(20.h),
+        backgroundColor: AppColors.background,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: EdgeInsets.only(
+                left: 24.h,
+                top: 31.5.h,
+                right: 24.h,
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: GestureDetector(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 56.h,
-                        height: 56.h,
-                        child: Image.asset('assets/images/profile.png'),
+                      Row(
+                        children: [
+                          Container(
+                            width: 56.h,
+                            height: 56.h,
+                            child: Image.asset('assets/images/profile.png'),
+                          ),
+                          SizedBox(width: 10.h),
+                          Fonts(
+                            text: widget.user.name,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                          SizedBox(width: 50.h),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 27.h),
+                              child: Image.asset(
+                                  'assets/icons/close-black-icon.png'),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 10.h),
-                      Fonts(
-                        text: widget.user.name,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                      SizedBox(width: 50.h),
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 27.h),
-                          child:
-                              Image.asset('assets/icons/close-black-icon.png'),
+                      SizedBox(height: 20.h),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: 200.h,
+                          maxWidth: 320.h,
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: 200.h,
-                      maxWidth: 320.h,
-                    ),
-                    child: Container(
-                      width: 300.h,
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF3F3F3),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Color(0xFFB4B7C9))),
-                      child: TextField(
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textPrimary,
-                          fontFamily: 'Montserrat',
-                        ),
-                        controller: postsController,
-                        expands: true,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        decoration: const InputDecoration(
-                          hintText: 'Escreva sua mensagem aqui',
-                          hintStyle: TextStyle(
+                        child: Container(
+                          width: 300.h,
+                          decoration: BoxDecoration(
+                              color: Color(0xFFF3F3F3),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Color(0xFFB4B7C9))),
+                          child: TextField(
+                            style: TextStyle(
                               fontSize: 12,
+                              color: AppColors.textPrimary,
                               fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w400),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.all(12),
+                            ),
+                            controller: postsController,
+                            expands: true,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              hintText: 'Escreva sua mensagem aqui',
+                              hintStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w400),
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.all(12),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      height: 60.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.orangePrimary),
-                        color: AppColors.background,
-                      ),
-                      child: _selectedImage == null
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset('assets/icons/gallery-icon.png',
-                                    height: 24.h),
-                                SizedBox(width: 8.h),
-                                Fonts(
-                                  text: 'Adicionar mídia',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.orangePrimary,
-                                ),
-                              ],
-                            )
-                          : Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12.h, vertical: 8.h),
-                              child: Row(
-                                children: [
-                                  // Miniatura da imagem
-                                  Container(
-                                    width: 40.h,
-                                    height: 40.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                        image: FileImage(_selectedImage!),
-                                        fit: BoxFit.cover,
+                      SizedBox(height: 16.h),
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          height: 60.h,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.orangePrimary),
+                            color: AppColors.background,
+                          ),
+                          child: _selectedImage == null
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset('assets/icons/gallery-icon.png',
+                                        height: 24.h),
+                                    SizedBox(width: 8.h),
+                                    Fonts(
+                                      text: 'Adicionar mídia',
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.orangePrimary,
+                                    ),
+                                  ],
+                                )
+                              : Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12.h, vertical: 8.h),
+                                  child: Row(
+                                    children: [
+                                      // Miniatura da imagem
+                                      Container(
+                                        width: 40.h,
+                                        height: 40.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          image: DecorationImage(
+                                            image: FileImage(_selectedImage!),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 8.h),
-                                  // Nome e tamanho do arquivo
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Fonts(
-                                          text: _imageName ?? '',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textPrimary,
+                                      SizedBox(width: 8.h),
+                                      // Nome e tamanho do arquivo
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Fonts(
+                                              text: _imageName ?? '',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textPrimary,
+                                            ),
+                                            SizedBox(height: 2.h),
+                                            Fonts(
+                                              text: _imageSize ?? '',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.septuanaryGrey,
+                                            ),
+                                          ],
                                         ),
-                                        SizedBox(height: 2.h),
-                                        Fonts(
-                                          text: _imageSize ?? '',
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.septuanaryGrey,
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      // Ícone de remoção
+                                      GestureDetector(
+                                        onTap: _removeImage,
+                                        child: Icon(Icons.close,
+                                            color: AppColors.textPrimary),
+                                      ),
+                                    ],
                                   ),
-                                  // Ícone de remoção
-                                  GestureDetector(
-                                    onTap: _removeImage,
-                                    child: Icon(Icons.close,
-                                        color: AppColors.textPrimary),
-                                  ),
-                                ],
+                                ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+                      Fonts(
+                        text: 'Suporta apenas arquivos .jpg e .png',
+                        maxLines: 3,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.septuanaryGrey,
+                      ),
+                      SizedBox(height: 16.h),
+                      SizedBox(
+                        width: double.maxFinite,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: CustomOutlinedButton(
+                                text: 'Enviar',
+                                height: 50.h,
+                                buttonFonts: const Fonts(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.background,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                buttonStyle: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: AppColors.orangePrimary),
+                                  backgroundColor: AppColors.orangePrimary,
+                                ),
+                                onPressed: _handlePost,
                               ),
                             ),
-                    ),
-                  ),
-                  SizedBox(height: 16.h),
-                  Fonts(
-                    text: 'Suporta apenas arquivos .jpg e .png',
-                    maxLines: 3,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.septuanaryGrey,
-                  ),
-                  SizedBox(height: 16.h),
-                  SizedBox(
-                    width: double.maxFinite,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: CustomOutlinedButton(
-                            text: 'Enviar',
-                            height: 50.h,
-                            buttonFonts: const Fonts(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.background,
+                            SizedBox(width: 16.h),
+                            Expanded(
+                              child: CustomOutlinedButton(
+                                text: 'Cancelar',
+                                height: 50.h,
+                                buttonFonts: const Fonts(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                buttonStyle: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: AppColors.textPrimary),
+                                  backgroundColor: AppColors.background,
+                                ),
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/home_screen');
+                                },
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            buttonStyle: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  color: AppColors.orangePrimary),
-                              backgroundColor: AppColors.orangePrimary,
-                            ),
-                            onPressed: _handlePost,
-                          ),
+                          ],
                         ),
-                        SizedBox(width: 16.h),
-                        Expanded(
-                          child: CustomOutlinedButton(
-                            text: 'Cancelar',
-                            height: 50.h,
-                            buttonFonts: const Fonts(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            buttonStyle: OutlinedButton.styleFrom(
-                              side: const BorderSide(
-                                  color: AppColors.textPrimary),
-                              backgroundColor: AppColors.background,
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/home_screen');
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 20.h),
+                    ],
                   ),
-                  SizedBox(height: 20.h),
-                ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

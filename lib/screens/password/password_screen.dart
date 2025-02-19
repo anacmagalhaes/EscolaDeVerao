@@ -149,92 +149,97 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(
-        onBackPressed: () {
-          FocusScope.of(context).unfocus();
-        },
-        fallbackRoute: '/login_screen',
-        backgroundColor: AppColors.background,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Fonts(
-                  text: 'Recuperação de senha',
-                  maxLines: 2,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary),
-              SizedBox(height: 8.h),
-              const Fonts(
-                  text: 'Informe o e-mail cadastrado para recuperação',
-                  maxLines: 2,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textPrimary),
-              SizedBox(height: 32.h),
-              CustomTextField(
-                labelText: 'E-mail',
-                hintText: 'Digite seu e-mail',
-                keyboardType: TextInputType.emailAddress,
-                controller: emailPassController,
-              ),
-              if (emailError != null)
-                Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: Text(
-                    emailError!,
-                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: CustomAppBar(
+          onBackPressed: () {
+            FocusScope.of(context).unfocus();
+          },
+          fallbackRoute: '/login_screen',
+          backgroundColor: AppColors.background,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Fonts(
+                    text: 'Recuperação de senha',
+                    maxLines: 2,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary),
+                SizedBox(height: 8.h),
+                const Fonts(
+                    text: 'Informe o e-mail cadastrado para recuperação',
+                    maxLines: 2,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.textPrimary),
+                SizedBox(height: 32.h),
+                CustomTextField(
+                  labelText: 'E-mail',
+                  hintText: 'Digite seu e-mail',
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailPassController,
                 ),
-              SizedBox(height: 16.h),
-              CustomTextField(
-                labelText: 'CPF',
-                hintText: 'Digite seu CPF',
-                keyboardType: TextInputType.number,
-                controller: cpfPassController,
-              ),
-              if (cpfError != null)
-                Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: Text(
-                    cpfError!,
-                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
-                  ),
-                ),
-              SizedBox(height: 16.h),
-              SizedBox(
-                width: double.maxFinite,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CustomOutlinedButton(
-                        text: 'Recuperar senha',
-                        height: 56.h,
-                        buttonFonts: const Fonts(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.background),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        buttonStyle: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: AppColors.orangePrimary),
-                            backgroundColor: AppColors.orangePrimary),
-                        onPressed: _recoverPassword,
-                      ),
+                if (emailError != null)
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Text(
+                      emailError!,
+                      style: TextStyle(color: Colors.red, fontSize: 12.sp),
                     ),
-                    SizedBox(width: 16.h),
-                  ],
+                  ),
+                SizedBox(height: 16.h),
+                CustomTextField(
+                  labelText: 'CPF',
+                  hintText: 'Digite seu CPF',
+                  keyboardType: TextInputType.number,
+                  controller: cpfPassController,
                 ),
-              ),
-            ],
+                if (cpfError != null)
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Text(
+                      cpfError!,
+                      style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                    ),
+                  ),
+                SizedBox(height: 16.h),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomOutlinedButton(
+                          text: 'Recuperar senha',
+                          height: 56.h,
+                          buttonFonts: const Fonts(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.background),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          buttonStyle: OutlinedButton.styleFrom(
+                              side: const BorderSide(
+                                  color: AppColors.orangePrimary),
+                              backgroundColor: AppColors.orangePrimary),
+                          onPressed: _recoverPassword,
+                        ),
+                      ),
+                      SizedBox(width: 16.h),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
