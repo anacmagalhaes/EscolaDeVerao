@@ -51,6 +51,10 @@ class AppRoutes {
       homeScreen: (context) {
         final routeUser = ModalRoute.of(context)?.settings.arguments as User?;
 
+        if (routeUser == null && initialUser == null) {
+          return const LoginScreen();
+        }
+
         return HomeScreen(user: routeUser ?? initialUser!);
       },
       signUpScreen: (context) => const SignUpScreen(origin: '/signup'),
@@ -100,7 +104,7 @@ class AppRoutes {
         return PostsScreen(user: routeUser ?? initialUser!);
       },
       initialRoute: (context) => initialUser != null
-          ? HomeScreen(user: User(id: '', name: '', roles: []))
+          ? HomeScreen(user: initialUser)
           : const LoginScreen(),
     };
   }
