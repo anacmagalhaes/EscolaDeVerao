@@ -8,11 +8,12 @@ import 'package:escoladeverao/services/image_cache_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://99d4-187-44-58-94.ngrok-free.app';
+  final String baseUrl = 'https://8690-177-39-11-252.ngrok-free.app';
   late final http.Client _client;
   late Dio _dio;
 
@@ -624,13 +625,28 @@ class ApiService {
       if (response.statusCode == 200) {
         final decodedResponse = json.decode(response.body);
 
-        // Usa o link_completo ao invés do campo imagem
+        // Verifica e formata os dados retornados
         if (decodedResponse['data'] != null &&
             decodedResponse['data']['data'] != null) {
           var posts = decodedResponse['data']['data'] as List;
           for (var post in posts) {
             if (post['link_completo'] != null) {
               post['imagem'] = post['link_completo'];
+            }
+
+            // Converte a data para um formato legível
+            if (post['created_at'] != null) {
+              try {
+                DateTime dataOriginal =
+                    DateTime.parse(post['created_at']).toLocal();
+                post['data_formatada'] =
+                    DateFormat('dd/MM/yyyy').format(dataOriginal);
+              } catch (e) {
+                print("Erro ao converter data: $e");
+                post['data_formatada'] = 'Data inválida';
+              }
+            } else {
+              post['data_formatada'] = 'Data desconhecida';
             }
           }
         }

@@ -1,6 +1,7 @@
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import '../utils/colors_utils.dart';
 import 'package:escoladeverao/services/api_service.dart';
 
@@ -35,6 +36,21 @@ class _CustomCardHomeState extends State<CustomCardHome> {
     super.initState();
     likesCount = widget.post['likes_count'] ?? 0;
     isLiked = widget.post['is_liked'] ?? false;
+  }
+
+  String _formatDate(String? dateString) {
+    if (dateString == null || dateString.isEmpty) {
+      return 'Data desconhecida';
+    }
+
+    try {
+      DateTime date =
+          DateTime.parse(dateString).toLocal(); // Ajusta para o fuso local
+      return DateFormat('dd/MM/yyyy').format(date); // Formata para "18/02/2024"
+    } catch (e) {
+      print("Erro ao converter data: $e");
+      return 'Data inválida';
+    }
   }
 
   @override
@@ -142,6 +158,16 @@ class _CustomCardHomeState extends State<CustomCardHome> {
             ),
             // Área de Likes
             SizedBox(height: 10.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Fonts(
+                    text: _formatDate(widget.post['created_at']),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.secondaryGrey),
+              ],
+            )
           ],
         ),
       ),
