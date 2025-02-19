@@ -150,193 +150,199 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(147.h),
-        child: Container(
-          width: double.infinity,
-          color: AppColors.orangePrimary,
-          child: Padding(
-            padding: EdgeInsets.only(left: 10.h, right: 10.h, top: 35.h),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if (widget.origin == 'settings') {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SettingsScreen(
-                                  user: widget.user,
-                                  scannedUser: widget.scannedUser,
-                                )),
-                      );
-                    } else if (widget.origin == 'profile') {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProfileScreen(
-                                  user: widget.user,
-                                )),
-                      );
-                    } else {
-                      Navigator.pop(context); // Fallback para outras telas
-                    }
-                  },
-                  child: SizedBox(
-                    width: 44.h,
-                    height: 44.h,
-                    child: Image.asset('assets/icons/angle-left-white.png'),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(147.h),
+          child: Container(
+            width: double.infinity,
+            color: AppColors.orangePrimary,
+            child: Padding(
+              padding: EdgeInsets.only(left: 10.h, right: 10.h, top: 35.h),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      if (widget.origin == 'settings') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SettingsScreen(
+                                    user: widget.user,
+                                    scannedUser: widget.scannedUser,
+                                  )),
+                        );
+                      } else if (widget.origin == 'profile') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                    user: widget.user,
+                                  )),
+                        );
+                      } else {
+                        Navigator.pop(context); // Fallback para outras telas
+                      }
+                    },
+                    child: SizedBox(
+                      width: 44.h,
+                      height: 44.h,
+                      child: Image.asset('assets/icons/angle-left-white.png'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Stack(
-          children: [
-            // Orange background container
-            Container(
-              height: 200.h,
-              color: AppColors.orangePrimary,
-            ),
-
-            // White background container with rounded corners
-            Container(
-              margin: EdgeInsets.only(top: 120.h),
-              decoration: const BoxDecoration(
-                color: AppColors.background,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25),
-                  topRight: Radius.circular(25),
-                ),
+        body: SingleChildScrollView(
+          controller: _scrollController,
+          child: Stack(
+            children: [
+              // Orange background container
+              Container(
+                height: 200.h,
+                color: AppColors.orangePrimary,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.h),
-                child: Column(
-                  children: [
-                    SizedBox(height: 80.h), // Space for profile image
-                    Fonts(
-                      text: StringUtils.formatUserName(widget.user.name),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                    SizedBox(height: 8.h),
-                    Fonts(
-                      text: 'ID: ',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.blueMarine,
-                      additionalSpans: [
-                        TextSpan(
-                          text: widget.user.id.padLeft(4, '0'),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.blueMarine,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 10.h),
-                    CustomTextField(
-                      labelText: 'Nome',
-                      hintText: 'Edite seu nome',
-                      keyboardType: TextInputType.name,
-                      controller: nameEditController,
-                    ),
 
-                    SizedBox(height: 20.h),
-                    CustomTextField(
-                      labelText: 'Telefone',
-                      hintText: 'Edite seu telefone',
-                      keyboardType: TextInputType.phone,
-                      controller: phoneEditController,
-                    ),
-                    SizedBox(height: 20.h),
-                    CustomTextField(
-                      labelText: 'LinkedIn',
-                      hintText: 'Edite seu LinkedIn',
-                      keyboardType: TextInputType.url,
-                      controller: linkedinEditController,
-                    ),
-                    SizedBox(height: 20.h),
-                    CustomTextField(
-                      labelText: 'GitHub',
-                      hintText: 'Edite seu GitHub',
-                      keyboardType: TextInputType.url,
-                      controller: githubEditController,
-                    ),
-                    SizedBox(height: 20.h),
-                    CustomTextField(
-                      labelText: 'Currículo Lattes',
-                      hintText: 'Edite seu Lattes',
-                      keyboardType: TextInputType.url,
-                      controller: latesEditController,
-                    ),
-                    SizedBox(height: 22.h),
-                    CustomOutlinedButton(
-                      text: _isLoading ? 'Salvando...' : 'Salvar alterações ',
-                      height: 56.h,
-                      width: double.maxFinite,
-                      buttonFonts: const Fonts(
+              // White background container with rounded corners
+              Container(
+                margin: EdgeInsets.only(top: 120.h),
+                decoration: const BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.h),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 80.h), // Space for profile image
+                      Fonts(
+                        text: StringUtils.formatUserName(widget.user.name),
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.background,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
+                      SizedBox(height: 8.h),
+                      Fonts(
+                        text: 'ID: ',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.blueMarine,
+                        additionalSpans: [
+                          TextSpan(
+                            text: widget.user.id.padLeft(4, '0'),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.blueMarine,
+                            ),
+                          ),
+                        ],
                       ),
-                      buttonStyle: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.orangePrimary),
-                        backgroundColor: AppColors.orangePrimary,
+                      SizedBox(height: 10.h),
+                      CustomTextField(
+                        labelText: 'Nome',
+                        hintText: 'Edite seu nome',
+                        keyboardType: TextInputType.name,
+                        controller: nameEditController,
                       ),
-                      onPressed: () {
-                        if (!_isLoading) {
-                          _updateProfile(); // Apenas chama a função, sem navegar ainda
-                        }
-                      },
-                    ),
-                    SizedBox(height: 20.h), // Add some bottom padding
-                  ],
+
+                      SizedBox(height: 20.h),
+                      CustomTextField(
+                        labelText: 'Telefone',
+                        hintText: 'Edite seu telefone',
+                        keyboardType: TextInputType.phone,
+                        controller: phoneEditController,
+                      ),
+                      SizedBox(height: 20.h),
+                      CustomTextField(
+                        labelText: 'LinkedIn',
+                        hintText: 'Edite seu LinkedIn',
+                        keyboardType: TextInputType.url,
+                        controller: linkedinEditController,
+                      ),
+                      SizedBox(height: 20.h),
+                      CustomTextField(
+                        labelText: 'GitHub',
+                        hintText: 'Edite seu GitHub',
+                        keyboardType: TextInputType.url,
+                        controller: githubEditController,
+                      ),
+                      SizedBox(height: 20.h),
+                      CustomTextField(
+                        labelText: 'Currículo Lattes',
+                        hintText: 'Edite seu Lattes',
+                        keyboardType: TextInputType.url,
+                        controller: latesEditController,
+                      ),
+                      SizedBox(height: 22.h),
+                      CustomOutlinedButton(
+                        text: _isLoading ? 'Salvando...' : 'Salvar alterações ',
+                        height: 56.h,
+                        width: double.maxFinite,
+                        buttonFonts: const Fonts(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.background,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        buttonStyle: OutlinedButton.styleFrom(
+                          side:
+                              const BorderSide(color: AppColors.orangePrimary),
+                          backgroundColor: AppColors.orangePrimary,
+                        ),
+                        onPressed: () {
+                          if (!_isLoading) {
+                            _updateProfile(); // Apenas chama a função, sem navegar ainda
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20.h), // Add some bottom padding
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            // Positioned profile image
-            // Replace the existing image widget with this:
-            Positioned(
-              top: 120.h - 52.h,
-              left: MediaQuery.of(context).size.width / 2 - 52.h,
-              child: EditableProfileImage(
-                userId: widget.user.id ?? '',
-                selectedImage: _selectedImage,
-                onEditTap: _pickImage,
-                size: 104.h,
+              // Positioned profile image
+              // Replace the existing image widget with this:
+              Positioned(
+                top: 120.h - 52.h,
+                left: MediaQuery.of(context).size.width / 2 - 52.h,
+                child: EditableProfileImage(
+                  userId: widget.user.id ?? '',
+                  selectedImage: _selectedImage,
+                  onEditTap: _pickImage,
+                  size: 104.h,
+                ),
               ),
-            ),
-            // Edit profile image icon
-            // Positioned(
-            //   top: 120.h + 24.h,
-            //   left: MediaQuery.of(context).size.width / 2 + 24.h,
-            //   child: GestureDetector(
-            //     onTap: _pickImage,
-            //     child: Container(
-            //       width: 27.h,
-            //       height: 27.h,
-            //       decoration: const BoxDecoration(
-            //         color: AppColors.orangePrimary,
-            //         shape: BoxShape.circle,
-            //       ),
-            //       child: Image.asset('assets/icons/pen_black_icon.png'),
-            //     ),
-            //   ),
-            // ),
-          ],
+              // Edit profile image icon
+              // Positioned(
+              //   top: 120.h + 24.h,
+              //   left: MediaQuery.of(context).size.width / 2 + 24.h,
+              //   child: GestureDetector(
+              //     onTap: _pickImage,
+              //     child: Container(
+              //       width: 27.h,
+              //       height: 27.h,
+              //       decoration: const BoxDecoration(
+              //         color: AppColors.orangePrimary,
+              //         shape: BoxShape.circle,
+              //       ),
+              //       child: Image.asset('assets/icons/pen_black_icon.png'),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
         ),
       ),
     );

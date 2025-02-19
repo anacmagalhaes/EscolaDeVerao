@@ -129,92 +129,97 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: CustomAppBar(
-        onBackPressed: () {
-          FocusScope.of(context).unfocus();
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SettingsScreen(
-                      user: widget.user, scannedUser: widget.scannedUser)));
-        },
-        backgroundColor: AppColors.background,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Fonts(
-                text: 'Alteração de senha',
-                maxLines: 2,
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-              SizedBox(height: 8.h),
-              const Fonts(
-                text: 'Digite uma nova senha para sua conta.',
-                maxLines: 2,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: AppColors.textPrimary,
-              ),
-              SizedBox(height: 32.h),
-              CustomTextField(
-                labelText: 'Nova Senha',
-                hintText: 'Crie sua nova senha',
-                obscureText: true,
-                showTogglePasswordIcon: true,
-                controller: passwordController,
-                isRequired: true,
-              ),
-              SizedBox(height: 8.h),
-              if (passwordError != null)
-                Text(
-                  passwordError!,
-                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: CustomAppBar(
+          onBackPressed: () {
+            FocusScope.of(context).unfocus();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SettingsScreen(
+                        user: widget.user, scannedUser: widget.scannedUser)));
+          },
+          backgroundColor: AppColors.background,
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.h, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Fonts(
+                  text: 'Alteração de senha',
+                  maxLines: 2,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
-              SizedBox(height: 16.h),
-              CustomTextField(
-                labelText: 'Confirme a Senha',
-                hintText: 'Digite novamente sua nova senha',
-                obscureText: true,
-                showTogglePasswordIcon: true,
-                controller: confirmPasswordController,
-                isRequired: true,
-              ),
-              SizedBox(height: 8.h),
-              if (confirmPasswordError != null)
-                Text(
-                  confirmPasswordError!,
-                  style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                SizedBox(height: 8.h),
+                const Fonts(
+                  text: 'Digite uma nova senha para sua conta.',
+                  maxLines: 2,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textPrimary,
                 ),
-              SizedBox(height: 24.h),
-              SizedBox(
-                width: double.infinity,
-                child: CustomOutlinedButton(
-                  text: 'Alterar Senha',
-                  height: 56.h,
-                  buttonFonts: const Fonts(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.background,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  buttonStyle: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: AppColors.orangePrimary),
-                    backgroundColor: AppColors.orangePrimary,
-                  ),
-                  onPressed: _changePassword,
+                SizedBox(height: 32.h),
+                CustomTextField(
+                  labelText: 'Nova Senha',
+                  hintText: 'Crie sua nova senha',
+                  obscureText: true,
+                  showTogglePasswordIcon: true,
+                  controller: passwordController,
+                  isRequired: true,
                 ),
-              ),
-            ],
+                SizedBox(height: 8.h),
+                if (passwordError != null)
+                  Text(
+                    passwordError!,
+                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                  ),
+                SizedBox(height: 16.h),
+                CustomTextField(
+                  labelText: 'Confirme a Senha',
+                  hintText: 'Digite novamente sua nova senha',
+                  obscureText: true,
+                  showTogglePasswordIcon: true,
+                  controller: confirmPasswordController,
+                  isRequired: true,
+                ),
+                SizedBox(height: 8.h),
+                if (confirmPasswordError != null)
+                  Text(
+                    confirmPasswordError!,
+                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                  ),
+                SizedBox(height: 24.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomOutlinedButton(
+                    text: 'Alterar Senha',
+                    height: 56.h,
+                    buttonFonts: const Fonts(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.background,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    buttonStyle: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.orangePrimary),
+                      backgroundColor: AppColors.orangePrimary,
+                    ),
+                    onPressed: _changePassword,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
