@@ -43,6 +43,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
             children: [
               GestureDetector(
                 onTap: () => widget.onTap(0),
+                behavior: HitTestBehavior.translucent,
                 child: Image.asset(
                   'assets/icons/home-icon.png',
                   color: widget.currentIndex == 0
@@ -52,6 +53,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               ),
               GestureDetector(
                 onTap: () => widget.onTap(1),
+                behavior: HitTestBehavior.translucent,
                 child: Image.asset(
                   'assets/icons/calendar-icon.png',
                   color: widget.currentIndex == 1
@@ -67,6 +69,7 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                     borderRadius: BorderRadius.all(Radius.circular(40.h))),
                 child: GestureDetector(
                   onTap: () => widget.onTap(2),
+                  behavior: HitTestBehavior.translucent,
                   child: Image.asset(
                     'assets/icons/scan-icon.png',
                     color: widget.currentIndex == 2
@@ -78,17 +81,23 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: () => widget.onTap(3),
-                child: Image.asset(
-                  'assets/icons/profile-icon.png',
-                  color: widget.currentIndex == 3
-                      ? AppColors.orangePrimary
-                      : AppColors.textPrimary,
-                ),
+              Stack(
+                children: [
+                  GestureDetector(
+                    onTap: () => widget.onTap(3),
+                    behavior: HitTestBehavior.translucent,
+                    child: Image.asset(
+                      'assets/icons/profile-icon.png',
+                      color: widget.currentIndex == 3
+                          ? AppColors.orangePrimary
+                          : AppColors.textPrimary,
+                    ),
+                  ),
+                ],
               ),
               GestureDetector(
                 onTap: () => widget.onTap(4),
+                behavior: HitTestBehavior.translucent,
                 child: Image.asset(
                   'assets/icons/config-icon.png',
                   color: widget.currentIndex == 4
