@@ -56,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _isFirstLoad = false;
     }
   }
-  
 
   @override
   void dispose() {
@@ -422,6 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: FloatingActionButton(
                             onPressed: () {
                               showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext context) {
                                     return PostsScreen(user: widget.user);
