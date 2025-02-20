@@ -19,6 +19,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HomeScreen extends StatefulWidget {
   final User user;
   final String? imageUrl;
+  static bool _isFirstLoad = true;
+
+  static void setNeedsRefresh() {
+    _isFirstLoad = true;
+  }
+
   const HomeScreen({Key? key, required this.user, this.imageUrl})
       : super(key: key);
 
@@ -48,13 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _fetchUserData();
     _setupScrollController();
 
-    if (_isFirstLoad) {
-      setState(() {
-        _isLoading = true;
-      });
-      _fetchPosts();
-      _isFirstLoad = false;
-    }
+    setState(() {
+      _isLoading = true;
+    });
+    _fetchPosts();
+    _isFirstLoad = false;
   }
 
   @override

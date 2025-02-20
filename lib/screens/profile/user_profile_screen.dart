@@ -302,42 +302,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Fonts(
-                                              text: 'Github:',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textPrimary,
-                                            ),
-                                            Fonts(
-                                              text: widget.scannedUser.github,
-                                              maxLines: 4,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColors.blue,
-                                              textAlign: TextAlign.right,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor: AppColors
-                                                  .blue, // Alinha o texto à direita
-                                            ),
-                                          ],
-                                        )),
-                                    onTap: () {
-                                      _launchURL(widget.scannedUser.github!);
-                                    },
-                                  ),
-                                  SizedBox(height: 5.h),
-                                  GestureDetector(
-                                    child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 16.h,
-                                            left: 16.h,
-                                            right: 16
-                                                .h), // Adicionando padding à direita também
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Fonts(
                                               text: 'Currículo Lattes:',
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,

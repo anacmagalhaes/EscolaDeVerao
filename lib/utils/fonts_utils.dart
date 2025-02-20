@@ -39,6 +39,7 @@ class Fonts extends StatelessWidget {
           color: color,
           decoration: decoration ?? TextDecoration.none,
           decorationColor: decorationColor,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     ];

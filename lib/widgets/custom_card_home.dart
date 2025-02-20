@@ -46,7 +46,8 @@ class _CustomCardHomeState extends State<CustomCardHome> {
     try {
       DateTime date =
           DateTime.parse(dateString).toLocal(); // Ajusta para o fuso local
-      return DateFormat('dd/MM/yyyy').format(date); // Formata para "18/02/2024"
+      return DateFormat('dd/MM/yyyy - HH:mm')
+          .format(date); // Formata para "18/02/2024 14:30"
     } catch (e) {
       print("Erro ao converter data: $e");
       return 'Data inválida';

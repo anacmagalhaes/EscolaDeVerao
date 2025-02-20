@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:escoladeverao/controllers/posts_controllers.dart';
@@ -163,6 +164,7 @@ class _PostsScreenState extends State<PostsScreen> {
           msg: response['message'],
           backgroundColor: Colors.green,
         );
+        HomeScreen.setNeedsRefresh();
 
         Navigator.pushReplacement(
           context,
@@ -213,7 +215,6 @@ class _PostsScreenState extends State<PostsScreen> {
                 physics: const ClampingScrollPhysics(),
                 child: GestureDetector(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Row(
                         children: [
@@ -224,18 +225,20 @@ class _PostsScreenState extends State<PostsScreen> {
                           ),
                           SizedBox(width: 10.h),
                           Fonts(
-                            text: widget.user.name,
+                            text: StringUtils.formatUserName(widget.user.name),
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
-                          SizedBox(width: 50.h),
-                          GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Padding(
-                              padding: EdgeInsets.only(bottom: 27.h),
-                              child: Image.asset(
-                                  'assets/icons/close-black-icon.png'),
+                          Padding(
+                            padding: EdgeInsets.only(left: double.maxFinite),
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 27.h),
+                                child: Image.asset(
+                                    'assets/icons/close-black-icon.png'),
+                              ),
                             ),
                           ),
                         ],

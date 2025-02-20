@@ -270,13 +270,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                       ),
                       SizedBox(height: 20.h),
                       CustomTextField(
-                        labelText: 'GitHub',
-                        hintText: 'Edite seu GitHub',
-                        keyboardType: TextInputType.url,
-                        controller: githubEditController,
-                      ),
-                      SizedBox(height: 20.h),
-                      CustomTextField(
                         labelText: 'Currículo Lattes',
                         hintText: 'Edite seu Lattes',
                         keyboardType: TextInputType.url,
