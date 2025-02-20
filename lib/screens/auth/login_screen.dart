@@ -285,11 +285,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         setState(() {
                           _isChecked = !_isChecked;
-                          if (!_isChecked) {
-                            // Clear credentials when checkbox is unchecked
-                            emailInput.clear();
-                            passwordInput.clear();
-                          }
                         });
                       },
                       child: Container(
