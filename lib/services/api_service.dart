@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://6607-177-130-172-11.ngrok-free.app';
+  final String baseUrl = 'https://api.escoladeverao.com.br';
   late final http.Client _client;
   late Dio _dio;
 
