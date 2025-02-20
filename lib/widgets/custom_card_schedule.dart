@@ -76,6 +76,7 @@ class CustomCardSchedule extends StatelessWidget {
                 SizedBox(width: 5.h),
                 Fonts(
                     text: event['local'],
+                    maxLines: 2,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.quaternaryGrey),
