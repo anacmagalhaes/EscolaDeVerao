@@ -13,7 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
 
 class ApiService {
-  final String baseUrl = 'https://8690-177-39-11-252.ngrok-free.app';
+  final String baseUrl = 'https://6607-177-130-172-11.ngrok-free.app';
   late final http.Client _client;
   late Dio _dio;
 
@@ -656,7 +656,7 @@ class ApiService {
         print('Error response: ${response.body}');
         return {
           'success': false,
-          'message': 'Erro ao buscar posts: ${response.body}',
+          'message': 'Erro ao buscar posts.',
         };
       }
     } catch (e) {
