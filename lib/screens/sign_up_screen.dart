@@ -328,13 +328,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       SizedBox(height: 16.h),
                       CustomTextField(
-                        labelText: 'Link Github',
-                        hintText: 'https://github.com/seugithub',
-                        keyboardType: TextInputType.url,
-                        controller: githubController,
-                      ),
-                      SizedBox(height: 16.h),
-                      CustomTextField(
                         labelText: 'Link Currículo Lattes',
                         hintText: 'Adicione seu link do Lattes',
                         keyboardType: TextInputType.url,
