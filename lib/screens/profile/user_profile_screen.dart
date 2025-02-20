@@ -181,6 +181,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ),
                             child: SingleChildScrollView(
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.only(
@@ -188,9 +189,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       left: 16.h,
                                       right: 16.h,
                                     ), // Adicionando padding à direita também
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Fonts(
                                           text: 'E-mail:',
@@ -198,27 +199,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textPrimary,
                                         ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.scannedUser.email,
-                                            maxLines: 4,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
-                                          ),
+                                        SizedBox(height: 2.h),
+                                        Fonts(
+                                          text: widget.scannedUser.email,
+                                          maxLines: 4,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.quintennialGrey,
+                                          textAlign: TextAlign
+                                              .right, // Alinha o texto à direita
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: 5.h),
                                   Padding(
                                     padding: EdgeInsets.only(
                                         top: 16.h, left: 16.h, right: 16.h),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Fonts(
                                           text: 'Telefone:',
@@ -226,21 +226,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.textPrimary,
                                         ),
-                                        Flexible(
-                                          child: Fonts(
-                                            text: widget.scannedUser.telefone,
-                                            maxLines: 2,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.quintennialGrey,
-                                            textAlign: TextAlign
-                                                .right, // Alinha o texto à direita
-                                          ),
+                                        Fonts(
+                                          text: widget.scannedUser.telefone,
+                                          maxLines: 2,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.quintennialGrey,
+                                          textAlign: TextAlign
+                                              .right, // Alinha o texto à direita
                                         ),
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: 5.h),
                                   GestureDetector(
                                     child: Padding(
                                         padding: EdgeInsets.only(
@@ -248,9 +246,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             left: 16.h,
                                             right: 16
                                                 .h), // Adicionando padding à direita também
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Fonts(
                                               text: 'LinkedIn:',
@@ -258,20 +256,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.textPrimary,
                                             ),
-                                            Flexible(
-                                              child: Fonts(
-                                                text:
-                                                    widget.scannedUser.linkedin,
-                                                maxLines: 4,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.blue,
-                                                textAlign: TextAlign
-                                                    .right, // Alinha o texto à direita
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationColor: AppColors.blue,
-                                              ),
+                                            Fonts(
+                                              text: widget.scannedUser.linkedin,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.blue,
+                                              textAlign: TextAlign
+                                                  .right, // Alinha o texto à direita
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors.blue,
                                             ),
                                           ],
                                         )),
@@ -294,7 +289,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       }
                                     },
                                   ),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: 5.h),
                                   GestureDetector(
                                     child: Padding(
                                         padding: EdgeInsets.only(
@@ -302,9 +297,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             left: 16.h,
                                             right: 16
                                                 .h), // Adicionando padding à direita também
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Fonts(
                                               text: 'Github:',
@@ -312,19 +307,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.textPrimary,
                                             ),
-                                            Flexible(
-                                              child: Fonts(
-                                                text: widget.scannedUser.github,
-                                                maxLines: 4,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.blue,
-                                                textAlign: TextAlign.right,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationColor: AppColors
-                                                    .blue, // Alinha o texto à direita
-                                              ),
+                                            Fonts(
+                                              text: widget.scannedUser.github,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.blue,
+                                              textAlign: TextAlign.right,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors
+                                                  .blue, // Alinha o texto à direita
                                             ),
                                           ],
                                         )),
@@ -332,7 +325,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                       _launchURL(widget.scannedUser.github!);
                                     },
                                   ),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: 5.h),
                                   GestureDetector(
                                     child: Padding(
                                         padding: EdgeInsets.only(
@@ -340,9 +333,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                             left: 16.h,
                                             right: 16
                                                 .h), // Adicionando padding à direita também
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Fonts(
                                               text: 'Currículo Lattes:',
@@ -350,19 +343,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.textPrimary,
                                             ),
-                                            Flexible(
-                                              child: Fonts(
-                                                text: widget.scannedUser.lattes,
-                                                maxLines: 4,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400,
-                                                color: AppColors.blue,
-                                                textAlign: TextAlign.right,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                decorationColor: AppColors
-                                                    .blue, // Alinha o texto à direita
-                                              ),
+                                            Fonts(
+                                              text: widget.scannedUser.lattes,
+                                              maxLines: 4,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.blue,
+                                              textAlign: TextAlign.right,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor: AppColors
+                                                  .blue, // Alinha o texto à direita
                                             ),
                                           ],
                                         )),

@@ -342,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Expanded(
                         child: CustomOutlinedButton(
-                          text: 'Acessar',
+                          text: _isLoading ? 'Acessando...' : 'Acessar',
                           height: 56.h,
                           buttonFonts: const Fonts(
                               fontSize: 16,

@@ -28,6 +28,7 @@ class _PostsScreenState extends State<PostsScreen> {
   final ImagePicker _picker = ImagePicker();
   String? _imageName;
   String? _imageSize;
+  bool _isSend = false;
 
   @override
   void initState() {
@@ -65,6 +66,10 @@ class _PostsScreenState extends State<PostsScreen> {
   }
 
   Future<void> _handlePost() async {
+    if (_isSend) return;
+    setState(() {
+      _isSend = true;
+    });
     try {
       // 1. Verificação do token
       String? token = await apiService.getToken();
@@ -362,7 +367,7 @@ class _PostsScreenState extends State<PostsScreen> {
                           children: [
                             Expanded(
                               child: CustomOutlinedButton(
-                                text: 'Enviar',
+                                text: _isSend ? 'Enviando...' : 'Enviar',
                                 height: 50.h,
                                 buttonFonts: const Fonts(
                                   fontSize: 14,

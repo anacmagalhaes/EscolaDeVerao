@@ -138,7 +138,7 @@ class _MyConnectionsScreenState extends State<MyConnectionsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(24.h),
                     child: Fonts(
                       text: 'Minhas Conexões',
                       fontSize: 24,

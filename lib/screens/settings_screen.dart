@@ -172,6 +172,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 SizedBox(height: 23.62.h),
                                 GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 60.09.h),
                                     child: Row(
@@ -208,6 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 SizedBox(height: 34.84.h),
                                 GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 60.09.h),
                                     child: Row(
@@ -244,6 +246,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 SizedBox(height: 34.84.h),
                                 GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 60.09.h),
                                     child: Row(
@@ -296,6 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 SizedBox(height: 23.62.h),
                                 GestureDetector(
+                                  behavior: HitTestBehavior.translucent,
                                   child: Padding(
                                     padding: EdgeInsets.only(right: 60.09.h),
                                     child: Row(

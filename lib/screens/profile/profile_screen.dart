@@ -281,6 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: actionButtons.map((button) {
         return GestureDetector(
+          behavior: HitTestBehavior.translucent,
           onTap: button['onTap'] as Function(),
           child: Container(
             color: Colors.transparent,
