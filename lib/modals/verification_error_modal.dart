@@ -12,7 +12,7 @@ void VerificationErrorModal(
     context: context,
     barrierColor:
         AppColors.background.withOpacity(0.3), // Fundo semi-transparente
-    barrierDismissible: true, // Permite fechar o dialog tocando fora
+    barrierDismissible: false, // Permite fechar o dialog tocando fora
     builder: (context) {
       return Dialog(
         backgroundColor:
@@ -65,7 +65,6 @@ void VerificationErrorModal(
                       ),
                       child: Image.asset('assets/icons/close-icon.png'),
                     ),
-                    onTapCancel: () {},
                   ),
                 ],
               ),

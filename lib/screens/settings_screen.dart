@@ -200,15 +200,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Padding(
                                 padding: EdgeInsets.only(top: 10.h, left: 24.h),
                                 child: SizedBox(
-                                    width: 48.h,
-                                    height: 48.h,
-                                    child: Image.asset('assets/images/profile.png'),
-                                    // child: CachedUserImage(
-                                    //   userId: widget.user.id,
-                                    //   width: 48,
-                                    //   height: 48,
-                                    // )
-                                    ),
+                                  width: 48.h,
+                                  height: 48.h,
+                                  child:
+                                      Image.asset('assets/images/profile.png'),
+                                  // child: CachedUserImage(
+                                  //   userId: widget.user.id,
+                                  //   width: 48,
+                                  //   height: 48,
+                                  // )
+                                ),
                               ),
                               SizedBox(width: 12.h),
                               Padding(
@@ -282,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.pushReplacement(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ProfileEditScreen(
@@ -319,7 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.pushReplacement(
+                                    Navigator.push(
                                       // ignore: use_build_context_synchronously
                                       context,
                                       MaterialPageRoute(
@@ -356,7 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.pushReplacement(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>

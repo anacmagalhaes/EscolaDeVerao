@@ -1,4 +1,5 @@
 import 'package:escoladeverao/controllers/sign_up_controllers.dart';
+import 'package:escoladeverao/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:escoladeverao/controllers/password_controller.dart';
 import 'package:escoladeverao/modals/new_password_modal.dart';
@@ -8,6 +9,7 @@ import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:escoladeverao/widgets/custom_text_field.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PasswordScreen extends StatefulWidget {
@@ -23,6 +25,9 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   String? cpfError;
   String? emailError;
+  TextEditingController emailPassController = TextEditingController();
+  TextEditingController cpfPassController =
+      MaskedTextController(mask: '000.000.000-00');
 
   // Validação para formato de e-mail
   bool isValidEmail(String email) {
@@ -101,6 +106,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       if (response['success']) {
         // Sucesso: exibir modal e limpar campos
         NewPasswordModal(context, email);
+
         setState(() {
           cpfPassController.clear();
           emailPassController.clear();
@@ -142,8 +148,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
     // Limpar os campos ao sair da tela
     cpfPassController.clear();
     emailPassController.clear();
-    cpfPassController.dispose();
-    emailPassController.dispose();
+    // cpfPassController.dispose();
+    // emailPassController.dispose();
     super.dispose();
   }
 
