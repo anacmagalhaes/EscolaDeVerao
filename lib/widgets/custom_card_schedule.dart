@@ -41,9 +41,11 @@ class CustomCardSchedule extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: event['imagem'] != null && event['imagem'].isNotEmpty
-                      ? Image.network(event['link_completo'])
-                      : Image.asset('assets/images/person.png'),
+                  child: ClipOval(
+                    child: event['imagem'] != null && event['imagem'].isNotEmpty
+                        ? Image.network(event['link_completo'])
+                        : Image.asset('assets/images/person.png'),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -51,7 +53,10 @@ class CustomCardSchedule extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Fonts(
-                          text: StringUtils.formatEventTitle(event['titulo']),
+                          text: StringUtils.formatEventTitle(
+                              event['titulo']?.isNotEmpty == true
+                                  ? event['titulo']
+                                  : 'Título não disponível'),
                           maxLines: 3,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -59,7 +64,9 @@ class CustomCardSchedule extends StatelessWidget {
                       const SizedBox(height: 4),
                       Fonts(
                           text: StringUtils.formatEventTitle(
-                              event['palestrante']),
+                              event['palestrante']?.isNotEmpty == true
+                                  ? event['palestrante']
+                                  : 'Palestrante não disponível'),
                           maxLines: 2,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,

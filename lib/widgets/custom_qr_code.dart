@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class CustomQrCode extends StatelessWidget {
@@ -36,8 +38,8 @@ class CustomQrCode extends StatelessWidget {
     return QrImageView(
       data: qrData,
       version: QrVersions.auto,
-      size: 300.0,
-      backgroundColor: Colors.white,
+      size: 280.h,
+      backgroundColor: AppColors.background,
       padding: const EdgeInsets.all(20),
     );
   }
