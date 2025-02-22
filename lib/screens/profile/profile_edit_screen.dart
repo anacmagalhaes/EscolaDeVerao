@@ -80,6 +80,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       setState(() {
         _selectedImage = File(pickedFile.path);
       });
+      print("Imagem selecionada: ${pickedFile.path}");
     }
   }
 
