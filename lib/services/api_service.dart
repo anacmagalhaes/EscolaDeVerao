@@ -57,10 +57,10 @@ class ApiService {
 
         if (userData != null && token != null) {
           // Pré-carregar a imagem do usuário
-          if (userData['link_completo'] != null) {
-            await CachedImageManager()
-                .cacheUserImage(userData['link_completo']);
-          }
+          // if (userData['link_completo'] != null) {
+          //   await CachedImageManager()
+          //       .cacheUserImage(userData['link_completo']);
+          // }
 
           return {
             'success': true,
