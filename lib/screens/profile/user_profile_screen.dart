@@ -381,54 +381,55 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               child: SizedBox(
                 width: 104.h,
                 height: 104.h,
-                child: Consumer<UserProvider>(
-                  builder: (context, userProvider, child) {
-                    String? imageUrl = widget.scannedUser
-                        .linkCompleto; // Use diretamente do currentUser
-
-                    return ClipOval(
-                      child: imageUrl != null && imageUrl.isNotEmpty
-                          ? Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              headers: const {
-                                'Accept': 'image/*',
-                                'ngrok-skip-browser-warning': 'true',
-                              },
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.background,
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                print('Erro ao carregar imagem: $error');
-                                return Image.asset(
-                                  'assets/images/profile.png',
-                                  fit: BoxFit.cover,
-                                  width: 95.h,
-                                  height: 95.h,
-                                );
-                              },
-                            )
-                          : Image.asset(
+                child: Image.asset(
                               'assets/images/profile.png',
                               fit: BoxFit.cover,
                               width: 95.h,
                               height: 95.h,
                             ),
-                    );
-                  },
-                ),
+                // child: Consumer<UserProvider>(
+                //   builder: (context, userProvider, child) {
+                //     String? imageUrl = widget.scannedUser
+                //         .linkCompleto; // Use diretamente do currentUser
+
+                //     return ClipOval(
+                //       child: imageUrl != null && imageUrl.isNotEmpty
+                //           ? Image.network(
+                //               imageUrl,
+                //               fit: BoxFit.cover,
+                //               headers: const {
+                //                 'Accept': 'image/*',
+                //                 'ngrok-skip-browser-warning': 'true',
+                //               },
+                //               loadingBuilder:
+                //                   (context, child, loadingProgress) {
+                //                 if (loadingProgress == null) return child;
+                //                 return Center(
+                //                   child: CircularProgressIndicator(
+                //                     color: AppColors.background,
+                //                     value: loadingProgress.expectedTotalBytes !=
+                //                             null
+                //                         ? loadingProgress
+                //                                 .cumulativeBytesLoaded /
+                //                             loadingProgress.expectedTotalBytes!
+                //                         : null,
+                //                   ),
+                //                 );
+                //               },
+                //               errorBuilder: (context, error, stackTrace) {
+                //                 print('Erro ao carregar imagem: $error');
+                //                 return Image.asset(
+                //                   'assets/images/profile.png',
+                //                   fit: BoxFit.cover,
+                //                   width: 95.h,
+                //                   height: 95.h,
+                //                 );
+                //               },
+                //             )
+                //           : 
+                //     );
+                //   },
+                // ),
               ),
             ),
           ],
