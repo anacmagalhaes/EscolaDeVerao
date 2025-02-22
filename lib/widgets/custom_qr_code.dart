@@ -10,7 +10,7 @@ class CustomQrCode extends StatelessWidget {
   final User user;
 
   String generateUserData() {
-    final jsonData = jsonEncode({
+    final Map<String, dynamic> userData = {
       "id": user.id,
       "name": user.name,
       "sobrenome": user.sobrenome,
@@ -20,9 +20,11 @@ class CustomQrCode extends StatelessWidget {
       "github": user.github,
       "linkedin": user.linkedin,
       "lattes": user.lattes,
-    });
+    };
 
-    return "https://2025.escoladeverao.com.br\n$jsonData"; // Link primeiro, depois JSON
+    final String encodedData = Uri.encodeComponent(jsonEncode(userData));
+
+    return "https://2025.escoladeverao.com.br?q=$encodedData"; 
   }
 
   @override
