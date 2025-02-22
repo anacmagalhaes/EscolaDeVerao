@@ -1,5 +1,8 @@
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:escoladeverao/services/api_service.dart';
+import 'package:escoladeverao/services/cached_user_service.dart';
+import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_app_bar_error.dart';
 import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_card_schedule.dart';
@@ -96,107 +99,171 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           onTap: _onItemTapped,
           currentIndex: _currentIndex,
         ),
-        body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  CustomAppBarError(
-                    onBackPressed: () {
-                      FocusScope.of(context).unfocus();
-                      /* Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ProfileScreen()),
-                        );*/
-                    },
-                    backgroundColor: AppColors.background,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(90.h),
+          child: Container(
+            width: double.maxFinite,
+            color: AppColors.orangePrimary,
+            child: Padding(
+              padding: EdgeInsets.only(left: 24.h, right: 10.h, top: 19.h),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 12.h),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 24.h),
+                                    child: SizedBox(
+                                        width: 56.h,
+                                        height: 56.h,
+                                        child: CachedUserImage(
+                                          userId: widget.user.id,
+                                          width: 48,
+                                          height: 48,
+                                        )),
+                                  ),
+                                  SizedBox(width: 8.h),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 24.h),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Fonts(
+                                          text:
+                                              'Oi, ${StringUtils.formatUserName(widget.user.name)}',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.white,
+                                        ),
+                                        Fonts(
+                                          text: 'ID: ',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.white,
+                                          additionalSpans: [
+                                            TextSpan(
+                                              text: widget.user.id
+                                                  .padLeft(4, '0'),
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppColors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
-            body: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 26.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            _buildScrollableButton('Hoje', 100),
-                            _buildScrollableButton('Cronograma completo', 150),
-                          ],
-                        ),
-                      ),
-                      if (isLoading)
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: CircularProgressIndicator(
-                              color: AppColors.orangePrimary,
-                            ),
-                          ),
-                        )
-                      else if (error != null)
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Text(error!),
-                          ),
-                        )
-                      else if (events.isEmpty)
-                        const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              'Não existem eventos',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.quaternaryGrey,
-                              ),
-                            ),
-                          ),
-                        )
-                      else
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: events.length,
-                          itemBuilder: (context, index) {
-                            return CustomCardSchedule(event: events[index]);
-                          },
-                        ),
-                    ],
-                  ),
-                )
-              ],
-            )));
-  }
-
-  Widget _buildScrollableButton(String text, double width) {
-    return GestureDetector(
-      onTap: () {
-        // Ação ao clicar
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        width: width.h,
-        height: 50.h,
-        decoration: BoxDecoration(
-          color: AppColors.grey,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontFamily: 'Montserrat',
-              color: AppColors.textPrimary,
-              fontSize: 12,
+              ),
             ),
-            softWrap: false,
-            overflow: TextOverflow.fade,
           ),
         ),
-      ),
-    );
+        body: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 26.h),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.start,
+                  //     children: [
+                  //       _buildScrollableButton('Hoje', 100),
+                  //       _buildScrollableButton('Cronograma completo', 150),
+                  //     ],
+                  //   ),
+                  // ),
+                  if (isLoading)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: CircularProgressIndicator(
+                          color: AppColors.orangePrimary,
+                        ),
+                      ),
+                    )
+                  else if (error != null)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(error!),
+                      ),
+                    )
+                  else if (events.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: Text(
+                          'Não existem eventos',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.quaternaryGrey,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: events.length,
+                      itemBuilder: (context, index) {
+                        return CustomCardSchedule(event: events[index]);
+                      },
+                    ),
+                ],
+              ),
+            )
+          ],
+        ));
   }
+}
+
+Widget _buildScrollableButton(String text, double width) {
+  return GestureDetector(
+    onTap: () {
+      // Ação ao clicar
+    },
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      width: width.h,
+      height: 50.h,
+      decoration: BoxDecoration(
+        color: AppColors.grey,
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontFamily: 'Montserrat',
+            color: AppColors.textPrimary,
+            fontSize: 12,
+          ),
+          softWrap: false,
+          overflow: TextOverflow.fade,
+        ),
+      ),
+    ),
+  );
 }

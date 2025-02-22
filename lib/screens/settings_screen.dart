@@ -3,6 +3,7 @@ import 'package:escoladeverao/models/user_provider_model.dart';
 import 'package:escoladeverao/screens/password/change_password_screen.dart';
 import 'package:escoladeverao/screens/my_connections_screen.dart';
 import 'package:escoladeverao/screens/profile/profile_edit_screen.dart';
+import 'package:escoladeverao/services/auth_service.dart';
 import 'package:escoladeverao/services/cached_user_service.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
@@ -11,6 +12,7 @@ import 'package:escoladeverao/widgets/custom_bottom_navigation.dart';
 import 'package:escoladeverao/widgets/custom_screen_index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -26,6 +28,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  AuthService authService = AuthService();
+
   int _currentIndex = 4;
 
   void _onItemTapped(int index) {
@@ -53,6 +57,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
         ),
       );
+    }
+  }
+
+  void _logout() async {
+    try {
+      await authService.logout();
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/login_screen',
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      Fluttertoast.showToast(
+        msg: 'Erro ao fazer logout. Tente novamente.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+
+      Future.delayed(const Duration(seconds: 5));
     }
   }
 
@@ -147,6 +173,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.black),
+                              ),
+                              const Spacer(),
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(top: 20.h, right: 15.h),
+                                child: IconButton(
+                                  onPressed: _logout,
+                                  icon: SizedBox(
+                                    width: 32,
+                                    height: 32,
+                                    child:
+                                        Image.asset('assets/icons/teste.png'),
+                                  ),
+                                  color: AppColors.white,
+                                ),
                               ),
                             ],
                           ),

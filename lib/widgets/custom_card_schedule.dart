@@ -1,4 +1,5 @@
 import 'package:escoladeverao/utils/fonts_utils.dart';
+import 'package:escoladeverao/utils/string_utils.dart';
 import 'package:escoladeverao/widgets/custom_details_dialog.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
@@ -50,14 +51,15 @@ class CustomCardSchedule extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Fonts(
-                          text: event['titulo'],
-                          maxLines: 2,
+                          text: StringUtils.formatEventTitle(event['titulo']),
+                          maxLines: 3,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.blueMarine),
                       const SizedBox(height: 4),
                       Fonts(
-                          text: event['palestrante'],
+                          text: StringUtils.formatEventTitle(
+                              event['palestrante']),
                           maxLines: 2,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -70,34 +72,43 @@ class CustomCardSchedule extends StatelessWidget {
             Divider(height: 20.h, color: AppColors.quaternaryGrey),
             SizedBox(height: 8.h),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset('assets/icons/local_icon.png'),
                 SizedBox(width: 5.h),
                 Fonts(
-                    text: event['local'],
+                    text: StringUtils.formatEventTitle(event['local']),
                     maxLines: 2,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: AppColors.quaternaryGrey),
-                SizedBox(width: 20.h),
-                Image.asset('assets/icons/calendar_icon.png'),
-                SizedBox(width: 5.h),
-                Fonts(
-                    text: dia,
-                    maxLines: 2,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.quaternaryGrey),
-                SizedBox(width: 20.h),
-                Image.asset('assets/icons/clock_icon.png'),
-                SizedBox(width: 5.h),
-                Fonts(
-                    text: hora,
-                    maxLines: 2,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.quaternaryGrey),
+              ],
+            ),
+            SizedBox(height: 10.h),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/icons/calendar_icon.png'),
+                    SizedBox(width: 5.h),
+                    Fonts(
+                        text: dia,
+                        maxLines: 2,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.quaternaryGrey),
+                    SizedBox(width: 20.h),
+                    Image.asset('assets/icons/clock_icon.png'),
+                    SizedBox(width: 5.h),
+                    Fonts(
+                        text: hora,
+                        maxLines: 2,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.quaternaryGrey),
+                  ],
+                )
               ],
             ),
             const SizedBox(height: 20),
