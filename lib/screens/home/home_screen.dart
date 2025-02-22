@@ -194,28 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void _logout() async {
-    try {
-      await authService.logout();
-      if (!mounted) return;
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        '/login_screen',
-        (Route<dynamic> route) => false,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      Fluttertoast.showToast(
-        msg: 'Erro ao fazer logout. Tente novamente.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-
-      Future.delayed(const Duration(seconds: 5));
-    }
-  }
-
   void _checkAdminStatus() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -296,17 +274,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
                                       ],
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.only(top: 20.h, right: 10.h),
-                                    child: IconButton(
-                                      onPressed: _logout,
-                                      icon: Image.asset(
-                                          'assets/icons/out-icon.png'),
-                                      color: AppColors.white,
                                     ),
                                   ),
                                 ],
