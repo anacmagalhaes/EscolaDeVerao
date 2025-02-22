@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen(
@@ -79,6 +80,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
       Future.delayed(const Duration(seconds: 5));
+    }
+  }
+
+  Future<void> _launchURL(String? url) async {
+    if (url == null || url.isEmpty) {
+      debugPrint('URL inválida ou nula.');
+      return;
+    }
+
+    try {
+      // Ensure URL starts with https://
+      String formattedUrl = url;
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        formattedUrl = 'https://$url';
+      }
+
+      final Uri uri = Uri.parse(formattedUrl);
+
+      // Try launching with platform default browser
+      final bool launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+        webOnlyWindowName: '_blank',
+      );
+
+      if (!launched) {
+        // If external application fails, try launching in app
+        final bool inAppLaunched = await launchUrl(
+          uri,
+          mode: LaunchMode.inAppWebView,
+          webViewConfiguration: const WebViewConfiguration(
+            enableJavaScript: true,
+            enableDomStorage: true,
+          ),
+        );
+
+        if (!inAppLaunched) {
+          throw 'Could not launch $formattedUrl';
+        }
+      }
+    } catch (e) {
+      debugPrint('Error launching URL: $e');
+      throw 'Não foi possível abrir o link: $url';
     }
   }
 
@@ -158,11 +202,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 child: SizedBox(
                                     width: 48.h,
                                     height: 48.h,
-                                    child: CachedUserImage(
-                                      userId: widget.user.id,
-                                      width: 48,
-                                      height: 48,
-                                    )),
+                                    child: Image.asset('assets/images/profile.png'),
+                                    // child: CachedUserImage(
+                                    //   userId: widget.user.id,
+                                    //   width: 48,
+                                    //   height: 48,
+                                    // )
+                                    ),
                               ),
                               SizedBox(width: 12.h),
                               Padding(
@@ -360,7 +406,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       ],
                                     ),
                                   ),
-                                  onTap: () {},
+                                  onTap: () {
+                                    _launchURL(
+                                        'https://2025.escoladeverao.com.br/');
+                                  },
                                 ),
                                 SizedBox(height: 34.84.h),
                               ],

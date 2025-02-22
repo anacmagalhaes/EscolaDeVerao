@@ -310,13 +310,14 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
               // Replace the existing image widget with this:
               Positioned(
                 top: 120.h - 52.h,
-                left: MediaQuery.of(context).size.width / 2 - 52.h,
-                child: EditableProfileImage(
-                  userId: widget.user.id ?? '',
-                  selectedImage: _selectedImage,
-                  onEditTap: _pickImage,
-                  size: 104.h,
-                ),
+                left: MediaQuery.of(context).size.width / 2 - 40.h,
+                child: Image.asset('assets/images/profile.png'),
+                // child: EditableProfileImage(
+                //   userId: widget.user.id ?? '',
+                //   selectedImage: _selectedImage,
+                //   onEditTap: _pickImage,
+                //   size: 104.h,
+                // ),
               ),
               // Edit profile image icon
               // Positioned(
