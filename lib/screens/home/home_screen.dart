@@ -234,13 +234,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Padding(
                                     padding: EdgeInsets.only(top: 24.h),
                                     child: SizedBox(
-                                        width: 56.h,
-                                        height: 56.h,
-                                        child: CachedUserImage(
-                                          userId: user.id,
-                                          width: 48,
-                                          height: 48,
-                                        )),
+                                      width: 56.h,
+                                      height: 56.h,
+                                      child: Image.asset(
+                                          'assets/images/profile.png'),
+                                      // child: CachedUserImage(
+                                      //   userId: user.id,
+                                      //   width: 48,
+                                      //   height: 48,
+                                      // )
+                                    ),
                                   ),
                                   SizedBox(width: 8.h),
                                   Padding(

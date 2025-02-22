@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: min(48.h, 52)),
+                      SizedBox(height: min(20.h, 52.h)),
                       Fonts(
                         text: StringUtils.formatUserName(currentUser.name),
                         maxLines: 2,
@@ -107,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         fontWeight: FontWeight.w700,
                         color: AppColors.blueMarine,
                       ),
-                      SizedBox(height: min(4.h, 8)),
+                      SizedBox(height: min(4.h, 8.h)),
                       Fonts(
                         text: 'ID: ',
                         fontSize: 14,
@@ -129,22 +129,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 30.h, bottom: 10.h),
+                padding: EdgeInsets.only(top: 35.h, bottom: 20.h),
                 child: SizedBox(
-                    width: 95.h,
-                    height: 95.h,
-                    child: Consumer<UserProvider>(
-                      builder: (context, userProvider, child) {
-                        String? imageUrl = currentUser
-                            .imagemUrl; // Use diretamente do currentUser
+                  width: 95.h,
+                  height: 65.h,
+                  child: Image.asset('assets/images/profile.png'),
+                  // child: Consumer<UserProvider>(
+                  //   builder: (context, userProvider, child) {
+                  //     String? imageUrl = currentUser
+                  //         .imagemUrl; // Use diretamente do currentUser
 
-                        return CachedUserImage(
-                          userId: widget.user.id,
-                          width: 48,
-                          height: 48,
-                        );
-                      },
-                    )),
+                  //     // return CachedUserImage(
+                  //     //   userId: widget.user.id,
+                  //     //   width: 48,
+                  //     //   height: 48,
+                  //     // );
+                  //   },
+                  // )
+                ),
               ),
             ],
           ),
@@ -240,20 +242,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 user: widget.user,
                 scannedUser: widget.user,
                 origin: 'profile',
-              ),
-            ),
-          );
-        },
-      },
-      {
-        'icon': 'assets/icons/sofa_icon.png',
-        'text': 'Meus \neventos',
-        'onTap': () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ScheduleScreen(
-                user: widget.user,
               ),
             ),
           );
