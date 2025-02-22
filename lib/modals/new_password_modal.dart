@@ -31,7 +31,7 @@ void NewPasswordModal(BuildContext context, String email) {
     context: context,
     barrierColor:
         AppColors.background.withOpacity(0.3), // Fundo semi-transparente
-    barrierDismissible: true, // Permite fechar o dialog tocando fora
+    barrierDismissible: false, // Permite fechar o dialog tocando fora
     builder: (context) {
       return Dialog(
         backgroundColor:
@@ -74,15 +74,14 @@ void NewPasswordModal(BuildContext context, String email) {
                         ),
                       ],
                     ),
+                  ),
+                  GestureDetector(
                     onTap: () {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => const LoginScreen()));
-                    },
-                  ),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(), // Fecha o modal
+                    }, // Fecha o modal
                     child: Container(
                       width: 60.h,
                       height: 60.h,
@@ -92,7 +91,6 @@ void NewPasswordModal(BuildContext context, String email) {
                       ),
                       child: Image.asset('assets/icons/close-icon.png'),
                     ),
-                    onTapCancel: () {},
                   ),
                 ],
               ),
