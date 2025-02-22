@@ -25,6 +25,7 @@ class ScanScreen extends StatefulWidget {
 class _ScanScreenState extends State<ScanScreen> {
   int _currentIndex = 2;
   bool _isProcessing = false;
+  final ApiService _apiService = ApiService();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -50,6 +51,66 @@ class _ScanScreenState extends State<ScanScreen> {
           },
         ),
       );
+    }
+  }
+
+  Future<void> _processQrCode(String rawValue) async {
+    if (_isProcessing) return;
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    try {
+      // Parse a URL do QR code
+      final uri = Uri.parse(rawValue);
+
+      // Extrai o ID do usuário da URL
+      if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'user') {
+        final userId = uri.pathSegments[1];
+
+        // Busca os dados do usuário usando o fetchUserById
+        final scannedUser = await _apiService.fetchUserById(userId);
+
+        // Tenta salvar a conexão
+        final result =
+            await _apiService.saveConnection(widget.user.id, scannedUser.id);
+
+        if (result['success']) {
+          if (mounted) {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UserProfileScreen(
+                  user: widget.user,
+                  scannedUser: scannedUser,
+                  origin: 'user_profile',
+                ),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            if (result['needsReauth'] == true) {
+              Navigator.of(context).pushReplacementNamed('/login');
+            } else {
+              // Mostra erro usando seu ErrorHandler
+              ErrorHandler();
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print('Erro ao processar QR code: $e');
+      if (mounted) {
+        ErrorHandler();
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isProcessing = false;
+        });
+      }
     }
   }
 
@@ -107,80 +168,19 @@ class _ScanScreenState extends State<ScanScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       color: Colors.black,
                     ),
-                    child: MobileScanner(onDetect: (capture) async {
-                      if (_isProcessing) return; // Evita múltiplas navegações
-
-                      setState(() {
-                        _isProcessing = true;
-                      });
-
-                      try {
+                    child: MobileScanner(
+                      onDetect: (capture) async {
                         final List<Barcode> barcodes = capture.barcodes;
-
                         if (barcodes.isNotEmpty) {
-                          final barcode = barcodes.first;
-                          final String? rawValue = barcode.rawValue;
-
+                          final String? rawValue = barcodes.first.rawValue;
                           if (rawValue != null) {
-                            try {
-                              final apiService = ApiService();
-
-                              final Map<String, dynamic> userData =
-                                  jsonDecode(rawValue);
-
-                              final scannedUser = User(
-                                  id: userData['id'],
-                                  name: userData['name'],
-                                  sobrenome: userData['sobrenome'],
-                                  email: userData['email'],
-                                  cpf: userData['cpf'],
-                                  telefone: userData['telefone'],
-                                  github: userData['github'],
-                                  linkedin: userData['linkedin'],
-                                  lattes: userData['lattes'],
-                                  roles: [],
-                                  linkCompleto: userData['link_completo']);
-
-                              // Tenta salvar a conexão
-                              final result = await apiService.saveConnection(
-                                  widget.user.id, scannedUser.id);
-
-                              if (result['success']) {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserProfileScreen(
-                                      user: widget.user,
-                                      scannedUser: scannedUser,
-                                      origin: 'user_profile',
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                if (mounted) {
-                                  if (result['needsReauth'] == true) {
-                                    Navigator.of(context)
-                                        .pushReplacementNamed('/login');
-                                  }
-                                  ErrorHandler();
-                                }
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ErrorHandler();
-                              }
-                            }
+                            await _processQrCode(rawValue);
                           }
                         }
-                      } catch (e) {
-                        ErrorHandler();
-                      } finally {
-                        setState(() {
-                          _isProcessing = false; // Libera para nova leitura
-                        });
-                      }
-                    }),
+                      },
+                    ),
                   ),
+
                   SizedBox(height: 10.h),
                   // Remove o Expanded aqui e coloca o Container diretamente dentro da Column
                   Center(
