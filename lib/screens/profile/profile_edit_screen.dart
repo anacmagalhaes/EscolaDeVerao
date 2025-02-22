@@ -111,10 +111,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             await apiService.fetchUserById(widget.user.id ?? '');
 
         if (mounted) {
-          // Update the provider with the new user data
-          Provider.of<UserProvider>(context, listen: false)
-              .updateUser(updatedUser);
-
           Fluttertoast.showToast(
             msg: "Perfil atualizado",
             toastLength: Toast.LENGTH_SHORT,

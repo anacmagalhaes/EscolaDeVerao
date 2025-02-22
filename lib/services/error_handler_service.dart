@@ -1,4 +1,6 @@
 import 'package:escoladeverao/modals/error_modal.dart';
+import 'package:escoladeverao/models/user_model.dart';
+import 'package:escoladeverao/screens/home/home_screen.dart';
 import 'package:escoladeverao/utils/colors_utils.dart';
 import 'package:escoladeverao/utils/fonts_utils.dart';
 import 'package:escoladeverao/widgets/custom_app_bar.dart';
@@ -6,6 +8,8 @@ import 'package:escoladeverao/widgets/custom_app_bar_error.dart';
 import 'package:escoladeverao/widgets/custom_outlined_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+late final User user;
 
 class ErrorHandler {
   static void handleError(BuildContext context, dynamic error,
@@ -79,7 +83,7 @@ class ErrorHandler {
     ErrorModal(context, errorMessage: message, title: 'Erro de Permissão');
   }
 
-   static void _showProfileErrorModal(BuildContext context, String message) {
+  static void _showProfileErrorModal(BuildContext context, String message) {
     ErrorModal(context, errorMessage: message, title: 'Erro de perfil');
   }
 
@@ -151,7 +155,8 @@ class _ErrorScreenState extends State<ErrorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(onBackPressed: () {
-        Navigator.of(context).pop();
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => HomeScreen(user: user)));
       }),
       body: Center(
         child: Column(
@@ -160,7 +165,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
             Image.asset(widget.imagePath, width: 300, height: 300),
             SizedBox(height: 20),
             Text(
-              'Sem conexões',
+              'Sem conexão',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
