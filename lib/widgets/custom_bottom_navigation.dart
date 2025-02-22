@@ -44,21 +44,29 @@ class _CustomBottomNavigationState extends State<CustomBottomNavigation> {
               GestureDetector(
                 onTap: () => widget.onTap(0),
                 behavior: HitTestBehavior.translucent,
-                child: Image.asset(
-                  'assets/icons/home-icon.png',
-                  color: widget.currentIndex == 0
-                      ? AppColors.orangePrimary
-                      : AppColors.textPrimary,
+                child: SizedBox(
+                  width: 32.h,
+                  height: 32.h,
+                  child: Image.asset(
+                    'assets/icons/home-icon.png',
+                    color: widget.currentIndex == 0
+                        ? AppColors.orangePrimary
+                        : AppColors.textPrimary,
+                  ),
                 ),
               ),
               GestureDetector(
                 onTap: () => widget.onTap(1),
                 behavior: HitTestBehavior.translucent,
-                child: Image.asset(
-                  'assets/icons/calendar-icon.png',
-                  color: widget.currentIndex == 1
-                      ? AppColors.orangePrimary
-                      : AppColors.textPrimary,
+                child: SizedBox(
+                  width: 32.h,
+                  height: 32.h,
+                  child: Image.asset(
+                    'assets/icons/calendar-icon.png',
+                    color: widget.currentIndex == 1
+                        ? AppColors.orangePrimary
+                        : AppColors.textPrimary,
+                  ),
                 ),
               ),
               Container(
