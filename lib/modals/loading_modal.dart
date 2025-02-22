@@ -1,46 +1,30 @@
 import 'package:flutter/material.dart';
 
-class LoadingModal {
-  static void show(BuildContext context, {String message = "Carregando..."}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Impede que fechem o modal tocando fora
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    Text(
-                      message,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+class LoadingModal extends StatelessWidget {
+  final bool isLoading;
+  final Widget child;
 
-  static void hide(BuildContext context) {
-    Navigator.of(context).pop();
+  const LoadingModal({
+    Key? key,
+    required this.isLoading,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        if (isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.orange),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
