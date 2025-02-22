@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:escoladeverao/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -10,7 +9,7 @@ class CustomQrCode extends StatelessWidget {
   final User user;
 
   String generateUserData() {
-    final Map<String, dynamic> userData = {
+    final jsonData = jsonEncode({
       "id": user.id,
       "name": user.name,
       "sobrenome": user.sobrenome,
@@ -20,21 +19,26 @@ class CustomQrCode extends StatelessWidget {
       "github": user.github,
       "linkedin": user.linkedin,
       "lattes": user.lattes,
-    };
+    });
 
-    final String encodedData = Uri.encodeComponent(jsonEncode(userData));
+    final encodedJson = base64Url
+        .encode(utf8.encode(jsonData))
+        .replaceAll('+', '-')
+        .replaceAll('/', '_')
+        .replaceAll('=', ''); // Remove "=" para evitar problemas na URL
 
-    return "https://2025.escoladeverao.com.br?q=$encodedData";
+    return "https://2025.escoladeverao.com.br?q=$encodedJson";
   }
 
   @override
   Widget build(BuildContext context) {
     final qrData = generateUserData();
-    print('QR Code data: $qrData');
     return QrImageView(
-      data: qrData, // Gera o texto formatado
+      data: qrData,
       version: QrVersions.auto,
       size: 300.0,
+      backgroundColor: Colors.white,
+      padding: const EdgeInsets.all(20),
     );
   }
 }
