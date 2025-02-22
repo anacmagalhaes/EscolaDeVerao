@@ -53,6 +53,50 @@ class _ScanScreenState extends State<ScanScreen> {
     }
   }
 
+  Future<Map<String, dynamic>?> processQRCode(String qrData) async {
+    try {
+      if (qrData.trim().isEmpty) {
+        throw FormatException("O QR Code está vazio.");
+      }
+
+      String cleanedRawValue = qrData.trim();
+      Map<String, dynamic>? userData;
+
+      if (cleanedRawValue.startsWith('{')) {
+        // Caso seja JSON puro
+        userData = jsonDecode(cleanedRawValue);
+      } else {
+        // Caso seja uma URL com parâmetro 'q'
+        Uri? uri = Uri.tryParse(cleanedRawValue);
+        if (uri != null && uri.hasQuery) {
+          String? jsonPart = uri.queryParameters['q'];
+          if (jsonPart != null) {
+            // Ajusta o padding do Base64 se necessário
+            int mod4 = jsonPart.length % 4;
+            if (mod4 > 0) {
+              jsonPart += '=' * (4 - mod4);
+            }
+
+            try {
+              // Tenta decodificar como Base64 primeiro
+              String decodedString = utf8.decode(base64Url.decode(jsonPart));
+              userData = jsonDecode(decodedString);
+            } catch (e) {
+              // Se falhar, tenta decodificar como URI encoded
+              final decodedJson = Uri.decodeFull(jsonPart);
+              userData = jsonDecode(decodedJson);
+            }
+          }
+        }
+      }
+
+      return userData;
+    } catch (e) {
+      print("❌ Erro ao processar o QR Code: $e");
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,29 +151,25 @@ class _ScanScreenState extends State<ScanScreen> {
                       borderRadius: BorderRadius.all(Radius.circular(20)),
                       color: Colors.black,
                     ),
-                    child: MobileScanner(onDetect: (capture) async {
-                      if (_isProcessing) return;
+                    child: MobileScanner(
+                      onDetect: (capture) async {
+                        if (_isProcessing) return;
 
-                      setState(() {
-                        _isProcessing = true;
-                      });
+                        setState(() {
+                          _isProcessing = true;
+                        });
 
-                      try {
-                        final List<Barcode> barcodes = capture.barcodes;
+                        try {
+                          final List<Barcode> barcodes = capture.barcodes;
 
-                        if (barcodes.isNotEmpty) {
-                          final barcode = barcodes.first;
-                          final String? rawValue = barcode.rawValue;
+                          if (barcodes.isNotEmpty) {
+                            final barcode = barcodes.first;
+                            final String? rawValue = barcode.rawValue;
 
-                          if (rawValue != null) {
-                            try {
-                              Uri uri = Uri.parse(rawValue);
-                              String? jsonPart = uri.queryParameters['q'];
+                            if (rawValue != null) {
+                              final userData = await processQRCode(rawValue);
 
-                              if (jsonPart != null) {
-                                final Map<String, dynamic> userData =
-                                    jsonDecode(Uri.decodeComponent(jsonPart));
-
+                              if (userData != null) {
                                 final scannedUser = User(
                                   id: userData['id'],
                                   name: userData['name'],
@@ -148,16 +188,18 @@ class _ScanScreenState extends State<ScanScreen> {
                                     widget.user.id, scannedUser.id);
 
                                 if (result['success']) {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => UserProfileScreen(
-                                        user: widget.user,
-                                        scannedUser: scannedUser,
-                                        origin: 'user_profile',
+                                  if (mounted) {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UserProfileScreen(
+                                          user: widget.user,
+                                          scannedUser: scannedUser,
+                                          origin: 'user_profile',
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
                                 } else {
                                   if (mounted) {
                                     if (result['needsReauth'] == true) {
@@ -167,24 +209,25 @@ class _ScanScreenState extends State<ScanScreen> {
                                     ErrorHandler();
                                   }
                                 }
-                              }
-                            } catch (e) {
-                              print("Erro ao processar o QR Code: $e");
-                              if (mounted) {
-                                ErrorHandler();
+                              } else {
+                                if (mounted) {
+                                  ErrorHandler();
+                                }
                               }
                             }
                           }
+                        } catch (e) {
+                          print("Erro ao escanear QR Code: $e");
+                          if (mounted) {
+                            ErrorHandler();
+                          }
+                        } finally {
+                          setState(() {
+                            _isProcessing = false;
+                          });
                         }
-                      } catch (e) {
-                        print("Erro ao escanear QR Code: $e");
-                        ErrorHandler();
-                      } finally {
-                        setState(() {
-                          _isProcessing = false;
-                        });
-                      }
-                    }),
+                      },
+                    ),
                   ),
                   SizedBox(height: 10.h),
                   Center(

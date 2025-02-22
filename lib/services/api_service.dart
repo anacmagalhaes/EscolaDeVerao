@@ -25,6 +25,7 @@ class ApiService {
     _client = IOClient(httpClient);
 
     _dio = Dio(BaseOptions(
+      responseType: ResponseType.plain,
       baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 30),
