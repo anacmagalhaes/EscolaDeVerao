@@ -36,7 +36,7 @@ class _ScanScreenState extends State<ScanScreen> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) {
-            return getScreenFromIndex(index, widget.user); // Tela de destino
+            return getScreenFromIndex(index, widget.user);
           },
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = 0.0;
@@ -108,8 +108,7 @@ class _ScanScreenState extends State<ScanScreen> {
                       color: Colors.black,
                     ),
                     child: MobileScanner(onDetect: (capture) async {
-                      if (_isProcessing)
-                        return; // Evita múltiplas leituras seguidas
+                      if (_isProcessing) return;
 
                       setState(() {
                         _isProcessing = true;
@@ -124,49 +123,49 @@ class _ScanScreenState extends State<ScanScreen> {
 
                           if (rawValue != null) {
                             try {
-                              final parts = rawValue
-                                  .split("\n"); // Divide a string pelo "\n"
-                              final jsonString =
-                                  parts.length > 1 ? parts[1] : parts[0];
+                              Uri uri = Uri.parse(rawValue);
+                              String? jsonPart = uri.queryParameters['q'];
 
-                              final Map<String, dynamic> userData =
-                                  jsonDecode(jsonString);
+                              if (jsonPart != null) {
+                                final Map<String, dynamic> userData =
+                                    jsonDecode(Uri.decodeComponent(jsonPart));
 
-                              final scannedUser = User(
-                                id: userData['id'],
-                                name: userData['name'],
-                                sobrenome: userData['sobrenome'],
-                                email: userData['email'],
-                                cpf: userData['cpf'],
-                                telefone: userData['telefone'],
-                                github: userData['github'],
-                                linkedin: userData['linkedin'],
-                                lattes: userData['lattes'],
-                                roles: [],
-                              );
-
-                              final apiService = ApiService();
-                              final result = await apiService.saveConnection(
-                                  widget.user.id, scannedUser.id);
-
-                              if (result['success']) {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserProfileScreen(
-                                      user: widget.user,
-                                      scannedUser: scannedUser,
-                                      origin: 'user_profile',
-                                    ),
-                                  ),
+                                final scannedUser = User(
+                                  id: userData['id'],
+                                  name: userData['name'],
+                                  sobrenome: userData['sobrenome'],
+                                  email: userData['email'],
+                                  cpf: userData['cpf'],
+                                  telefone: userData['telefone'],
+                                  github: userData['github'],
+                                  linkedin: userData['linkedin'],
+                                  lattes: userData['lattes'],
+                                  roles: [],
                                 );
-                              } else {
-                                if (mounted) {
-                                  if (result['needsReauth'] == true) {
-                                    Navigator.of(context)
-                                        .pushReplacementNamed('/login');
+
+                                final apiService = ApiService();
+                                final result = await apiService.saveConnection(
+                                    widget.user.id, scannedUser.id);
+
+                                if (result['success']) {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UserProfileScreen(
+                                        user: widget.user,
+                                        scannedUser: scannedUser,
+                                        origin: 'user_profile',
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  if (mounted) {
+                                    if (result['needsReauth'] == true) {
+                                      Navigator.of(context)
+                                          .pushReplacementNamed('/login');
+                                    }
+                                    ErrorHandler();
                                   }
-                                  ErrorHandler();
                                 }
                               }
                             } catch (e) {
@@ -182,13 +181,12 @@ class _ScanScreenState extends State<ScanScreen> {
                         ErrorHandler();
                       } finally {
                         setState(() {
-                          _isProcessing = false; // Libera para nova leitura
+                          _isProcessing = false;
                         });
                       }
                     }),
                   ),
                   SizedBox(height: 10.h),
-                  // Remove o Expanded aqui e coloca o Container diretamente dentro da Column
                   Center(
                     child: Container(
                       width: 285.h,
