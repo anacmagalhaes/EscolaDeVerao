@@ -81,7 +81,7 @@ class _CustomCardHomeState extends State<CustomCardHome> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: Image.asset('assets/images/person.png'),
+                  child: Image.asset('assets/images/orange_simbol.png'),
                 ),
                 const SizedBox(width: 10),
                 Expanded(

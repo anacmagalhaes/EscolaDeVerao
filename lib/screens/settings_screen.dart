@@ -183,8 +183,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   icon: SizedBox(
                                     width: 32,
                                     height: 32,
-                                    child:
-                                        Image.asset('assets/icons/teste.png'),
+                                    child: Image.asset(
+                                        'assets/icons/logout-icon.png'),
                                   ),
                                   color: AppColors.white,
                                 ),
