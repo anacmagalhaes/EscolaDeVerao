@@ -24,7 +24,7 @@ class CustomQrCode extends StatelessWidget {
 
     final String encodedData = Uri.encodeComponent(jsonEncode(userData));
 
-    return "https://2025.escoladeverao.com.br?q=$encodedData"; 
+    return "https://2025.escoladeverao.com.br?q=$encodedData";
   }
 
   @override
