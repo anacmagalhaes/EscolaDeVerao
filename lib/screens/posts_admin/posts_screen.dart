@@ -231,11 +231,11 @@ class _PostsScreenState extends State<PostsScreen> {
                             color: AppColors.textPrimary,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: double.maxFinite),
+                            padding: EdgeInsets.only(left: 40.h),
                             child: GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: Padding(
-                                padding: EdgeInsets.only(bottom: 27.h),
+                                padding: EdgeInsets.only(bottom: 25.h),
                                 child: Image.asset(
                                     'assets/icons/close-black-icon.png'),
                               ),
