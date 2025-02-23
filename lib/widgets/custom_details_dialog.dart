@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 void CustomDetailsDialog(BuildContext context, Map<String, dynamic> event) {
   showDialog(
     context: context,
-    barrierColor: AppColors.background.withOpacity(0.3),
+    barrierColor: AppColors.background.withOpacity(0.9),
     barrierDismissible: true,
     builder: (context) {
       return Dialog(
