@@ -56,12 +56,17 @@ class ApiService {
         final userData = decodedResponse['data']['user'];
         final token = decodedResponse['data']['token'];
 
+        print('Resposta do servidor: $decodedResponse'); // Debug
+
         if (userData != null && token != null) {
-          // Pré-carregar a imagem do usuário
-          // if (userData['link_completo'] != null) {
-          //   await CachedImageManager()
-          //       .cacheUserImage(userData['link_completo']);
-          // }
+          // Se o e-mail ainda não foi verificado
+          if (userData['email_verified_at'] == null) {
+            return {
+              'success': false,
+              'message':
+                  'E-mail não verificado. Verifique sua caixa de entrada.',
+            };
+          }
 
           return {
             'success': true,
@@ -75,13 +80,13 @@ class ApiService {
 
       return {
         'success': false,
-        'message': 'Login failed',
+        'message': 'Login falhou. Verifique suas credenciais.',
       };
     } catch (e) {
-      print('Login error: $e');
+      print('Erro ao fazer login: $e');
       return {
         'success': false,
-        'message': e.toString(),
+        'message': 'Erro ao conectar ao servidor.',
       };
     }
   }
