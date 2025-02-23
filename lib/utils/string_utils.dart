@@ -11,7 +11,7 @@ class StringUtils {
   }
 
   static String formatEventTitle(String title) {
-    const int maxLength = 60; // defina o limite desejado
+    const int maxLength = 80; // defina o limite desejado
     if (title.length > maxLength) {
       return '${title.substring(0, maxLength)}...';
     }

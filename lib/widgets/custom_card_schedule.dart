@@ -41,9 +41,11 @@ class CustomCardSchedule extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: event['imagem'] != null && event['imagem'].isNotEmpty
-                      ? Image.network(event['link_completo'])
-                      : Image.asset('assets/images/person.png'),
+                  child: ClipOval(
+                    child: event['imagem'] != null && event['imagem'].isNotEmpty
+                        ? Image.network(event['link_completo'])
+                        : Image.asset('assets/images/person.png'),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -51,16 +53,21 @@ class CustomCardSchedule extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Fonts(
-                          text: StringUtils.formatEventTitle(event['titulo']),
-                          maxLines: 3,
+                          text: StringUtils.formatEventTitle(
+                              event['titulo']?.isNotEmpty == true
+                                  ? event['titulo']
+                                  : 'Título não disponível'),
+                          maxLines: 4,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.blueMarine),
                       const SizedBox(height: 4),
                       Fonts(
                           text: StringUtils.formatEventTitle(
-                              event['palestrante']),
-                          maxLines: 2,
+                              event['palestrante']?.isNotEmpty == true
+                                  ? event['palestrante']
+                                  : 'Palestrante não disponível'),
+                          maxLines: 4,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           color: AppColors.quaternaryGrey),

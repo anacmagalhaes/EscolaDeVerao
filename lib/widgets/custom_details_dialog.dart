@@ -24,7 +24,9 @@ void CustomDetailsDialog(BuildContext context, Map<String, dynamic> event) {
               Column(
                 children: [
                   Fonts(
-                      text: event['titulo'],
+                      text: event['titulo']?.isNotEmpty == true
+                          ? event['titulo']
+                          : 'Título não disponível',
                       fontSize: 24,
                       textAlign: TextAlign.center,
                       maxLines: 4,
@@ -32,7 +34,9 @@ void CustomDetailsDialog(BuildContext context, Map<String, dynamic> event) {
                       color: AppColors.blueMarine),
                   SizedBox(height: 20.h),
                   Fonts(
-                      text: '${event['descricao']}',
+                      text: event['descricao']?.isNotEmpty == true
+                          ? event['descricao']
+                          : 'Descrição não disponível',
                       fontSize: 16,
                       textAlign: TextAlign.center,
                       maxLines: 10,
