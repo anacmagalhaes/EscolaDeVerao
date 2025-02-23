@@ -57,7 +57,7 @@ class CustomCardSchedule extends StatelessWidget {
                               event['titulo']?.isNotEmpty == true
                                   ? event['titulo']
                                   : 'Título não disponível'),
-                          maxLines: 3,
+                          maxLines: 4,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.blueMarine),
@@ -67,7 +67,7 @@ class CustomCardSchedule extends StatelessWidget {
                               event['palestrante']?.isNotEmpty == true
                                   ? event['palestrante']
                                   : 'Palestrante não disponível'),
-                          maxLines: 2,
+                          maxLines: 4,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           color: AppColors.quaternaryGrey),

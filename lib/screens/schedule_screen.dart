@@ -71,25 +71,36 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         error = null; // Limpa erros anteriores
       });
 
-      print('Iniciando carregamento de eventos');
-      final result = await _apiService.fetchEvents();
-      print('Resultado da API: $result');
+      // Verifica se os eventos já estão em cache
+      final cachedEvents = await CachedUserService.getCachedEvents();
+      if (cachedEvents != null && cachedEvents.isNotEmpty) {
+        setState(() {
+          events = cachedEvents;
+          isLoading = false;
+        });
+        return; // Evita chamar a API se já houver eventos armazenados
+      }
 
-      setState(() {
-        isLoading = false;
-        if (result['success']) {
-          events = result['data'];
-        } else {
-          error = result['message'] ?? 'Erro desconhecido ao carregar eventos';
-        }
-      });
+      print('Carregando eventos da API...');
+      final result = await _apiService.fetchEvents();
+
+      if (result['success']) {
+        events = result['data'];
+        await CachedUserService.saveCachedEvents(events); // Salva no cache
+      } else {
+        error = result['message'] ?? 'Erro desconhecido ao carregar eventos';
+      }
     } catch (e) {
+      error = 'Erro ao carregar eventos: $e';
+    } finally {
       setState(() {
         isLoading = false;
-        error = 'Erro ao carregar eventos: $e';
       });
-      print('Erro ao carregar eventos: $e'); // Para debug
     }
+  }
+
+  Future<void> _onRefresh() async {
+    return _loadEvents();
   }
 
   @override
@@ -180,64 +191,69 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
           ),
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  // Padding(
-                  //   padding: EdgeInsets.only(left: 26.h),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       _buildScrollableButton('Hoje', 100),
-                  //       _buildScrollableButton('Cronograma completo', 150),
-                  //     ],
-                  //   ),
-                  // ),
-                  if (isLoading)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: CircularProgressIndicator(
-                          color: AppColors.orangePrimary,
-                        ),
-                      ),
-                    )
-                  else if (error != null)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(error!),
-                      ),
-                    )
-                  else if (events.isEmpty)
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Text(
-                          'Não existem eventos',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.quaternaryGrey,
+        body: RefreshIndicator(
+          backgroundColor: AppColors.orangePrimary,
+          color: AppColors.background,
+          onRefresh: _onRefresh,
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    // Padding(
+                    //   padding: EdgeInsets.only(left: 26.h),
+                    //   child: Row(
+                    //     mainAxisAlignment: MainAxisAlignment.start,
+                    //     children: [
+                    //       _buildScrollableButton('Hoje', 100),
+                    //       _buildScrollableButton('Cronograma completo', 150),
+                    //     ],
+                    //   ),
+                    // ),
+                    if (isLoading && events.isEmpty)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: CircularProgressIndicator(
+                            color: AppColors.orangePrimary,
                           ),
                         ),
+                      )
+                    else if (error != null)
+                      Center(
+                        child: Text(
+                          error!,
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      )
+                    else if (events.isEmpty)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Text(
+                            'Não existem eventos',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.quaternaryGrey,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: events.length,
+                        itemBuilder: (context, index) {
+                          return CustomCardSchedule(event: events[index]);
+                        },
                       ),
-                    )
-                  else
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: events.length,
-                      itemBuilder: (context, index) {
-                        return CustomCardSchedule(event: events[index]);
-                      },
-                    ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ));
   }
 }

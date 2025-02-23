@@ -31,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late Future<User> _userFuture;
   int _currentIndex = 3;
   late User currentUser;
+  Widget? _qrCode;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         setState(() {
           currentUser = userData;
+          _qrCode ??= CustomQrCode(user: userData);
         });
       }
       return userData;
