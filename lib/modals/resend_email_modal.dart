@@ -116,22 +116,6 @@ void ResendEmailModal(BuildContext context, String email) {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  CustomOutlinedButton(
-                    text: 'Reenviar e-mail',
-                    buttonFonts: const Fonts(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.background),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    buttonStyle: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: AppColors.orangePrimary),
-                        backgroundColor: AppColors.orangePrimary),
-                    onPressed: () {
-                      //lógica para reenviar e-mail
-                    },
-                  ),
                   SizedBox(width: 10.h),
                   CustomOutlinedButton(
                     text: 'Ok',

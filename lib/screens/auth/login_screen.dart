@@ -214,6 +214,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 result['message'] ?? 'Erro ao fazer login');
           });
         }
+        if (result['message'] ==
+            'E-mail não verificado. Verifique sua caixa de entrada.') {
+          ResendEmailModal(context, emailInput.text);
+
+          return;
+        }
       }
     } catch (e) {
       if (!mounted) return;
