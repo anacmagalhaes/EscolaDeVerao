@@ -119,7 +119,7 @@ class _CustomCardHomeState extends State<CustomCardHome> {
                         child: Image.network(
                           widget.post['imagem'],
                           width: double.infinity,
-                          height: 200.h,
+                          height: 330.h,
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) {

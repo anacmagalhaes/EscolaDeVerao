@@ -1,3 +1,5 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class CachedUserService {
   static List<dynamic>? _cachedEvents;
 
@@ -7,5 +9,10 @@ class CachedUserService {
 
   static Future<List<dynamic>?> getCachedEvents() async {
     return _cachedEvents;
+  }
+
+  static Future<void> clearCachedEvents() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cached_events');
   }
 }
