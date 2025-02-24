@@ -71,22 +71,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         error = null; // Limpa erros anteriores
       });
 
-      // Verifica se os eventos já estão em cache
-      final cachedEvents = await CachedUserService.getCachedEvents();
-      if (cachedEvents != null && cachedEvents.isNotEmpty) {
-        setState(() {
-          events = cachedEvents;
-          isLoading = false;
-        });
-        return; // Evita chamar a API se já houver eventos armazenados
-      }
-
       print('Carregando eventos da API...');
       final result = await _apiService.fetchEvents();
 
       if (result['success']) {
         events = result['data'];
-        await CachedUserService.saveCachedEvents(events); // Salva no cache
       } else {
         error = result['message'] ?? 'Erro desconhecido ao carregar eventos';
       }
@@ -100,7 +89,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   Future<void> _onRefresh() async {
-    return _loadEvents();
+    if (!mounted) return;
+    await _loadEvents();
   }
 
   @override
@@ -191,98 +181,92 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             ),
           ),
         ),
-        body: RefreshIndicator(
-          backgroundColor: AppColors.orangePrimary,
-          color: AppColors.background,
-          onRefresh: _onRefresh,
-          child: CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    // Padding(
-                    //   padding: EdgeInsets.only(left: 26.h),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.start,
-                    //     children: [
-                    //       _buildScrollableButton('Hoje', 100),
-                    //       _buildScrollableButton('Cronograma completo', 150),
-                    //     ],
-                    //   ),
-                    // ),
-                    if (isLoading && events.isEmpty)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: CircularProgressIndicator(
-                            color: AppColors.orangePrimary,
-                          ),
+        body: LayoutBuilder(builder: (context, constraints) {
+          return Stack(
+            children: [
+              Container(
+                color: AppColors.orangePrimary,
+              ),
+              Container(
+                height: constraints.maxHeight,
+                width: double.infinity,
+                margin: EdgeInsets.only(top: 2.h),
+                decoration: const BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  ),
+                ),
+                child: RefreshIndicator(
+                  backgroundColor: AppColors.orangePrimary,
+                  color: AppColors.background,
+                  onRefresh: _onRefresh,
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            // Padding(
+                            //   padding: EdgeInsets.only(left: 26.h),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.start,
+                            //     children: [
+                            //       _buildScrollableButton('Hoje', 100),
+                            //       _buildScrollableButton('Cronograma completo', 150),
+                            //     ],
+                            //   ),
+                            // ),
+                            if (isLoading && events.isEmpty)
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.orangePrimary,
+                                  ),
+                                ),
+                              )
+                            else if (error != null)
+                              Center(
+                                child: Text(
+                                  error!,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey),
+                                ),
+                              )
+                            else if (events.isEmpty)
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: Text(
+                                    'Não existem eventos',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.quaternaryGrey,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: events.length,
+                                itemBuilder: (context, index) {
+                                  return CustomCardSchedule(
+                                      event: events[index]);
+                                },
+                              ),
+                          ],
                         ),
                       )
-                    else if (error != null)
-                      Center(
-                        child: Text(
-                          error!,
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      )
-                    else if (events.isEmpty)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Text(
-                            'Não existem eventos',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.quaternaryGrey,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: events.length,
-                        itemBuilder: (context, index) {
-                          return CustomCardSchedule(event: events[index]);
-                        },
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               )
             ],
-          ),
-        ));
+          );
+        }));
   }
-}
-
-Widget _buildScrollableButton(String text, double width) {
-  return GestureDetector(
-    onTap: () {
-      // Ação ao clicar
-    },
-    child: Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      width: width.h,
-      height: 50.h,
-      decoration: BoxDecoration(
-        color: AppColors.grey,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontFamily: 'Montserrat',
-            color: AppColors.textPrimary,
-            fontSize: 12,
-          ),
-          softWrap: false,
-          overflow: TextOverflow.fade,
-        ),
-      ),
-    ),
-  );
 }
